@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso ArcGIS Pro & Online - SoilTech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#34A678',
+                        'dark-green': '#132723',
+                        'med-green': '#245A50',
+                        'light-green': '#E6F4F1',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; color: #363636; background-color: #fcfcfc; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: all 0.3s ease-in-out; opacity: 0; }
+        .accordion-item.active .accordion-content { max-height: 1000px; opacity: 1; padding-bottom: 2rem; }
+        .accordion-item.active .arrow-icon {transform: rotate(180deg);}
+        .no-rotate {
+            transform: none !important;
+            transition: none !important;
+        }
+        .btn-wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.5s;
+            transform: translateZ(0);
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .btn-wa:hover {
+            transform: translateY(-0.25rem);
+        }
+    </style>
+    
+    <link rel="icon" type="image/png" href="circulo_soiltech_2026.png">
+    
+    <link rel="apple-touch-icon" href="circulo_soiltech_2026.png">
+
+</head>
+<body class="antialiased">
+
+<header class="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/50 to-transparent">
+    <div class="container mx-auto px-6 py-6 flex justify-between items-center">
+        
+        <div class="flex items-center gap-4 md:gap-6">
+            <img src="LOGO2026.svg" alt="Logo SoilTech" class="h-10 md:h-12 w-auto object-contain">
+            <div class="h-8 w-px bg-white/30 rounded-full hidden sm:block"></div>
+            <img src="Mesa de trabajo 1LOGOSIG.png" alt="Logo SIG" class="h-10 md:h-12 w-auto object-contain">
+        </div>
+
+        <div class="flex items-center gap-12">
+            
+            <nav class="hidden lg:flex gap-8 items-center text-[10px] font-black text-white uppercase tracking-[0.25em]">
+                <a href="https://www.soiltechpy.com/#inicio" class="hover:text-brand transition-colors">Inicio</a>
+                <a href="https://www.soiltechpy.com/#nosotros" class="hover:text-brand transition-colors">Nosotros</a>
+                <a href="https://www.soiltechpy.com/#servicios" class="hover:text-brand transition-colors">Servicios</a>
+                <a href="https://www.soiltechpy.com/#capacitaciones" class="hover:text-brand transition-colors">Capacitaciones</a>
+            </nav>
+
+            <a href="https://wa.me/595982369083?text=Hola%20SoilTech%2C%20quiero%20inscribirme" 
+               target="_blank"
+               class="group relative bg-brand text-white px-6 py-3 rounded-full font-bold transition-all duration-500 shadow-[0_0_20px_rgba(52,166,120,0.4)] flex items-center gap-3 overflow-hidden border border-brand hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-dark-green">
+                
+                <i class="fa-brands fa-whatsapp text-xl relative z-10"></i> 
+                
+                <div class="relative h-5 w-24 overflow-hidden hidden md:block">
+                    <span class="absolute inset-0 flex items-center justify-center transition-all duration-500 group-hover:-translate-y-full">
+                        Inscribirme
+                    </span>
+                    <span class="absolute inset-0 flex items-center justify-center translate-y-full transition-all duration-500 group-hover:translate-y-0 text-[10px] font-black tracking-widest uppercase">
+                        JAHA HESE
+                    </span>
+                </div>
+            </a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden bg-black">
+        <div class="absolute inset-0 z-0">
+            <img src="back_sig.png" alt="Fondo GIS" class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-green via-transparent to-transparent"></div>
+        </div>
+
+        <div class="container mx-auto text-center max-w-4xl relative z-10 pt-20">
+            <span class="bg-brand/20 text-brand border border-brand/40 backdrop-blur-md text-xs font-bold px-4 py-1 rounded-full uppercase tracking-widest inline-block mb-6">
+                Modalidad Híbrida
+            </span>
+            <h1 class="text-4xl md:text-7xl font-extrabold mb-8 text-white leading-[1.1] drop-shadow-lg">
+                Capacitación en SIG <br>
+                <span class="text-brand">ArcGIS Pro & Online</span>
+            </h1>
+
+            <div class="flex justify-center items-center gap-6 mb-8">
+                <img src="arcgis_pro.png" alt="ArcGIS Pro" class="h-10 w-auto opacity-90">
+                <div class="h-8 w-px bg-white/30"></div>
+                <img src="arcgis_online.png" alt="ArcGIS Online" class="h-10 w-auto opacity-90">
+            </div>
+
+            <p class="text-lg md:text-xl text-gray-200 mb-10 font-light max-w-2xl mx-auto">
+                Domina el ecosistema Esri con un enfoque práctico en gestión territorial, lenguaje Arcade y visualización avanzada.
+            </p>
+            
+            <div class="inline-flex flex-wrap justify-center gap-6 bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 mb-12">
+                <div class="flex items-center gap-2 text-white text-sm"><i class="fa-solid fa-certificate text-brand"></i> 25 Horas Certificadas</div>
+                <div class="flex items-center gap-2 text-white text-sm"><i class="fa-solid fa-key text-brand"></i> Licencia Full x 3 Meses</div>
+            </div>
+            
+            <div class="flex justify-center">
+                <a href="https://wa.me/595982369083" class="group relative bg-brand text-white px-12 py-5 
+                    rounded-full font-black text-xl hover:bg-[#D4AF37] hover:text-dark-green transition-all duration-500 shadow-2xl flex items-center gap-4 overflow-hidden">
+                    <i class="fa-brands fa-whatsapp text-[clamp(1.5rem,5vw,4rem)] group-hover:scale-110 transition-transform"></i>
+                    <span class="group-hover:hidden transition-all">Quiero Inscribirme Ahora</span>
+                    <span class="hidden group-hover:block transition-all tracking-widest uppercase">¡JAHA HESE!</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-white">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-black text-dark-green mb-4">Incluye con el Programa</h2>
+                <div class="w-20 h-1.5 bg-brand mx-auto rounded-full"></div>
+            </div>
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="p-6 bg-light-green rounded-2xl border-b-4 border-brand hover:translate-y-[-5px] transition-transform">
+                <i class="fa-solid fa-laptop-code text-3xl text-brand mb-4 block"></i>
+                <h3 class="font-bold mb-2 text-dark-green">Licencia Advanced</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Acceso total a ArcGIS Pro por 3 meses para seguir practicando.</p>
+            </div>
+            <div class="p-6 bg-light-green rounded-2xl border-b-4 border-brand hover:translate-y-[-5px] transition-transform">
+                <i class="fa-solid fa-mug-hot text-3xl text-brand mb-4 block"></i>
+                <h3 class="font-bold mb-2 text-dark-green">Coffee Break</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Networking y receso incluido en jornadas presenciales.</p>
+            </div>
+            <div class="p-6 bg-light-green rounded-2xl border-b-4 border-brand hover:translate-y-[-5px] transition-transform">
+                <i class="fa-solid fa-database text-3xl text-brand mb-4 block"></i>
+                <h3 class="font-bold mb-2 text-dark-green">Material Premium</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Datasets reales de Paraguay y guías paso a paso en PDF.</p>
+            </div>
+            <div class="p-6 bg-light-green rounded-2xl border-b-4 border-brand hover:translate-y-[-5px] transition-transform">
+                <i class="fa-solid fa-code text-3xl text-brand mb-4 block"></i>
+                <h3 class="font-bold mb-2 text-dark-green">Bussiness Intelligence</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">Dashboard interactivos en tiempo real y ArcGIS para PowerBI.</p>
+            </div>
+        </div>
+    </section>
+
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-12 text-dark-green">Cronograma del Curso</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-dark-green">
+                    <i class="fa-solid fa-video text-brand"></i> Fase Virtual (18:00 - 21:00)
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex justify-between border-b border-gray-50 pb-2">
+                        <span class="text-gray-600">Lunes 13 de Abril</span> 
+                        <span class="font-bold text-brand">Clase 1</span>
+                    </li>
+                    <li class="flex justify-between border-b border-gray-50 pb-2">
+                        <span class="text-gray-600">Miércoles 15 de Abril</span> 
+                        <span class="font-bold text-brand">Clase 2</span>
+                    </li>
+                    <li class="flex justify-between border-b border-gray-50 pb-2">
+                        <span class="text-gray-600">Jueves 16 de Abril</span> 
+                        <span class="font-bold text-brand">Clase 3</span>
+                    </li>
+                </ul>
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-dark-green pt-10">
+                    <i class="fa-solid fa-video text-brand"></i> Clases Refuerzo (18:00 - 21:00)
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex justify-between border-b border-gray-50 pb-2">
+                        <span class="text-gray-600">Miércoles 22 de Mayo</span> 
+                        <span class="font-bold text-brand">Clase Refuerzo 1</span>
+                    </li>
+                    <li class="flex justify-between border-b border-gray-50 pb-2">
+                        <span class="text-gray-600">Miércoles 29 de Mayo</span> 
+                        <span class="font-bold text-brand">Clase Refuerzo 2</span>
+                    </li>
+                </ul>
+                
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border-2 border-green-50">
+                <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-dark-green">
+                    <i class="fa-solid fa-location-dot text-brand"></i> Fase Presencial (08:00 - 16:00)
+                </h3>
+
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                        <div><p class="font-bold text-dark-green">Coronel Oviedo</p><p class="text-xs text-gray-500 italic">Sábado 18 de abril</p></div>
+                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                        <div><p class="font-bold text-dark-green">Encarnación</p><p class="text-xs text-gray-500 italic">Sábado 25 de abril</p></div>
+                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                        <div><p class="font-bold text-dark-green">Ciudad del Este</p><p class="text-xs text-gray-500 italic">Sábado 02 de Mayo</p></div>
+                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                        <div><p class="font-bold text-dark-green">Asunción</p><p class="text-xs text-gray-500 italic">Sábado 09 de Mayo</p></div>
+                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto bg-brand/5 border border-brand/20 p-6 rounded-2xl">
+            <div class="flex items-start gap-4">
+                <i class="fa-solid fa-circle-info text-brand text-xl mt-1"></i>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    <span class="font-bold text-dark-green">Nota importante:</span> El paquete del curso incluye el acceso a <span class="font-semibold italic">todas</span> 
+                    las clases virtuales y la participación en <span class="font-semibold italic">una</span> de las jornadas presenciales, en la ciudad que mejor le quede al participante. 
+                    La asistencia a clases en ciudades adicionales y las clases de refuerzo es totalmente opcional. Consultar condiciones de las clases presenciales.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="relative py-20 bg-black text-white">
+    <div class="absolute inset-0 opacity-20">
+        <img src="back_road.png" alt="" class="w-full h-full object-cover">
+    </div>
+    
+    <div class="container mx-auto px-6 max-w-4xl relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-black mb-4 text-white uppercase tracking-tighter">Contenido Programático</h2>
+            <div class="w-20 h-1.5 bg-brand mx-auto rounded-full"></div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="accordion-item bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <button class="w-full flex items-center p-6 text-left hover:text-brand transition group" onclick="toggleAccordion(this)">
+                    <div class="flex-1 pr-4">
+                        <span class="text-brand font-bold mr-3 text-lg">01.</span>
+                        <span class="font-bold text-sm md:text-lg text-white leading-tight">Fundamentos de los SIG y el Ecosistema Esri</span>
+                    </div>
+                    <div class="shrink-0 flex justify-center w-24 md:w-32">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-[10px] text-blue-400 uppercase tracking-widest font-black">
+                            <i class="fa-solid fa-laptop no-rotate"></i> Virtual
+                        </span>
+                    </div>
+                    <div class="shrink-0 flex justify-end w-8">
+                        <i class="fa-solid fa-chevron-down text-brand transition-transform duration-300 arrow-icon"></i>
+                    </div>
+                </button>
+                <div class="accordion-content px-6">
+                    <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Comprender la arquitectura de ArcGIS y preparar el entorno de trabajo híbrido (Desktop-Cloud).</div>
+                    <ul class="space-y-3 text-sm text-gray-200 pb-6">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-earth-americas text-brand mt-1 w-5 text-center"></i> <span><strong>Introducción a la Ciencia de los Datos Geográficos:</strong> Conceptos clave de geodesia, sistemas de coordenadas (WGS84 vs Locales) y tipos de datos.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-window-restore text-brand mt-1 w-5 text-center"></i> <span><strong>Interfaz de ArcGIS Pro:</strong> Manejo de cintas de opciones, paneles de contenido, catálogo y configuración de proyectos (<code>.aprx</code>).</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-id-card-clip text-brand mt-1 w-5 text-center"></i> <span><strong>Conectividad con ArcGIS Online:</strong> Inicio de sesión, licenciamiento y el concepto de "Organización".</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-cloud-arrow-down text-brand mt-1 w-5 text-center"></i> <span><strong>Datos Online:</strong> acceso a datos en línea desde la Biblioteca Esri en ArcGIS PRO, Conexiones STAC.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <button class="w-full flex items-center p-6 text-left hover:text-brand transition group" onclick="toggleAccordion(this)">
+                    <div class="flex-1 pr-4">
+                        <span class="text-brand font-bold mr-3 text-lg">02.</span>
+                        <span class="font-bold text-sm md:text-lg text-white leading-tight">Gestión y Edición de Datos Geográficos</span>
+                    </div>
+                    <div class="shrink-0 flex justify-center w-24 md:w-32">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-[10px] text-blue-400 uppercase tracking-widest font-black">
+                            <i class="fa-solid fa-laptop no-rotate"></i> Virtual
+                        </span>
+                    </div>
+                    <div class="shrink-0 flex justify-end w-8">
+                        <i class="fa-solid fa-chevron-down text-brand transition-transform duration-300 arrow-icon"></i>
+                    </div>
+                </button>
+                <div class="accordion-content px-6">
+                    <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Crear y administrar bases de datos espaciales.</div>
+                    <ul class="space-y-3 text-sm text-gray-200 pb-6">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-database text-brand mt-1 w-5 text-center"></i> <span><strong>Geodatabase:</strong> Creación de Geodatabases, Reglas de atributos, Dominios y Subtipos para integridad de datos.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-draw-polygon text-brand mt-1 w-5 text-center"></i> <span><strong>Creación de datos Vectoriales:</strong> Creación de puntos líneas y polígonos, edición de elementos, Tabla de Atributos.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-highlighter text-brand mt-1 w-5 text-center"></i> <span><strong>Edición Avanzada:</strong> Herramientas de digitalización, topología de geodatabase para corregir errores de superposición y ajustes de precisión.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-file-export text-brand mt-1 w-5 text-center"></i> <span><strong>Importar y exportar Datos:</strong> Importación de Excel, KML y Shapefiles hacia la Geodatabase u otras rutas.</span></li>
+                        <li class="flex items-center gap-3 text-brand font-bold pt-2 uppercase text-[11px]"><i class="fa-solid fa-thumbtack w-5 text-center"></i> Tarea - Aplicación de lo aprendido</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <button class="w-full flex items-center p-6 text-left hover:text-brand transition group" onclick="toggleAccordion(this)">
+                    <div class="flex-1 pr-4">
+                        <span class="text-brand font-bold mr-3 text-lg">03.</span>
+                        <span class="font-bold text-sm md:text-lg text-white leading-tight">Análisis Espacial y Geoprocesamiento</span>
+                    </div>
+                    <div class="shrink-0 flex justify-center w-24 md:w-32">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-[10px] text-blue-400 uppercase tracking-widest font-black">
+                            <i class="fa-solid fa-laptop no-rotate"></i> Virtual
+                        </span>
+                    </div>
+                    <div class="shrink-0 flex justify-end w-8">
+                        <i class="fa-solid fa-chevron-down text-brand transition-transform duration-300 arrow-icon"></i>
+                    </div>
+                </button>
+                <div class="accordion-content px-6">
+                    <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Resolver problemas territoriales mediante herramientas de análisis vectorial y ráster.</div>
+                    <ul class="space-y-3 text-sm text-gray-200 pb-6">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-layer-group text-brand mt-1 w-5 text-center"></i> <span><strong>Análisis Vectorial:</strong> Herramientas de proximidad (Buffer), superposición (Intersect, Union) y extracción.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-diagram-project text-brand mt-1 w-5 text-center"></i> <span><strong>ModelBuilder:</strong> Automatización de flujos de trabajo mediante modelos visuales sin necesidad de programación.</span></li>
+                        <li class="flex items-center gap-3 text-brand font-bold pt-2 uppercase text-[11px]"><i class="fa-solid fa-thumbtack w-5 text-center"></i> Tarea - Aplicación de lo aprendido</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <button class="w-full flex items-center p-6 text-left hover:text-brand transition group" onclick="toggleAccordion(this)">
+                    <div class="flex-1 pr-4">
+                        <span class="text-brand font-bold mr-3 text-lg">04.</span>
+                        <span class="font-bold text-sm md:text-lg text-white leading-tight">Visualización Cartográfica y Simbología</span>
+                    </div>
+                    <div class="shrink-0 flex justify-center w-24 md:w-32">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-[10px] text-blue-400 uppercase tracking-widest font-black">
+                            <i class="fa-solid fa-laptop no-rotate"></i> Virtual
+                        </span>
+                    </div>
+                    <div class="shrink-0 flex justify-end w-8">
+                        <i class="fa-solid fa-chevron-down text-brand transition-transform duration-300 arrow-icon"></i>
+                    </div>
+                </button>
+                <div class="accordion-content px-6">
+                    <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Comunicar información compleja a través de mapas estéticos y técnicamente correctos.</div>
+                    <ul class="space-y-3 text-sm text-gray-200 pb-6">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-palette text-brand mt-1 w-5 text-center"></i> <span><strong>Simbologías:</strong> Tipos, edición de simbología, Clasificación por valores únicos.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-tags text-brand mt-1 w-5 text-center"></i> <span><strong>Etiquetado Dinámico:</strong> Expresiones Arcade para etiquetas conjuntas, Convertir etiquetas.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-swatchbook text-brand mt-1 w-5 text-center"></i> <span><strong>Estilos:</strong> Crear y administrar estilos nuevos para estandarizar simbologías (STYLX).</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-map text-brand mt-1 w-5 text-center"></i> <span><strong>Diseño de Layouts:</strong> Diseños predeterminados, Creación de series de mapas, Leyendas y textos dinámicos, Exportación en serie, Exportación de archivo de diseño (.pagx).</span></li>
+                        <li class="flex items-center gap-3 text-brand font-bold pt-2 uppercase text-[11px]"><i class="fa-solid fa-thumbtack w-5 text-center"></i> Tarea - Aplicación de lo aprendido</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <button class="w-full flex items-center p-6 text-left hover:text-brand transition group" onclick="toggleAccordion(this)">
+                    <div class="flex-1 pr-4">
+                        <span class="text-brand font-bold mr-3 text-lg">05.</span>
+                        <span class="font-bold text-sm md:text-lg text-white leading-tight">Del Escritorio al Trabajo en la Nube</span>
+                    </div>
+                    <div class="shrink-0 flex justify-center w-24 md:w-32">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 border border-brand/30 text-[10px] text-brand uppercase tracking-widest font-black">
+                            <i class="fa-solid fa-users no-rotate"></i> Presencial
+                        </span>
+                    </div>
+                    <div class="shrink-0 flex justify-end w-8">
+                        <i class="fa-solid fa-chevron-down text-brand transition-transform duration-300 arrow-icon"></i>
+                    </div>
+                </button>
+                <div class="accordion-content px-6 text-sm">
+                    <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Publicar contenido y configurar aplicaciones web interactivas.</div>
+                    <ul class="space-y-3 text-gray-200 pb-6">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-cloud-arrow-up text-brand mt-1 w-5 text-center"></i> <span><strong>Publicación de Capas:</strong> Compartir Web Layer y Web Map desde ArcGIS Pro hacia la nube.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-desktop text-brand mt-1 w-5 text-center"></i> <span><strong>Configuración de Map Viewer:</strong> Ventanas emergentes (Pop-ups) optimizadas y simbología inteligente (Smart Mapping).</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-sync text-brand mt-1 w-5 text-center"></i> <span><strong>Actualización de capas online:</strong> Edición de datos y leyendas de capas alojadas en ArcGIS Pro.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-mobile-screen-button text-brand mt-1 w-5 text-center"></i> <span><strong>Field Maps:</strong> Diseño de formularios de atributos para la edición de datos en campo.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <button class="w-full flex items-center p-6 text-left hover:text-brand transition group" onclick="toggleAccordion(this)">
+                    <div class="flex-1 pr-4">
+                        <span class="text-brand font-bold mr-3 text-lg">06.</span>
+                        <span class="font-bold text-sm md:text-lg text-white leading-tight">Aplicaciones de Campo y Tableros de Control</span>
+                    </div>
+                    <div class="shrink-0 flex justify-center w-24 md:w-32">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 border border-brand/30 text-[10px] text-brand uppercase tracking-widest font-black">
+                            <i class="fa-solid fa-users no-rotate"></i> Presencial
+                        </span>
+                    </div>
+                    <div class="shrink-0 flex justify-end w-8">
+                        <i class="fa-solid fa-chevron-down text-brand transition-transform duration-300 arrow-icon"></i>
+                    </div>
+                </button>
+                <div class="accordion-content px-6 text-sm text-gray-200 pb-6">
+                    <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Desplegar soluciones para la toma de datos en tiempo real y monitoreo.</div>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-clipboard-list text-brand mt-1 w-5 text-center"></i> <span><strong>ArcGIS Survey123:</strong> Diseño de formularios para recolección de datos en campo, Informes PDF automáticos.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-chart-line text-brand mt-1 w-5 text-center"></i> <span><strong>ArcGIS Dashboards:</strong> Creación de tableros, gráficos dinámicos y mapas en tiempo real ArcGIS en PowerBI.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-rotate text-brand mt-1 w-5 text-center"></i> <span><strong>Actualización de capas online:</strong> Edición de datos y leyendas de capas alojadas en ArcGIS Pro.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-book-open text-brand mt-1 w-5 text-center"></i> <span><strong>ArcGIS StoryMaps:</strong> Narrativa geoespacial para presentar informes técnicos de forma atractiva.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section class="py-20 bg-gray-50 text-center">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-16 text-dark-green">Expertos a cargo</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="group">
+                    <div class="w-32 h-32 aspect-square rounded-full mx-auto mb-6 overflow-hidden border-4 border-white shadow-xl group-hover:border-brand transition-all">
+                        <img src="fernando2.jpeg" alt="Fernando Moran" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-dark-green">Ing. Agr. Fernando Morán</h4>
+                    <p class="text-brand text-xs font-bold uppercase tracking-widest mb-3">Especialista en SIG y teledetección</p>
+                    <p class="text-gray-500 text-sm px-4">Encargado de diseño e innovación de procesos de desarrollo  mediante planificación en GIS en el ámbito productivo.</p>
+                </div>
+                <div class="group">
+                    <div class="w-32 h-32 aspect-square rounded-full mx-auto mb-6 overflow-hidden border-4 border-white shadow-xl group-hover:border-brand transition-all">
+                        <img src="ALFREDO2.png" alt="Alfredo Moran" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-dark-green">Mg. Ing. Agr. Alfredo Morán</h4>
+                    <p class="text-brand text-xs font-bold uppercase tracking-widest mb-3">Experiencia en el sector ganadero de carne</p>
+                    <p class="text-gray-500 text-sm px-4">Magíster en Sistemas de Información Geográfica y Teledetección, con énfasis en análisis espacial aplicado a sistemas productivos.
+                    Experiencia en coordinación, gestión y análisis de proyectos SIG</p>
+                </div>
+                <div class="group">
+                    <div class="w-32 h-32 aspect-square rounded-full mx-auto mb-6 overflow-hidden border-4 border-white shadow-xl group-hover:border-brand transition-all">
+                        <img src="RAMON2026_2.png" alt="Ramon Torres" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-dark-green">Ing. Agr. Ramón Torres</h4>
+                    <p class="text-brand text-xs font-bold uppercase tracking-widest mb-3">Área Suelos & Teledetección</p>
+                    <p class="text-gray-500 text-sm px-4">Maestría en Suelos y Ordenamiento Territorial. Consultor en sector agrícola, forestal y ganadero.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<section class="py-20 bg-dark-green text-white text-center">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl md:text-5xl font-black mb-12 uppercase tracking-tighter pb-10">Inversión del programa</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto items-stretch">
+            
+            <div class="lg:col-span-4 p-8 border border-white/10 rounded-3xl bg-white/5 flex flex-col justify-center order-2 lg:order-1">
+                <p class="text-xs uppercase opacity-60 mb-2 font-bold tracking-widest">Precio Base</p>
+                <div class="mb-1">
+                    <span class="text-4xl font-black">1.400.000</span>
+                    <span class="text-brand font-bold block text-sm">Guaraníes</span>
+                </div>
+                <p class="text-[10px] uppercase mt-4 opacity-50">Inscripción Individual después del 31/03</p>
+            </div>
+
+            <div class="lg:col-span-8 relative group order-1 lg:order-2">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-white text-brand text-[11px] font-black px-6 py-1.5 rounded-full uppercase shadow-xl tracking-widest">
+                    Promociones válidas hasta el 31 de Marzo
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-3xl overflow-hidden border-2 border-brand/50 bg-brand shadow-[0_0_50px_rgba(52,166,120,0.2)]">
+                    
+                    <div class="p-10 border-b md:border-b-0 md:border-r border-white/20 flex flex-col justify-center">
+                        <i class="fa-solid fa-bolt-lightning text-dark-green/30 text-2xl mb-3"></i>
+                        <p class="text-xs uppercase text-dark-green mb-2 font-black tracking-wider">Inscripción Anticipada</p>
+                        <h3 class="text-4xl lg:text-5xl font-black mb-1 text-white">1.100.000</h3>
+                        <p class="text-dark-green font-bold text-sm pb-5">Guaraníes</p>
+
+                        <a href="https://wa.me/595982369083?text=Hola%20SoilTech!%20Somos%20un%20grupo/estudiantes%20interesados%20en%20el%20curso%20de%20ArcGIS" 
+                            class="w-full bg-dark-green text-white text-[11px] font-bold py-3 px-4 rounded-xl hover:bg-white hover:text-dark-green transition-colors duration-300 flex items-center justify-center gap-2 uppercase tracking-tighter">
+                           <i class="fa-brands fa-whatsapp"></i>
+                           Quiero aprovechar la oferta
+                        </a>                        
+                    </div>
+
+                    <div class="p-10 flex flex-col justify-center bg-white/10 backdrop-blur-sm">
+                        <i class="fa-solid fa-users text-dark-green/30 text-2xl mb-3"></i>
+                        <p class="text-xs uppercase text-dark-green mb-2 font-black tracking-wider">Estudiantes o Grupos (3+)</p>
+                        <h3 class="text-4xl lg:text-5xl font-black mb-1 text-white">950.000</h3>
+                        <p class="text-dark-green font-bold text-sm pb-5">Guaraníes p/persona</p>
+
+                        <a href="https://wa.me/595982369083?text=Hola%20SoilTech!%20Somos%20un%20grupo/estudiantes%20interesados%20en%20el%20curso%20de%20ArcGIS" 
+                            class="w-full bg-dark-green text-white text-[11px] font-bold py-3 px-4 rounded-xl hover:bg-white hover:text-dark-green transition-colors duration-300 flex items-center justify-center gap-2 uppercase tracking-tighter">
+                           <i class="fa-brands fa-whatsapp"></i>
+                           Consultar por grupo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-10 flex flex-col items-center justify-center animate-pulse">
+            <div class="px-6 py-3 border border-dashed border-white/30 rounded-full bg-white/5 inline-flex items-center gap-3">
+                <i class="fa-solid fa-calendar-check text-brand text-sm"></i>
+                <p class="text-xs md:text-sm text-gray-200 tracking-wide font-medium">
+                    ¿Prefieres fraccionar tu inversión? <span class="text-white font-bold">Consulta nuestros planes de pago personalizados.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-16 inline-flex items-start gap-4 bg-white/5 p-6 rounded-2xl max-w-2xl border border-brand/30 text-left">
+            <i class="fa-solid fa-laptop text-brand mt-1 text-xl"></i>
+            <p class="text-sm text-gray-300 leading-relaxed">
+                <span class="font-bold text-white block mb-1 uppercase text-xs tracking-wider">Requisito Técnico Obligatorio:</span>
+                Es indispensable contar con una Notebook propia. El software y la licencia serán configurados y validados junto con los instructores durante el inicio del curso.
+            </p>
+        </div>
+    </div>
+</section>
+</main>
+
+<footer class="py-12 bg-white text-center border-t">
+
+        <h2 class="text-2xl font-bold mb-6">¿Listo para especializarte?</h2>
+
+        <a href="https://wa.me/595982369083?text=Hola%20SoilTech%2C%20quiero%20inscribirme%20al%20curso%20de%20ArcGIS%20Pro" class="inline-flex items-center gap-3 bg-green-700 text-white px-8 py-4 rounded-full text-xl font-bold hover:bg-green-600 transition shadow-lg">
+
+            <i class="fa-brands fa-whatsapp"></i> Reservar mi Cupo
+
+        </a>
+
+        <p class="mt-8 text-gray-400 text-xs">Disponible hasta el dia del inicio de la Fase Virtual</p>
+
+    </footer>
+
+<footer class="bg-dark-green text-white pt-20 pb-10 border-t border-white/5">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
+            <div class="space-y-6 text-center md:text-left">
+                <img src="LOGO2026.svg" alt="SoilTech" class="h-16 mx-auto md:mx-0">
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Consultoría y Capacitaciones. <br>
+                    Especialistas en Suelos, SIG y Teledetección <br>
+                    en el sector agrícola, forestal y ganadero.
+                </p>
+            </div>
+            
+            <div class="text-center md:text-left">
+                <h4 class="font-bold text-brand uppercase tracking-widest text-sm mb-8">Contacto Directo</h4>
+                <ul class="space-y-4 text-gray-300">
+                    <li class="flex items-center justify-center md:justify-start gap-3">
+                        <i class="fa-brands fa-whatsapp text-brand"></i>
+                        <a href="https://wa.me/595982369083?text=Hola%20SOILTECH%20tengo%20una%20consulta" 
+                            target="_blank" 
+                            class="hover:text-white transition-colors duration-300">
+                             +595 982 369 083
+                        </a>
+                    </li>
+                    <li class="flex items-center justify-center md:justify-start gap-3">
+                        <i class="fa-solid fa-envelope text-brand"></i>
+                        <a href="mailto:admin@soiltechpy.com" class="hover:text-white">admin@soiltechpy.com</a>
+                    </li>
+                    <li class="flex items-center justify-center md:justify-start gap-3 italic">
+                        <i class="fa-solid fa-location-dot text-brand"></i>
+                        <span>San Lorenzo, Paraguay</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="text-center md:text-left">
+                <h4 class="font-bold text-brand uppercase tracking-widest text-sm mb-8">Comunidad</h4>
+                <div class="flex justify-center md:justify-start gap-4">
+                    <a href="https://www.instagram.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all"><i class="fa-brands fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-8 flex flex-col md:row justify-between items-center text-[10px] text-gray-500 uppercase tracking-[0.2em]">
+            <p>&copy; 2026 SoilTech Paraguay. Todos los derechos reservados.</p>
+            <img src="guiño.png" alt="" class="h-4 mt-4 opacity-50">
+        </div>
+    </div>
+</footer>
+
+<script>
+    function toggleAccordion(button) {
+        const item = button.parentElement;
+        const icon = button.querySelector('i');
+        
+        // Cerrar otros si se desea (opcional)
+        // document.querySelectorAll('.accordion-item').forEach(i => { if(i !== item) i.classList.remove('active') });
+
+        item.classList.toggle('active');
+        icon.classList.toggle('rotate-180');
+    }
+</script>
+
+</body>
+</html>

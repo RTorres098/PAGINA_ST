@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoilTech | Enlaces</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,GRAD,fill@24,400,0,0" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': '#34a678',
+                        'dark-green': '#132723',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Asegura que el video ocupe toda la pantalla sin barras blancas */
+        #bg-video {
+            object-fit: cover;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -2;
+        }
+    </style>
+
+    <link rel="icon" type="image/png" href="circulo_soiltech_2026.png">
+    
+    <link rel="apple-touch-icon" href="circulo_soiltech_2026.png">
+
+</head>
+<body class="bg-dark-green text-white min-h-screen flex flex-col items-center py-12 px-6 relative">
+
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <div class="fixed inset-0 z-[-1] bg-gradient-to-b from-black/90 via-black/60 to-dark-green/90"></div>
+
+    <div class="relative z-10 w-full flex flex-col items-center">
+        
+        <div class="text-center mb-10">
+            <div class="max-w-[280px] mx-auto transition-transform hover:scale-105 duration-500">
+                <img src="HORIZONTAL2_2026.png" 
+                    alt="SoilTech Logo" 
+                    class="w-full h-auto drop-shadow-[0_0_15px_rgba(52,166,120,0.5)]">
+            </div>
+            <p class="text-brand font-bold text-sm tracking-widest pt-5">Estudios de Suelo, SIG y Teledetección, Business intelligence</p>
+        </div>
+
+        <div class="w-full max-w-md space-y-4">
+            
+            <a href="https://www.soiltechpy.com" class="flex items-center justify-between bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl hover:bg-brand hover:scale-105 transition-all group">
+                <div class="flex items-center gap-4">
+                    <img src="circulo_soiltech_2026.png" alt="SoilTech" class="w-7 h-7 object-contain rounded-full">
+                    <span class="font-bold uppercase text-sm tracking-wider">Sitio Web Oficial</span>
+                </div>
+                <span class="material-symbols-outlined text-brand group-hover:text-white">Visitar sitio</span>
+            </a>
+
+            <a href="https://www.soiltechpy.com/curso_arcgis/" class="flex items-center justify-between bg-white/10 backdrop-blur-md border border-brand/50 p-4 rounded-2xl hover:bg-brand hover:scale-105 transition-all group shadow-[0_0_15px_rgba(52,166,120,0.2)]">
+                <div class="flex items-center gap-4">
+                    <i class="fa-solid fa-map-location-dot text-xl text-brand group-hover:text-white"></i>
+                    <span class="font-bold uppercase text-sm tracking-wider">Curso ArcGIS Pro & Online</span>
+                </div>
+                <span class="bg-brand text-white text-[10px] px-2 py-1 rounded-md font-black animate-pulse">NUEVO</span>
+            </a>
+
+            <a href="https://wa.me/595982369083?text=Hola%20SoilTech%2C%20vengo%20desde%20tus%20redes" target="_blank" class="flex items-center justify-between bg-brand text-white p-4 rounded-2xl hover:scale-105 transition-all shadow-xl">
+                <div class="flex items-center gap-4">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span class="font-black uppercase text-sm tracking-widest">Contactar por WhatsApp</span>
+                </div>
+                <i class="fa-solid fa-comment-dots"></i>
+            </a>
+
+        </div>
+
+        <footer class="mt-20 text-center">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">Estudios de suelo para la producción agraria sostenible</p>
+        </footer>
+    </div>
+
+</body>
+</html>
