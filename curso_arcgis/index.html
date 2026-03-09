@@ -42,11 +42,104 @@
         .btn-wa:hover {
             transform: translateY(-0.25rem);
         }
+
+        .glow-card-simple {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        /* círculo de luz que sigue al mouse */
+        .glow-spotlight {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(52, 166, 120, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .glow-card-simple:hover .glow-spotlight {
+            opacity: 1;
+        }
+
+        nav a {
+            position: relative;
+            padding: 10px 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #34A678;
+            box-shadow: 0 0 10px #34A678, 0 0 20px #34A678; /* El efecto neón */
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 10px;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        @keyframes rotate-border {
+            to { transform: rotate(360deg); }
+        }
+
+        .glow-border-container {
+            position: relative;
+            padding: 2px; /* Grosor del borde */
+            border-radius: 9999px; /* Mantiene la forma circular de los extremos */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            isolation: isolate;
+        }
+
+        /* El resplandor amarillo que gira */
+        .glow-border-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent 0deg, 
+                transparent 280deg, 
+                #EFBF04 320deg, 
+                #EFBF04 360deg
+            );
+            animation: rotate-border 2s linear infinite;
+            z-index: -1;
+        }
+
+        /* El fondo interno para que el texto sea legible */
+        .glow-inner-content {
+            background: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
     
     <link rel="icon" type="image/png" href="circulo_soiltech_2026.png">
     
     <link rel="apple-touch-icon" href="circulo_soiltech_2026.png">
+    <script src="components/ui/glow-card.tsx"></script>
 
 </head>
 <body class="antialiased">
@@ -114,18 +207,32 @@
                 Domina el ecosistema Esri con un enfoque práctico en gestión territorial, lenguaje Arcade y visualización avanzada.
             </p>
             
-            <div class="inline-flex flex-wrap justify-center gap-6 bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 mb-12">
-                <div class="flex items-center gap-2 text-white text-sm"><i class="fa-solid fa-certificate text-brand"></i> 25 Horas Certificadas</div>
-                <div class="flex items-center gap-2 text-white text-sm"><i class="fa-solid fa-key text-brand"></i> Licencia Full x 3 Meses</div>
+            <div class="glow-card-simple mx-auto max-w-2xl p-8 rounded-2xl flex flex-wrap justify-center gap-8 mb-12" onmousemove="moveGlow(event, this)">
+                <div class="glow-spotlight"></div> <div class="relative z-10 flex items-center gap-2 text-white font-bold">
+                    <i class="fa-solid fa-certificate text-brand"></i> 25 Horas Certificadas
+                </div>
+                <div class="relative z-10 flex items-center gap-2 text-white font-bold">
+                    <i class="fa-solid fa-key text-brand"></i> Licencia Full x 3 Meses
+                </div>
             </div>
             
             <div class="flex justify-center">
-                <a href="https://wa.me/595982369083" class="group relative bg-brand text-white px-12 py-5 
-                    rounded-full font-black text-xl hover:bg-[#D4AF37] hover:text-dark-green transition-all duration-500 shadow-2xl flex items-center gap-4 overflow-hidden">
-                    <i class="fa-brands fa-whatsapp text-[clamp(1.5rem,5vw,4rem)] group-hover:scale-110 transition-transform"></i>
-                    <span class="group-hover:hidden transition-all">Quiero Inscribirme Ahora</span>
-                    <span class="hidden group-hover:block transition-all tracking-widest uppercase">¡JAHA HESE!</span>
-                </a>
+            <a href="https://wa.me/595982369083" 
+            target="_blank"
+            class="group relative bg-brand text-white px-12 py-5 rounded-full font-black text-xl transition-all duration-500 shadow-2xl flex items-center gap-4 overflow-hidden border border-brand hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-dark-green">
+                
+                <i class="fa-brands fa-whatsapp text-3xl relative z-10 transition-transform duration-500 group-hover:scale-110"></i> 
+                
+                <div class="relative h-7 w-64 overflow-hidden">
+                    <span class="absolute inset-0 flex items-center justify-center transition-all duration-500 group-hover:-translate-y-full">
+                        Quiero Inscribirme Ahora
+                    </span>
+                    
+                    <span class="absolute inset-0 flex items-center justify-center translate-y-full transition-all duration-500 group-hover:translate-y-0 text-sm tracking-[0.2em] uppercase">
+                        ¡JAHA HESE!
+                    </span>
+                </div>
+            </a>
             </div>
         </div>
     </section>
@@ -166,32 +273,32 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
             <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                 <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-dark-green">
-                    <i class="fa-solid fa-video text-brand"></i> Fase Virtual (18:00 - 21:00)
+                    <i class="fa-solid fa-video text-brand"></i> Fase Virtual (18:30 - 21:00)
                 </h3>
                 <ul class="space-y-4">
                     <li class="flex justify-between border-b border-gray-50 pb-2">
-                        <span class="text-gray-600">Lunes 13 de Abril</span> 
+                        <span class="text-gray-600">Lunes 18 de Mayo</span> 
                         <span class="font-bold text-brand">Clase 1</span>
                     </li>
                     <li class="flex justify-between border-b border-gray-50 pb-2">
-                        <span class="text-gray-600">Miércoles 15 de Abril</span> 
+                        <span class="text-gray-600">Miércoles 20 de Mayo</span> 
                         <span class="font-bold text-brand">Clase 2</span>
                     </li>
                     <li class="flex justify-between border-b border-gray-50 pb-2">
-                        <span class="text-gray-600">Jueves 16 de Abril</span> 
+                        <span class="text-gray-600">Jueves 21 de Mayo</span> 
                         <span class="font-bold text-brand">Clase 3</span>
                     </li>
                 </ul>
                     <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-dark-green pt-10">
-                    <i class="fa-solid fa-video text-brand"></i> Clases Refuerzo (18:00 - 21:00)
+                    <i class="fa-solid fa-video text-brand"></i> Clases Refuerzo (18:30 - 21:00)
                 </h3>
                 <ul class="space-y-4">
                     <li class="flex justify-between border-b border-gray-50 pb-2">
-                        <span class="text-gray-600">Miércoles 22 de Mayo</span> 
+                        <span class="text-gray-600">Miércoles 03 de Junio</span> 
                         <span class="font-bold text-brand">Clase Refuerzo 1</span>
                     </li>
                     <li class="flex justify-between border-b border-gray-50 pb-2">
-                        <span class="text-gray-600">Miércoles 29 de Mayo</span> 
+                        <span class="text-gray-600">Miércoles 10 de Junio</span> 
                         <span class="font-bold text-brand">Clase Refuerzo 2</span>
                     </li>
                 </ul>
@@ -205,23 +312,52 @@
 
                 <div class="space-y-3 text-sm">
                     <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
-                        <div><p class="font-bold text-dark-green">Coronel Oviedo</p><p class="text-xs text-gray-500 italic">Sábado 18 de abril</p></div>
-                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
+                        <div>
+                            <p class="font-bold text-dark-green">Coronel Oviedo</p>
+                            <p class="text-xs text-gray-500 italic">Sábado 23 de Mayo</p>
+                        </div>
+                        
+                        <div class="glow-border-container shadow-sm">
+                            <div class="glow-inner-content">
+                                <span class="text-brand font-bold text-xs">Cupos Libres</span>
+                            </div>
+                        </div>
                     </div>
+                        <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                            <div>
+                                <p class="font-bold text-dark-green">Encarnación</p>
+                                <p class="text-xs text-gray-500 italic">Sábado 30 de Mayo</p>
+                            </div>
+                            <div class="glow-border-container shadow-sm">
+                                <div class="glow-inner-content">
+                                    <span class="text-brand font-bold text-xs">Cupos Libres</span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
-                        <div><p class="font-bold text-dark-green">Encarnación</p><p class="text-xs text-gray-500 italic">Sábado 25 de abril</p></div>
-                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
-                    </div>
+                        <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                            <div>
+                                <p class="font-bold text-dark-green">Ciudad del Este</p>
+                                <p class="text-xs text-gray-500 italic">Sábado 06 de Junio</p>
+                            </div>
+                            <div class="glow-border-container shadow-sm">
+                                <div class="glow-inner-content">
+                                    <span class="text-brand font-bold text-xs">Cupos Libres</span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
-                        <div><p class="font-bold text-dark-green">Ciudad del Este</p><p class="text-xs text-gray-500 italic">Sábado 02 de Mayo</p></div>
-                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
-                        <div><p class="font-bold text-dark-green">Asunción</p><p class="text-xs text-gray-500 italic">Sábado 09 de Mayo</p></div>
-                        <span class="text-brand font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">Cupos Libres</span>
+                        <div class="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                            <div>
+                                <p class="font-bold text-dark-green">Asunción</p>
+                                <p class="text-xs text-gray-500 italic">Sábado 13 de Junio</p>
+                            </div>
+                            <div class="glow-border-container shadow-sm">
+                                <div class="glow-inner-content">
+                                    <span class="text-brand font-bold text-xs">Cupos Libres</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -523,7 +659,18 @@
         item.classList.toggle('active');
         icon.classList.toggle('rotate-180');
     }
+    function moveGlow(e, card) {
+    const spotlight = card.querySelector('.glow-spotlight');
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    spotlight.style.left = x + 'px';
+    spotlight.style.top = y + 'px';
+}
 </script>
+
+
 
 </body>
 </html>
