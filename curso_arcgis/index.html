@@ -134,6 +134,13 @@
             align-items: center;
             justify-content: center;
         }
+
+        .price-card {
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .price-card:hover {
+                transform: translateY(-10px);
+            }
     </style>
     
     <link rel="icon" type="image/png" href="circulo_soiltech_2026.png">
@@ -255,7 +262,7 @@
             </div>
             <div class="p-6 bg-light-green rounded-2xl border-b-4 border-brand hover:translate-y-[-5px] transition-transform">
                 <i class="fa-solid fa-database text-3xl text-brand mb-4 block"></i>
-                <h3 class="font-bold mb-2 text-dark-green">Material Premium</h3>
+                <h3 class="font-bold mb-2 text-dark-green">Materiales Premium</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">Datasets, vídeos explicativos extras y guías paso a paso en PDF.</p>
             </div>
             <div class="p-6 bg-light-green rounded-2xl border-b-4 border-brand hover:translate-y-[-5px] transition-transform">
@@ -460,7 +467,7 @@
                     <div class="pl-4 border-l-2 border-brand/40 mb-4 italic text-gray-300 text-sm">Resolver problemas territoriales mediante herramientas de análisis vectorial y ráster.</div>
                     <ul class="space-y-3 text-sm text-gray-200 pb-6">
                         <li class="flex items-start gap-3"><i class="fa-solid fa-layer-group text-brand mt-1 w-5 text-center"></i> <span><strong>Análisis Vectorial:</strong> Herramientas de proximidad (Buffer), superposición (Intersect, Union) y extracción.</span></li>
-                        <li class="flex items-start gap-3"><i class="fa-solid fa-diagram-project text-brand mt-1 w-5 text-center"></i> <span><strong>ModelBuilder:</strong> Automatización de flujos de trabajo mediante modelos visuales sin necesidad de programación.</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-diagram-pro ject text-brand mt-1 w-5 text-center"></i> <span><strong>ModelBuilder:</strong> Automatización de flujos de trabajo mediante modelos visuales sin necesidad de programación.</span></li>
                         <li class="flex items-center gap-3 text-brand font-bold pt-2 uppercase text-[11px]"><i class="fa-solid fa-thumbtack w-5 text-center"></i> Tarea - Aplicación de lo aprendido</li>
                     </ul>
                 </div>
@@ -548,6 +555,106 @@
     </div>
 </section>
 
+<section id="precios" class="py-24 bg-white relative">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-[#34A678] text-sm font-black uppercase tracking-[0.3em] mb-4">Inversión del Programa</h2>
+            <h3 class="text-4xl md:text-5xl font-black text-dark-green uppercase tracking-tighter">Planes de Inscripción</h3>
+            <p class="text-gray-500 mt-4 max-w-2xl mx-auto italic text-sm">El contenido, certificación y licencias son los mismos en todos los planes. Elige el que mejor se adapte a tu perfil o momento de inscripción.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            
+            <div class="price-card glow-card-simple p-1 rounded-[2.5rem] bg-gray-100 border border-gray-100" onmousemove="moveGlow(event, this)">
+                <div class="glow-spotlight"></div>
+                <div class="relative z-10 p-6 text-center flex flex-col h-full">
+                    <span class="text-gray-500 font-black text-[9px] uppercase tracking-widest bg-gray-200/50 px-3 py-1 rounded-full w-fit mx-auto mb-4">Inscripción General</span>
+                    <h4 class="text-lg font-black text-dark-green mb-2">BASE</h4>
+                    <div class="mb-6">
+                        <span class="text-3xl font-black text-dark-green">1.400.000</span>
+                        <span class="text-gray-500 font-bold text-xs">Gs.</span>
+                    </div>
+                    <ul class="text-[12px] text-gray-600 space-y-3 mb-8 text-left flex-grow">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-calendar-day text-brand"></i> Inscripción fuera de promo</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-user text-brand"></i> Registro individual</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-coins text-brand"></i> Pago fraccionado</li>
+                    </ul>
+                    <a href="https://wa.me/595982369083?text=Hola! Quiero inscribirme al curso con el Precio Base" class="block w-full py-3 border border-dark-green text-dark-green rounded-xl font-bold hover:bg-dark-green hover:text-white transition-all text-sm">Consultar</a>
+                </div>
+            </div>
+
+            <div class="price-card glow-card-simple p-1 rounded-[2.5rem] bg-dark-green border-2 border-brand shadow-2xl scale-105" onmousemove="moveGlow(event, this)">
+                <div class="glow-spotlight" style="background: radial-gradient(circle, rgba(52, 166, 120, 0.3) 0%, transparent 70%);"></div>
+                <div class="relative z-10 p-6 text-center text-white flex flex-col h-full">
+                    <div class="glow-border-container shadow-sm mx-auto mb-4">
+                        <div class="glow-inner-content !bg-brand">
+                            <span class="text-white font-black text-[9px] uppercase tracking-tighter">Hasta el 31 de Marzo</span>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-black mb-2 uppercase">Anticipado</h4>
+                    <div class="mb-6">
+                        <span class="text-3xl font-black text-brand">1.100.000</span>
+                        <span class="text-gray-400 font-bold text-xs">Gs.</span>
+                    </div>
+                    <ul class="text-[12px] text-gray-300 space-y-3 mb-8 text-left flex-grow">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-bolt text-brand"></i> Ahorro de 300.000 Gs.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-clock text-brand"></i> Beneficio por pronto pago</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-brand"></i> Cupo garantizado</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-coins text-brand"></i> Pago fraccionado</li>
+                    </ul>
+                    <a href="https://wa.me/595982369083?text=Hola! Quiero aprovechar el Precio Anticipado para el curso de ArcGis" class="block w-full py-3 bg-brand text-white rounded-xl font-black hover:scale-105 transition-all shadow-lg text-sm uppercase">¡Aprovechar Ahora!</a>
+                </div>
+            </div>
+
+            <div class="price-card glow-card-simple p-1 rounded-[2.5rem] bg-gray-50 border border-gray-100" onmousemove="moveGlow(event, this)">
+                <div class="glow-spotlight"></div>
+                <div class="relative z-10 p-6 text-center flex flex-col h-full">
+                    <span class="text-brand font-black text-[9px] uppercase tracking-widest bg-brand/10 px-3 py-1 rounded-full w-fit mx-auto mb-4">Grupos y Universitarios</span>
+                    <h4 class="text-lg font-black text-dark-green mb-2">ACADÉMICO/TEAM</h4>
+                    <div class="mb-6">
+                        <span class="text-3xl font-black text-dark-green">950.000</span>
+                        <span class="text-gray-500 font-bold text-xs">Gs.</span>
+                    </div>
+                    <ul class="text-[12px] text-gray-600 space-y-3 mb-8 text-left flex-grow">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-graduation-cap text-brand"></i> Estudiantes de Pre-grado</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-id-card text-brand"></i> Requiere comprobante</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-users text-brand"></i> Grupos de 3 o más profesionales</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-coins text-brand"></i> Pago fraccionado</li>
+                    </ul>
+                    <a href="https://wa.me/595982369083?text=Hola! Quiero inscribirme bajo la modalidad Académica/Team (950.000 Gs)" class="block w-full py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-bold hover:border-brand hover:text-brand transition-all text-sm">Solicitar</a>
+                </div>
+            </div>
+
+            <div class="price-card glow-card-simple p-1 rounded-[2.5rem] bg-[#f8f9fa] border-l-4 border-brand" onmousemove="moveGlow(event, this)">
+                <div class="glow-spotlight" style="background: radial-gradient(circle, rgba(239, 191, 4, 0.1) 0%, transparent 70%);"></div>
+                <div class="relative z-10 p-6 text-center flex flex-col h-full">
+                    <span class="text-brand font-black text-[9px] uppercase tracking-widest bg-brand/10 px-3 py-1 rounded-full w-fit mx-auto mb-4">Empresas</span>
+                    <h4 class="text-lg font-black text-dark-green mb-2">CORPORATIVO</h4>
+                    <div class="mb-6 py-2">
+                        <span class="text-m font-bold text-gray-400 underline">BAJO COTIZACIÓN</span>
+                    </div>
+                    <ul class="text-[12px] text-gray-600 space-y-3 mb-8 text-left flex-grow">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-building text-brand"></i> Precios corporativos</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-briefcase text-brand"></i> Proyectos específicos</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-brand"></i> Soporte corporativo</li>
+                    </ul>
+                    <a href="https://wa.me/595982369083?text=Hola! Quisiera solicitar presupuesto corporativo para el curso de ArcGIS" class="block w-full py-3 bg-dark-green text-white rounded-xl font-bold hover:bg-brand transition-all text-sm">Contactar Asesor</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-16 text-center bg-light-green/50 p-6 rounded-3xl border border-brand/10 max-w-4xl mx-auto">
+            <p class="text-dark-green font-bold mb-4 uppercase text-xs tracking-widest">Todos los planes incluyen:</p>
+            <div class="flex flex-wrap justify-center gap-6 text-[11px] font-black text-brand">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-check"></i> LICENCIA ADVANCED POR 3 MESES</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-check"></i> JORNADA PRESENCIAL</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-check"></i> CERTIFICACIÓN</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-check"></i> DATASETS</span>
+            </div>
+        </div>
+    </div>
+</section>
+
     <section class="py-20 bg-gray-50 text-center">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl font-bold mb-16 text-dark-green">Profesionales a cargo</h2>
@@ -599,51 +706,67 @@
 
 <footer class="bg-dark-green text-white pt-20 pb-10 border-t border-white/5">
     <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
-            <div class="space-y-6 text-center md:text-left">
-                <img src="LOGO2026.svg" alt="SoilTech" class="h-16 mx-auto md:mx-0">
-                <p class="text-gray-400 text-sm leading-relaxed">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16 text-center">
+            <div class="space-y-6">
+                <img src="horizontal2_2026.svg" alt="SoilTech" class="h-16 mx-auto">
+                <p class="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">
                     Consultoría y Capacitaciones. <br>
                     Especialistas en Suelos, SIG y Teledetección <br>
                     en el sector agrícola, forestal y ganadero.
                 </p>
             </div>
             
-            <div class="text-center md:text-left">
+            <div class="flex flex-col items-center">
                 <h4 class="font-bold text-brand uppercase tracking-widest text-sm mb-8">Contacto Directo</h4>
                 <ul class="space-y-4 text-gray-300">
-                    <li class="flex items-center justify-center md:justify-start gap-3">
+                    <li class="flex items-center justify-center gap-3">
                         <i class="fa-brands fa-whatsapp text-brand"></i>
                         <a href="https://wa.me/595982369083?text=Hola%20SOILTECH%20tengo%20una%20consulta" 
-                            target="_blank" 
-                            class="hover:text-white transition-colors duration-300">
+                           target="_blank" 
+                           class="hover:text-white transition-colors duration-300">
                              +595 982 369 083
                         </a>
                     </li>
-                    <li class="flex items-center justify-center md:justify-start gap-3">
+                    <li class="flex items-center justify-center gap-3">
                         <i class="fa-solid fa-envelope text-brand"></i>
                         <a href="mailto:admin@soiltechpy.com" class="hover:text-white">admin@soiltechpy.com</a>
                     </li>
-                    <li class="flex items-center justify-center md:justify-start gap-3 italic">
+                    <li class="flex items-center justify-center gap-3 italic">
                         <i class="fa-solid fa-location-dot text-brand"></i>
                         <span>San Lorenzo, Paraguay</span>
                     </li>
                 </ul>
             </div>
 
-            <div class="text-center md:text-left">
+            <div class="flex flex-col items-center">
                 <h4 class="font-bold text-brand uppercase tracking-widest text-sm mb-8">Comunidad</h4>
-                <div class="flex justify-center md:justify-start gap-4">
-                    <a href="https://www.instagram.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.facebook.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all"><i class="fa-brands fa-linkedin"></i></a>
+                <div class="flex justify-center gap-4">
+                    <a href="https://www.instagram.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="border-t border-white/5 pt-8 flex flex-col md:row justify-between items-center text-[10px] text-gray-500 uppercase tracking-[0.2em]">
-            <p>&copy; 2026 SoilTech Paraguay. Todos los derechos reservados.</p>
-            <img src="guiño.png" alt="" class="h-4 mt-4 opacity-50">
+        <div class="border-t border-white/5 pt-8 flex flex-col items-center gap-8 text-center">
+            
+            <div class="text-[10px] text-gray-500 uppercase tracking-[0.2em]">
+                <p>&copy; 2026 SoilTech Paraguay. Todos los derechos reservados.</p>
+                <img src="guiño.png" alt="" class="h-4 mt-4 opacity-30 mx-auto">
+            </div>
+
+            <div class="flex flex-col items-center gap-3">
+                <span class="text-[9px] text-gray-600 uppercase tracking-[0.3em] font-bold">Desarrollado por</span>
+                <a href="#" target="_blank" class="hover:opacity-80 transition-opacity">
+                    <img src="socialtech.png" alt="SocialTech Logo" class="h-10 md:h-12 w-auto object-contain brightness-110">
+                </a>
+            </div>
         </div>
     </div>
 </footer>
