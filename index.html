@@ -3,394 +3,1453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoilTech | Ciencia y Tecnología Agraria</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SEO -->
+    <title>SoilTech | Ciencia y Tecnología Agraria — Paraguay</title>
+    <meta name="description" content="SoilTech Paraguay: Consultoría en estudios de suelo, SIG, teledetección y capacitaciones técnicas especializadas para el sector agropecuario.">
+    <meta name="keywords" content="suelos paraguay, SIG, teledetección, ArcGIS, capacitación agraria, GIS, remote sensing, soil science">
+    <meta name="author" content="SoilTech Paraguay">
+    <meta property="og:title" content="SoilTech | Ciencia y Tecnología Agraria">
+    <meta property="og:description" content="Soluciones innovadoras en SIG, estudios de suelo y formación técnica para el sector agropecuario paraguayo.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.soiltechpy.com">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.soiltechpy.com">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#34A678',
-                        'dark-green': '#132723',
-                        'med-green': '#245A50',
-                        'light-green': '#E6F4F1',
-                        'golden': '#EFBF04',
-                    },
-                    borderRadius: {
-                        '3xl': '1.5rem',
-                        '4xl': '2rem',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Segoe UI', system-ui, sans-serif; color: #363636; }
-        .hero-gradient { background: linear-gradient(135deg, #132723 0%, #245A50 100%); }
-        .card-hover:hover { transform: translateY(-10px); }
-        
-    </style>
-    
+
     <link rel="icon" type="image/png" href="circulo_soiltech_2026.png">
-    
     <link rel="apple-touch-icon" href="circulo_soiltech_2026.png">
 
-</head>
-<body class="bg-[#fcfcfc] overflow-x-hidden">
+    <style>
+        :root {
+            --brand: #34A678;
+            --brand-light: #4DC491;
+            --brand-dark: #278560;
+            --dark: #0E1E1B;
+            --dark-2: #132723;
+            --mid: #245A50;
+            --light-bg: #F5FAF8;
+            --golden: #EFBF04;
+            --text: #1A2E2A;
+            --text-muted: #6B8880;
+            --white: #FFFFFF;
+            --surface: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.1);
+        }
 
-    <nav class="absolute w-full z-50 bg-transparent">
-        <div class="container mx-auto px-6 py-6 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <img src="horizontal2_2026.svg" class="h-10 md:h-12 w-auto object-contain" alt="SoilTech Logo">
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            color: var(--text);
+            background: #fafafa;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── CURSOR ─────────────────────────────── */
+        .cursor {
+            width: 10px; height: 10px;
+            background: var(--brand);
+            border-radius: 50%;
+            position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s, width 0.25s, height 0.25s, opacity 0.25s;
+            mix-blend-mode: normal;
+        }
+        .cursor-ring {
+            width: 36px; height: 36px;
+            border: 1.5px solid var(--brand);
+            border-radius: 50%;
+            position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.18s cubic-bezier(.25,.46,.45,.94), width 0.3s, height 0.3s, opacity 0.3s;
+            opacity: 0.6;
+        }
+        body:hover .cursor { opacity: 1; }
+
+        /* ─── NAV ─────────────────────────────────── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 0;
+            transition: all 0.4s cubic-bezier(.25,.46,.45,.94);
+        }
+        nav.scrolled {
+            background: rgba(14, 30, 27, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 rgba(52,166,120,0.15);
+        }
+        .nav-inner {
+            max-width: 1280px; margin: 0 auto;
+            padding: 24px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: padding 0.4s;
+        }
+        nav.scrolled .nav-inner { padding: 16px 40px; }
+
+        .nav-logo img { height: 40px; width: auto; object-fit: contain; }
+        
+        .nav-links {
+            display: flex; gap: 36px; align-items: center;
+            list-style: none;
+        }
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute; bottom: -4px; left: 0; right: 0;
+            height: 1px; background: var(--brand);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.3s cubic-bezier(.25,.46,.45,.94);
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-links a:hover::after { transform: scaleX(1); }
+        .nav-cta {
+            background: var(--brand) !important;
+            color: var(--white) !important;
+            padding: 10px 24px;
+            border-radius: 100px;
+            transition: background 0.25s, transform 0.2s !important;
+        }
+        .nav-cta::after { display: none !important; }
+        .nav-cta:hover { background: var(--white) !important; color: var(--dark) !important; transform: translateY(-1px); }
+
+        /* Hamburger */
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .mobile-menu {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--dark); z-index: 99;
+            flex-direction: column; align-items: center; justify-content: center;
+            gap: 32px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            color: white; text-decoration: none;
+            font-size: 24px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            transition: color 0.2s;
+        }
+        .mobile-menu a:hover { color: var(--brand); }
+
+        /* ─── HERO ────────────────────────────────── */
+        #inicio {
+            position: relative;
+            min-height: 100svh;
+            display: flex; align-items: center;
+            background: var(--dark);
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; inset: 0; z-index: 0;
+        }
+        .hero-bg img {
+            width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.45;
+            transform: scale(1.05);
+            transition: transform 8s ease-out;
+        }
+        #inicio.loaded .hero-bg img { transform: scale(1); }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(160deg, rgba(14,30,27,0.75) 0%, rgba(14,30,27,0.3) 50%, rgba(14,30,27,0.85) 100%);
+        }
+        .hero-noise {
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            opacity: 0.4; pointer-events: none;
+        }
+        .hero-content {
+            position: relative; z-index: 2;
+            max-width: 1280px; margin: 0 auto;
+            padding: 140px 40px 80px;
+            width: 100%;
+        }
+        .hero-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 32px;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeUp 0.7s 0.2s forwards;
+        }
+        .hero-tag {
+            padding: 6px 14px;
+            border: 1px solid rgba(52,166,120,0.4);
+            border-radius: 100px;
+            font-size: 10px; font-weight: 700;
+            color: var(--brand); letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: rgba(52,166,120,0.08);
+        }
+        .hero-headline {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(52px, 8vw, 96px);
+            line-height: 1;
+            color: var(--white);
+            letter-spacing: -0.02em;
+            margin-bottom: 28px;
+            opacity: 0; transform: translateY(30px);
+            animation: fadeUp 0.8s 0.35s forwards;
+        }
+        .hero-headline .accent { color: var(--brand); font-style: italic; }
+        .hero-sub {
+            font-size: clamp(16px, 2vw, 20px);
+            color: rgba(255,255,255,0.7);
+            max-width: 560px;
+            line-height: 1.65;
+            margin-bottom: 48px;
+            font-weight: 400;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeUp 0.7s 0.5s forwards;
+        }
+        .hero-actions {
+            display: flex; flex-wrap: wrap; gap: 16px;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeUp 0.7s 0.65s forwards;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--brand);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 14px; font-weight: 700;
+            text-decoration: none; letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: all 0.25s cubic-bezier(.25,.46,.45,.94);
+            border: 2px solid transparent;
+        }
+        .btn-primary:hover {
+            background: white; color: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(52,166,120,0.3);
+        }
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: transparent;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 14px; font-weight: 700;
+            text-decoration: none; letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.25s cubic-bezier(.25,.46,.45,.94);
+        }
+        .btn-ghost:hover {
+            background: white; color: var(--dark);
+            border-color: white;
+            transform: translateY(-3px);
+        }
+        .hero-stats {
+            position: absolute; bottom: 48px; left: 40px; right: 40px;
+            max-width: 1280px; margin: 0 auto;
+            display: flex; gap: 0;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeUp 0.7s 0.85s forwards;
+            width: calc(100% - 80px);
+        }
+        .hero-stat {
+            flex: 1; padding: 20px 28px;
+            border-right: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+        }
+        .hero-stat:last-child { border-right: none; }
+        .hero-stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px; color: var(--brand);
+            line-height: 1; margin-bottom: 4px;
+        }
+        .hero-stat-label { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .scroll-indicator {
+            position: absolute; bottom: 160px; right: 48px;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 0.15em;
+            text-transform: uppercase; writing-mode: vertical-rl;
+        }
+        .scroll-line {
+            width: 1px; height: 40px;
+            background: linear-gradient(to bottom, var(--brand), transparent);
+            animation: scrollLine 1.5s ease-in-out infinite;
+        }
+        @keyframes scrollLine { 0%,100%{opacity:1;transform:scaleY(1)} 50%{opacity:0.3;transform:scaleY(0.5)} }
+
+        /* ─── SECTION SHARED ──────────────────────── */
+        section { position: relative; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+
+        .section-label {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--brand);
+            margin-bottom: 16px;
+        }
+        .section-label::before {
+            content: ''; display: block;
+            width: 24px; height: 1px; background: var(--brand);
+        }
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(36px, 4vw, 56px);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--dark);
+        }
+        .section-title.light { color: var(--white); }
+
+        /* ─── NOSOTROS ────────────────────────────── */
+        #nosotros {
+            padding: 120px 0;
+            background: white;
+        }
+        .about-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: center;
+        }
+        .about-text .section-title { margin-bottom: 28px; }
+        .about-text p {
+            font-size: 17px; line-height: 1.75;
+            color: #4a6460; margin-bottom: 20px;
+        }
+        .about-text strong { color: var(--brand); font-weight: 700; }
+        .about-quote {
+            margin-top: 40px;
+            padding: 28px 32px;
+            background: var(--light-bg);
+            border-left: 4px solid var(--brand);
+            border-radius: 0 16px 16px 0;
+        }
+        .about-quote p {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 20px; line-height: 1.5;
+            color: var(--mid); margin: 0;
+        }
+        /* ─── ABOUT STACKED PARALLAX ─────────────── */
+        .about-visual-wrap {
+            position: relative; height: 520px;
+            border-radius: 24px; overflow: visible;
+        }
+        .av-back {
+            position: absolute; top: 0; right: 0;
+            width: 72%; height: 85%;
+            border-radius: 20px; overflow: hidden;
+            will-change: transform;
+        }
+        .av-front {
+            position: absolute; bottom: 0; left: 0;
+            width: 65%; height: 78%;
+            border-radius: 20px; overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.18);
+            will-change: transform;
+        }
+        .av-back img, .av-front img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .av-label {
+            position: absolute; bottom: 16px; left: 16px;
+            background: rgba(14,30,27,0.72);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: var(--brand); font-size: 10px; font-weight: 700;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            padding: 8px 14px; border-radius: 8px;
+            border: 1px solid rgba(52,166,120,0.3);
+        }
+        .av-badge {
+            position: absolute; top: 20px; left: 20px;
+            background: white; border-radius: 14px;
+            padding: 14px 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            will-change: transform; z-index: 10;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .av-badge-sub {
+            font-size: 10px; color: #888;
+            letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .av-badge-num {
+            font-size: 28px; font-weight: 700;
+            color: var(--brand); line-height: 1;
+        }
+        .av-tag {
+            position: absolute; bottom: 28px; right: 16px;
+            background: var(--brand); color: white;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 10px 16px; border-radius: 10px;
+            will-change: transform; z-index: 10;
+        }
+
+        /* ─── SERVICIOS ───────────────────────────── */
+        #servicios {
+            padding: 120px 0;
+            background: var(--dark-2);
+            overflow: hidden;
+        }
+        .services-bg {
+            position: absolute; inset: 0;
+        }
+        .services-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.2; }
+        .services-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, var(--dark-2) 0%, rgba(19,39,35,0.7) 50%, var(--dark-2) 100%);
+        }
+        .services-header { text-align: center; margin-bottom: 72px; position: relative; z-index: 1; }
+        .services-header .section-label { justify-content: center; }
+        .services-header .section-label::before { display: none; }
+        .services-header .section-label::after { content: ''; display: block; width: 24px; height: 1px; background: var(--brand); }
+        .services-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 24px; position: relative; z-index: 1;
+        }
+        .service-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px; padding: 40px;
+            transition: all 0.4s cubic-bezier(.25,.46,.45,.94);
+            cursor: default;
+            position: relative; overflow: hidden;
+        }
+        .service-card::before {
+            content: ''; position: absolute;
+            bottom: 0; left: 0; right: 0; height: 3px;
+            background: var(--brand);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.4s cubic-bezier(.25,.46,.45,.94);
+        }
+        .service-card:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-8px);
+            box-shadow: 0 40px 60px rgba(0,0,0,0.3);
+            border-color: rgba(52,166,120,0.25);
+        }
+        .service-card:hover::before { transform: scaleX(1); }
+        .service-icon {
+            width: 56px; height: 56px;
+            background: rgba(52,166,120,0.15);
+            border: 1px solid rgba(52,166,120,0.3);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: var(--brand);
+            margin-bottom: 28px;
+            transition: all 0.3s;
+        }
+        .service-card:hover .service-icon {
+            background: var(--brand); color: white;
+            transform: rotate(5deg) scale(1.05);
+        }
+        .service-card h4 {
+            font-size: 20px; font-weight: 800;
+            color: white; text-transform: uppercase;
+            letter-spacing: 0.05em; margin-bottom: 16px;
+        }
+        .service-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+
+        /* ─── CAPACITACIONES ──────────────────────── */
+        #capacitaciones {
+            padding: 120px 0;
+            background: var(--dark);
+        }
+        .training-header {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 64px;
+        }
+        .training-header .section-title { color: white; }
+        .training-header p { color: rgba(255,255,255,0.4); max-width: 300px; font-style: italic; font-size: 15px; text-align: right; }
+
+        .training-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* FEATURED CARD */
+        .training-featured {
+            background: linear-gradient(135deg, rgba(52,166,120,0.12) 0%, rgba(36,90,80,0.2) 100%);
+            border: 2px solid rgba(239,191,4,0.5);
+            border-radius: 28px; padding: 40px;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            gap: 0;
+            transition: all 0.4s;
+        }
+        .training-featured:hover { transform: translateY(-6px); box-shadow: 0 40px 80px rgba(0,0,0,0.4); }
+        .featured-badge {
+            position: absolute; top: 24px; right: 24px;
+            background: var(--golden);
+            color: white; font-size: 9px; font-weight: 900;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            padding: 6px 14px; border-radius: 100px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+        .featured-date {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(52,166,120,0.15); border: 1px solid rgba(52,166,120,0.3);
+            border-radius: 100px; padding: 8px 16px;
+            margin-bottom: 24px; width: fit-content;
+        }
+        .featured-date span { font-size: 11px; font-weight: 700; color: var(--brand); letter-spacing: 0.1em; text-transform: uppercase; }
+        .featured-date i { font-size: 11px; color: var(--brand); }
+        .training-featured h4 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 30px; color: white; line-height: 1.1;
+            margin-bottom: 12px; letter-spacing: -0.02em;
+        }
+        .training-featured h4 span { color: var(--brand); font-style: italic; }
+        .sw-logos {
+            display: flex; gap: 12px; margin: 20px 0;
+        }
+        .sw-logo-box {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 10px 14px;
+        }
+        .sw-logo-box img { height: 32px; object-fit: contain; filter: brightness(1.1); }
+        .training-featured p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 24px; flex: 1; }
+        .training-pills {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;
+        }
+        .training-pill {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(52,166,120,0.1); border: 1px solid rgba(52,166,120,0.2);
+            padding: 6px 12px; border-radius: 100px;
+            font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 600;
+        }
+        .training-pill i { color: var(--brand); font-size: 11px; }
+        .training-featured .btn-primary {
+            width: 100%; justify-content: center; padding: 16px;
+            font-size: 12px; border-radius: 14px;
+        }
+
+        /* SECONDARY CARDS */
+        .training-col { display: flex; flex-direction: column; gap: 16px; }
+        .training-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 28px;
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.35s cubic-bezier(.25,.46,.45,.94);
+            position: relative; overflow: hidden;
+        }
+        .training-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; bottom: 0; width: 3px;
+            background: var(--brand);
+            transform: scaleY(0); transform-origin: top;
+            transition: transform 0.35s;
+        }
+        .training-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(52,166,120,0.2); transform: translateX(4px); }
+        .training-card:hover::before { transform: scaleY(1); }
+        .training-card h4 { font-size: 15px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+        .training-card p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 16px; }
+        .training-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; text-decoration: none;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s, gap 0.2s;
+        }
+        .training-link:hover { color: var(--brand); gap: 10px; }
+        .training-link i { font-size: 10px; }
+        .soon-ribbon {
+            position: absolute; top: 12px; right: -8px;
+            background: var(--golden); color: white;
+            font-size: 8px; font-weight: 900; letter-spacing: 0.15em;
+            text-transform: uppercase; padding: 4px 20px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 8px 50%);
+        }
+        .download-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: rgba(52,166,120,0.15); border: 1px solid rgba(52,166,120,0.3);
+            color: var(--brand); padding: 10px 16px;
+            border-radius: 10px; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            text-decoration: none; transition: all 0.25s;
+        }
+        .download-btn:hover { background: var(--brand); color: white; }
+
+        /* ─── CONTACTO ────────────────────────────── */
+        #contacto { padding: 80px 0 120px; background: white; }
+        .contact-card {
+            background: var(--brand);
+            border-radius: 32px; padding: 80px;
+            display: grid; grid-template-columns: 1fr auto;
+            gap: 80px; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        .contact-card::before {
+            content: ''; position: absolute;
+            right: -80px; top: -80px;
+            width: 400px; height: 400px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+        }
+        .contact-card::after {
+            content: ''; position: absolute;
+            right: 120px; bottom: -60px;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+        .contact-left h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(32px, 3.5vw, 52px);
+            color: white; line-height: 1.05;
+            letter-spacing: -0.02em; margin-bottom: 20px;
+        }
+        .contact-left p { color: rgba(255,255,255,0.8); font-size: 17px; line-height: 1.6; margin-bottom: 36px; }
+        .contact-details { display: flex; flex-direction: column; gap: 16px; }
+        .contact-item {
+            display: flex; align-items: center; gap: 16px;
+        }
+        .contact-icon {
+            width: 44px; height: 44px; flex-shrink: 0;
+            background: rgba(255,255,255,0.15); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: white;
+        }
+        .contact-item span { font-size: 17px; font-weight: 700; color: white; }
+        .contact-right { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 12px; }
+        .btn-contact-main {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            background: var(--dark); color: white;
+            padding: 20px 48px; border-radius: 20px;
+            font-size: 15px; font-weight: 800; letter-spacing: 0.08em;
+            text-transform: uppercase; text-decoration: none;
+            transition: all 0.3s cubic-bezier(.25,.46,.45,.94);
+            white-space: nowrap;
+        }
+        .btn-contact-main:hover { background: white; color: var(--dark); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .btn-contact-main i { font-size: 20px; }
+
+        /* ─── FOOTER ──────────────────────────────── */
+        footer {
+            background: var(--dark);
+            padding: 72px 0 40px;
+            border-top: 1px solid rgba(52,166,120,0.12);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 48px; margin-bottom: 56px;
+        }
+        .footer-brand img { height: 44px; object-fit: contain; margin-bottom: 20px; }
+        .footer-brand p { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.7; max-width: 260px; }
+        .footer-col h5 {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--brand);
+            margin-bottom: 24px;
+        }
+        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-col a {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 14px; color: rgba(255,255,255,0.5);
+            text-decoration: none; transition: color 0.2s;
+        }
+        .footer-col a:hover { color: white; }
+        .footer-col a i { color: var(--brand); font-size: 14px; width: 16px; }
+        .social-links { display: flex; gap: 12px; }
+        .social-btn {
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: rgba(255,255,255,0.5);
+            text-decoration: none; transition: all 0.25s;
+        }
+        .social-btn:hover { background: var(--brand); color: white; border-color: var(--brand); transform: translateY(-2px); }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 32px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.25); letter-spacing: 0.08em; }
+        .footer-dev {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 10px; color: rgba(255,255,255,0.2);
+            letter-spacing: 0.15em; text-transform: uppercase;
+            text-decoration: none;
+        }
+        .footer-dev img { height: 24px; opacity: 0.4; filter: brightness(2); transition: opacity 0.2s; }
+        .footer-dev:hover img { opacity: 0.7; }
+
+        /* ─── ANIMATIONS ──────────────────────────── */
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal {
+            opacity: 0; transform: translateY(32px);
+            transition: opacity 0.7s cubic-bezier(.25,.46,.45,.94), transform 0.7s cubic-bezier(.25,.46,.45,.94);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* ─── RESPONSIVE ──────────────────────────── */
+        @media (max-width: 1024px) {
+            .training-grid { grid-template-columns: 1fr; }
+            .training-featured { order: -1; }
+            .training-col { display: grid; grid-template-columns: 1fr 1fr; }
+            .about-grid { grid-template-columns: 1fr; gap: 48px; }
+            .about-visual-wrap { height: 380px; }
+            .av-back { width: 75%; height: 82%; }
+            .av-front { width: 68%; height: 76%; }
+            .services-grid { grid-template-columns: 1fr; gap: 16px; }
+            .contact-card { grid-template-columns: 1fr; padding: 48px; }
+            .contact-right { flex-direction: row; flex-wrap: wrap; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; }
+            .hero-content { padding: 120px 20px 200px; }
+            .hero-stats { left: 20px; right: 20px; width: calc(100% - 40px); bottom: 24px; }
+            .hero-stat { padding: 16px; }
+            .hero-stat-num { font-size: 24px; }
+            .nav-inner { padding: 20px; }
+            nav.scrolled .nav-inner { padding: 14px 20px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            #nosotros, #servicios, #capacitaciones, #contacto { padding: 80px 0; }
+            .training-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .training-header p { text-align: left; }
+            .training-col { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .contact-card { padding: 36px 28px; border-radius: 24px; }
+            .scroll-indicator { display: none; }
+        }
+
+        /* ─── COUNTER ANIMATION ───────────────────── */
+        .count { display: inline-block; }
+
+        /* ─── PRELOADER ───────────────────────────── */
+        #preloader {
+            position: fixed; inset: 0; z-index: 10000;
+            background: #F4F0E8;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.7s cubic-bezier(.25,.46,.45,.94), visibility 0.7s;
+        }
+        #preloader.hide {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        body.preloading { overflow: hidden; }
+
+        .pre-progress {
+            position: absolute; bottom: 0; left: 0;
+            height: 3px; width: 0%;
+            background: linear-gradient(90deg, var(--brand), #4DC491);
+            transition: width 0.4s ease;
+            box-shadow: 0 0 8px rgba(52,166,120,0.4);
+        }
+
+        /* ambient */
+        .pre-bg {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 40%, rgba(52,166,120,0.08) 0%, transparent 70%);
+            opacity: 0; animation: preBgIn 3s ease 0.5s forwards;
+        }
+        .pre-grain {
+            position: absolute; inset: 0; opacity: 0.025; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 256px;
+        }
+
+        /* sweep lines */
+        .pre-line {
+            position: absolute; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(71,35,7,0.08), transparent);
+            width: 40vw; opacity: 0;
+        }
+        .pre-line:nth-child(1) { top: 20%; left: -10%; animation: preLine 4s ease 2.5s forwards; }
+        .pre-line:nth-child(2) { top: 75%; right: -10%; left: auto; animation: preLine 4s ease 3s forwards; }
+
+        /* corner accents */
+        .pre-corner { position: absolute; width: 60px; height: 60px; opacity: 0; animation: preCorner 1.5s ease 3.8s forwards; }
+        .pre-corner::before, .pre-corner::after { content: ''; position: absolute; background: rgba(71,35,7,0.2); }
+        .pre-corner.tl { top: 8%; left: 8%; }
+        .pre-corner.tl::before { top:0; left:0; width:30px; height:1px; }
+        .pre-corner.tl::after  { top:0; left:0; width:1px;  height:30px; }
+        .pre-corner.br { bottom: 8%; right: 8%; }
+        .pre-corner.br::before { bottom:0; right:0; width:30px; height:1px; }
+        .pre-corner.br::after  { bottom:0; right:0; width:1px;  height:30px; }
+
+        /* particles */
+        .pre-particle { position: absolute; width:2px; height:2px; background:rgba(52,166,120,0.4); border-radius:50%; opacity:0; }
+        .pre-particle:nth-child(1) { top:30%; left:20%; animation: preParticle 6s ease 3s infinite; }
+        .pre-particle:nth-child(2) { top:65%; left:75%; animation: preParticle 7s ease 3.5s infinite; }
+        .pre-particle:nth-child(3) { top:25%; left:65%; animation: preParticle 5s ease 4s infinite; }
+        .pre-particle:nth-child(4) { top:70%; left:30%; animation: preParticle 8s ease 4.5s infinite; }
+
+        /* logo container */
+        .pre-logo {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; gap: 0;
+        }
+
+        /* emblem */
+        .pre-emblem { position: relative; width: 160px; height: 160px; margin-bottom: 24px; }
+        .pre-ring {
+            position: absolute; inset: 0; border-radius: 50%;
+            border: 1px solid rgba(71,35,7,0.12);
+            opacity: 0; animation: preRing 2s cubic-bezier(0.23,1,0.32,1) 0.3s forwards;
+        }
+        .pre-ring-inner {
+            position: absolute; inset: 8px; border-radius: 50%;
+            border: 1px solid rgba(71,35,7,0.07);
+            opacity: 0; animation: preRing 2s cubic-bezier(0.23,1,0.32,1) 0.6s forwards;
+        }
+        .pre-glow {
+            position: absolute; inset: -20px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(52,166,120,0.12) 0%, transparent 70%);
+            opacity: 0; animation: preGlow 3s ease 1s forwards;
+        }
+        .pre-svg {
+            position: absolute; inset: 12px;
+            opacity: 0; transform: scale(0.85);
+            animation: preEmblema 1.8s cubic-bezier(0.23,1,0.32,1) 0.8s forwards;
+        }
+        .pre-svg svg { width: 100%; height: 100%; }
+
+        /* brand text */
+        .pre-brand { position: relative; overflow: hidden; height: 52px; display: flex; align-items: center; justify-content: center; }
+        .pre-brand svg { height: 46px; opacity: 0; transform: translateY(14px); animation: preText 1.2s cubic-bezier(0.23,1,0.32,1) 1.6s forwards; }
+        .pre-shimmer { position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%); background-size: 300% 100%; opacity: 0; animation: preShimmer 2.5s ease 3.2s forwards; pointer-events: none; }
+
+        /* divider */
+        .pre-divider { width: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(71,35,7,0.3), transparent); margin: 14px 0; animation: preDivider 1.5s cubic-bezier(0.23,1,0.32,1) 2.2s forwards; }
+
+        /* tagline */
+        .pre-tagline { font-family: 'DM Sans', sans-serif; font-weight: 500; font-style: italic; font-size: 13px; letter-spacing: 0.32em; color: rgba(71,35,7,0.5); text-transform: uppercase; opacity: 0; transform: translateY(10px); animation: preText 1.2s cubic-bezier(0.23,1,0.32,1) 2.6s forwards; }
+
+        /* KEYFRAMES preloader */
+        @keyframes preBgIn    { to { opacity: 1; } }
+        @keyframes preRing    { 0%{opacity:0;transform:scale(0.6) rotate(-10deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
+        @keyframes preGlow    { 0%{opacity:0} 50%{opacity:1} 100%{opacity:0.6} }
+        @keyframes preEmblema { 0%{opacity:0;transform:scale(0.85)} 100%{opacity:1;transform:scale(1)} }
+        @keyframes preText    { 0%{opacity:0;transform:translateY(14px)} 100%{opacity:1;transform:translateY(0)} }
+        @keyframes preDivider { 0%{width:0} 100%{width:240px} }
+        @keyframes preLine    { 0%{opacity:0;transform:translateX(-50px)} 50%{opacity:1} 100%{opacity:0;transform:translateX(50px)} }
+        @keyframes preCorner  { to { opacity: 1; } }
+        @keyframes preShimmer { 0%{opacity:1;background-position:200% 0} 100%{opacity:0;background-position:-200% 0} }
+        @keyframes preParticle{ 0%,100%{opacity:0;transform:translateY(0)} 25%{opacity:0.6} 50%{opacity:0.3;transform:translateY(-28px)} 75%{opacity:0.5} }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ PRELOADER ══════════════════════════════ -->
+    <div id="preloader">
+
+        <div class="pre-bg"></div>
+        <div class="pre-grain"></div>
+        <div class="pre-line"></div>
+        <div class="pre-line"></div>
+        <div class="pre-particle"></div>
+        <div class="pre-particle"></div>
+        <div class="pre-particle"></div>
+        <div class="pre-particle"></div>
+        <div class="pre-corner tl"></div>
+        <div class="pre-corner br"></div>
+
+        <div class="pre-logo">
+
+            <!-- Emblem -->
+            <div class="pre-emblem">
+                <div class="pre-glow"></div>
+                <div class="pre-ring"></div>
+                <div class="pre-ring-inner"></div>
+                <div class="pre-svg">
+                    <svg viewBox="210 60 340 280" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#fff" cx="370.8" cy="202.2" r="132.6" opacity="0.07"/>
+                        <g>
+                            <path fill="#18403e" d="M370.8,72.9c-71.4,0-129.3,57.1-129.3,127.4s0,3.9.1,5.8c.5,9.9,2.1,19.6,4.7,28.8,1.6,5.2,4.1,6.3,9.9,4.5,27.4-9.3,64.3-15.5,105.5-16.8h0c3.5-.2,6.5-2.7,7.4-6,.1-.5.4-1.5.4-1.5h.3c0-.2,0-.3,0-.5h0v-6.8s0-2.7-1.4-3.2l-6.1-3.1s-2.2-1.5-7.2.4c0,0-16.4,8.7-28.2.4,0,0-7.9-4.9-12-10.6-4.1-5.7-8.9-27.4-8.9-27.4,0,0,12.6-.6,16.4-1.7,0,0,.9-.3,5.4-.6,0,0,5.7-.6,13.1.9,0,0,13.6,2.2,18.2,16.4,0,0,2.5,8.1,2.3,16,0,0,.3,3.1,3,4.1l4,2s1.3,0,1.3-2.3v-16s1.3-11-7.4-16.5c0,0-8.2-5-13.7-12.2,0,0-6.7-10.3-.2-25.2,0,0,4.7-10.7,11.8-17.6,0,0,7.2-5.5,11.6-12.1,0,0,1.3,4.5,10,12.1,0,0,7.3,6.5,12.4,17.2,0,0,6.8,11.5,1.4,25.1,0,0-3.8,7.2-13.2,13.1,0,0-8.4,4.4-8.4,16.4v15.6s-.6,4,2.1,2.3c0,0,4.1-2.4,5.7-5,0,0,.2-10.3,1.8-15.7,0,0,1.3-9.5,13.1-14.6,0,0,8.6-3.4,18.1-3.5,0,0,7.5.5,13.3,1.2,0,0,3.2,1.1,9.6.6,0,0-1.6,3.2-1.7,6.9,0,0-.6,7.2-3.1,12.1,0,0-5.1,15.5-20.9,21.7,0,0-11.5,3.4-26.7-3.9,0,0-1.7-.7-3.6.1l-5.5,2.9s-2.3.8-2.3,3.9v5.9s0,1.8.5,3.9h0c1.4,2.6,4,4.4,7.1,4.4h0c39.6.3,75.9,5,104.6,12.9,6.7,1.5,8.4,1,10.3-5,2.3-9.6,3.6-19.6,3.6-29.9,0-70.4-57.9-127.4-129.3-127.4h0Z"/>
+                            <path fill="#472307" d="M482,239.9h0c-28.8-7.7-65.2-12.3-104.9-12.3h-.4c-.7.1-1.2.8-1.2,1.5s.2,1,.6,1.2h0l4.6,2.6h0v6l16.3,9.3,2.9,1.7,14.9,8.5v5.6c1.2.2,2,1.2,2,2.4s-1.1,2.4-2.5,2.4-2.5-1.1-2.5-2.4.9-2.2,2-2.4v-4.8l-14.6-8.3h0s0,13.7,0,13.7c1.1.2,1.9,1.2,1.9,2.4s-1.1,2.4-2.5,2.4-2.5-1.1-2.5-2.4.8-2.1,1.9-2.4v-13.1l-17.6-10v25l18.7,10.6h0s17.9,10.1,17.9,10.1h0s0,0,0,0v4.9c1.1.2,2,1.2,2,2.4s-1.1,2.4-2.5,2.4-2.5-1.1-2.5-2.4.9-2.2,2-2.4v-4.2l-16.4-9.3v19.4c1.1.3,1.9,1.2,1.9,2.4s0,.6-.1.8h-1.2c.2-.2.3-.5.3-.8,0-.8-.6-1.4-1.4-1.4s-1.4.6-1.4,1.4.1.6.3.8h-1.2c0-.3-.1-.5-.1-.8,0-1.2.8-2.1,1.9-2.4v-18.8l-20.3-11.6h0v-32.1l-6.2-3.5v55.5c1.5.7,2.5,2.1,2.5,3.8s-1.9,4.2-4.3,4.2-4.3-1.9-4.3-4.2,1.1-3.2,2.6-3.9v-55.5l-6.3,3.6v32.1h0s-20.3,11.6-20.3,11.6v18.9c1.1.3,1.9,1.2,1.9,2.4s0,.5-.1.7h-1.2c.1-.2.2-.5.2-.7,0-.8-.6-1.4-1.4-1.4s-1.4.6-1.4,1.4,0,.5.2.7h-1.2c0-.2-.1-.5-.1-.7,0-1.2.8-2.1,1.9-2.4v-19.5l-16.4,9.3v4.2c1.1.2,2,1.2,2,2.4s-1.1,2.4-2.5,2.4-2.5-1.1-2.5-2.4.9-2.2,2-2.4v-5h0l17.8-10.2h0s18.7-10.6,18.7-10.6v-24.7l-17.6,10v12.8c1.1.3,1.9,1.2,1.9,2.4s-1.1,2.4-2.5,2.4-2.5-1.1-2.5-2.4.8-2.1,1.9-2.4v-13.4h0l-12.5,7.1v4.4c1.2.2,2,1.2,2,2.4s-1.1,2.4-2.5,2.4-2.5-1.1-2.5-2.4.9-2.2,2-2.4v-5.2h0s12.8-7.3,12.8-7.3l5-2.8,14.3-8.1v-6.3h0l5.3-3h0c.2-.2.3-.5.3-.8,0-.7-.5-1.2-1.1-1.3-41.5,1-78.9,7.1-106.6,16.4-6.2,2.5-7.4,5.4-5.5,10.3,7.7,18.2,19.7,34.1,34.6,46.8,22.3,18.8,51.2,30.2,82.8,30.2s59.8-11.4,82.4-30.2c16.2-13.6,29.1-31,36.7-50.8,2.5-6.1,1-8-7-10.6h0Z"/>
+                        </g>
+                    </svg>
+                </div>
             </div>
-            <div class="hidden md:flex gap-8 items-center text-xs font-black text-white uppercase tracking-[0.2em]">
-                <a href="#inicio" class="hover:text-brand transition-colors">Inicio</a>
-                <a href="#nosotros" class="hover:text-brand transition-colors">Nosotros</a>
-                <a href="#servicios" class="hover:text-brand transition-colors">Servicios</a>
-                <a href="#capacitaciones" class="hover:text-brand transition-colors">Capacitaciones</a>
-                <a href="#contacto" class="bg-brand text-white px-6 py-2 rounded-full hover:bg-white hover:text-dark-green transition-all shadow-lg shadow-brand/20">Contactar</a>
+
+            <!-- Brand name SVG text -->
+            <div class="pre-brand">
+                <div class="pre-shimmer"></div>
+                <svg viewBox="120 380 500 110" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <path fill="#472307" d="M191.5,419.1h-16.7c-.9-8.3-5.6-13.5-14.1-13.5s-11.5,3.1-11.5,9.7,4.4,10.3,17.4,13.4c18,4.1,26.1,12.4,26.1,25.6s-14.1,24.2-30.2,24.2-32.4-8.7-33.9-25.9h16.7c1.8,9,8.7,13.6,17,13.6s13.4-4,13.4-10.3-4.3-10.9-16.4-13.8c-16.7-4-27.3-9.8-27.3-24.9s13.6-24,29.3-24,28.5,11.2,30.2,25.7h0Z"/>
+                        <path fill="#472307" d="M264.3,445.3c0,19.1-11.7,33.2-32.7,33.2s-32.7-14.1-32.7-33.2,11.7-33.2,32.7-33.2,32.7,14,32.7,33.2ZM247.3,445.3c0-13.6-5.9-21.7-15.8-21.7s-15.8,8.1-15.8,21.7,5.9,21.7,15.8,21.7,15.8-8.2,15.8-21.7Z"/>
+                        <path fill="#472307" d="M292.2,398.9c0,5.2-3.7,8.7-9,8.7s-9-3.4-9-8.7,3.7-8.7,9-8.7,9,3.6,9,8.7ZM275,476.8v-63.1h16.4v63.1h-16.4Z"/>
+                        <path fill="#472307" d="M322.4,456.2c0,2.5,0,4.1.1,5.8.4,3.2,1.8,4.3,7.4,3.9v11.3c-3.2.4-6.4.5-10.1.5-8.1,0-13.2-3-13.5-11.2-.2-2.8-.2-5.8-.2-10v-66.9h16.4v66.5h0Z"/>
+                    </g>
+                    <g>
+                        <path fill="#18403e" d="M379,407.8v69h-16.4v-69h-27.8v-12.8h71.9v12.8h-27.8Z"/>
+                        <path fill="#18403e" d="M463.8,449.6h-44.8c1.1,13.3,7,17.4,14.6,17.4s12.1-3.9,13.2-10.7h16.4c-3.2,14.7-15.1,22.2-29.9,22.2s-30.7-10.8-30.7-33,12.7-33.5,32-33.5,29.5,14.7,29.5,31.9,0,3.4-.2,5.6h0ZM419.5,438.9h27.8c-1.1-10-5.6-15.3-13.4-15.3s-12.9,4.9-14.4,15.3Z"/>
+                        <path fill="#18403e" d="M531.4,436.5h-16.1c-1.5-9.1-6.3-12.9-13-12.9s-14.2,6.8-14.2,21.1,5.9,22.3,14.1,22.3,11.1-4,12.8-12h16.4c-2.7,15.5-14.4,23.5-30.1,23.5s-30.1-10.9-30.1-32.7,14.2-33.7,31.5-33.7,27.6,10.4,28.8,24.4h0Z"/>
+                        <path fill="#18403e" d="M601.2,441.3v35.6h-16.4v-33.3c0-2.6,0-5.6-.2-8.8-.5-6.6-4.2-11.2-12.1-11.2-7.9.1-14.2,6.9-14.2,24.4v28.8h-16.4v-87.8h16.4v34.9l4.9-7.5c4.5-3.2,9.1-4.4,15.2-4.4,13.4,0,21.1,6.6,22.4,17.7.4,3.2.5,6.4.5,11.5h0Z"/>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="pre-divider"></div>
+            <div class="pre-tagline">Soluciones Agronómicas</div>
+
+        </div>
+
+        <!-- loading progress bar -->
+        <div class="pre-progress" id="preProgress"></div>
+
+    </div>
+
+    <!-- Custom Cursor (desktop only) -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#inicio" onclick="closeMobileMenu()">Inicio</a>
+        <a href="#nosotros" onclick="closeMobileMenu()">Nosotros</a>
+        <a href="#servicios" onclick="closeMobileMenu()">Servicios</a>
+        <a href="#capacitaciones" onclick="closeMobileMenu()">Capacitaciones</a>
+        <a href="#contacto" onclick="closeMobileMenu()" style="color:var(--brand)">Contactar</a>
+    </div>
+
+    <!-- ═══ NAV ═══════════════════════════════════ -->
+    <nav id="mainNav">
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <img src="horizontal2_2026.svg" alt="SoilTech Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#capacitaciones">Capacitaciones</a></li>
+                <li><a href="#contacto" class="nav-cta">Contactar</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menú">
+                <span></span><span></span><span></span>
             </div>
         </div>
     </nav>
 
-    <header id="inicio" class="relative min-h-screen flex items-center overflow-hidden bg-dark-green">
-        <div class="absolute inset-0 z-0">
-            <img src="PORTADA.webp" class="w-full h-full object-cover opacity-60" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#363636]"></div>
+    <!-- ═══ HERO ════════════════════════════════════ -->
+    <header id="inicio">
+        <div class="hero-bg">
+            <img src="PORTADA.webp" alt="Campo agrícola" loading="eager">
         </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-noise"></div>
         
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="max-w-4xl pt-20"> <div class="flex flex-wrap gap-2 mb-8">
-                    <span class="inline-block px-4 py-1 bg-brand text-white font-bold text-[10px] rounded-full uppercase tracking-widest">SUELOS</span>
-                    <span class="inline-block px-4 py-1 bg-brand text-white font-bold text-[10px] rounded-full uppercase tracking-widest">SIG Y TELEDETECCIÓN</span>
-                    <span class="inline-block px-4 py-1 bg-brand text-white font-bold text-[10px] rounded-full uppercase tracking-widest">Business Intelligence</span>
-                </div>
-                
-                <h1 class="text-5xl md:text-8xl font-black text-white leading-[0.9] mb-8 uppercase tracking-tighter">
-                    Ciencia y Tecnología <br> para la 
-                    <span class="text-brand">Producción Sostenible</span>
-                </h1>
-                
-                <p class="text-xl md:text-2xl text-gray-200 mb-12 max-w-2xl leading-relaxed font-medium">
-                    Soluciones innovadoras que optimizan la toma de decisiones mediante tecnología SIG, estudios de suelo y formación técnica especializada.
-                </p>
-                
-                <div class="flex flex-wrap gap-4">
-                    <a href="#servicios" class="bg-brand text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white hover:text-dark-green transition-all shadow-2xl">
-                        Nuestros Servicios
-                    </a>
-                    <a href="#capacitaciones" class="bg-transparent border-2 border-white text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white hover:text-dark-green transition-all">
-                        Ver Capacitaciones
-                    </a>
-                </div>
+        <div class="hero-content">
+            <div class="hero-tags">
+                <span class="hero-tag">Suelos</span>
+                <span class="hero-tag">SIG & Teledetección</span>
+                <span class="hero-tag">Business Intelligence</span>
+            </div>
+            <h1 class="hero-headline">
+                Ciencia y Tecnología<br>
+                para la <span class="accent">Producción</span><br>
+                Sostenible
+            </h1>
+            <p class="hero-sub">
+                Optimizamos la toma de decisiones mediante tecnología SIG, estudios de suelo y formación técnica especializada.
+            </p>
+            <div class="hero-actions">
+                <a href="#servicios" class="btn-primary">
+                    Nuestros Servicios <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#capacitaciones" class="btn-ghost">
+                    Ver Capacitaciones
+                </a>
             </div>
         </div>
-        
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce text-white/50">
-            <i class="fa-solid fa-chevron-down text-2xl"></i>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-num"><span class="count" data-target="120">0</span>+</div>
+                <div class="hero-stat-label">Profesionales Formados</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num"><span class="count" data-target="50">0</span>+</div>
+                <div class="hero-stat-label">Proyectos Ejecutados</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num"><span class="count" data-target="7">0</span></div>
+                <div class="hero-stat-label">Cursos Disponibles</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num"><span class="count" data-target="5">0</span>+</div>
+                <div class="hero-stat-label">Años de Experiencia</div>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span>Scroll</span>
         </div>
     </header>
 
-    <section id="nosotros" class="py-24 bg-white">
-        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
-            <div class="relative">
-                <div class="absolute -top-7 -left-4 w-24 h-24 bg-brand rounded-full opacity-10"></div>
-                <h2 class="text-4xl font-black text-dark-green mb-8 uppercase tracking-tighter">Sobre Nosotros</h2>
-                <div class="space-y-6 text-gray-600 text-lg leading-relaxed">
-                    <p>En <span class="text-brand font-bold uppercase">SoilTech</span>, somos un equipo de expertos dedicados a ofrecer soluciones innovadoras que optimizan la toma de decisiones en diversos sectores productivos.</p>
-                    <p>Nuestro enfoque está centrado en el desarrollo sostenible, brindando herramientas precisas para una gestión más eficiente de los recursos naturales mediante 
-                        <span class="text-brand font-bold text-med-green">Estudios de Suelo, SIG y Teledetección y capacitaciones agrícolas y estudios de suelo.</span></p>
+    <!-- ═══ NOSOTROS ════════════════════════════════ -->
+    <section id="nosotros">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <span class="section-label reveal">Sobre Nosotros</span>
+                    <h2 class="section-title reveal reveal-delay-1">Expertos en el<br>Suelo que Alimenta</h2>
+                    <div style="margin-top:28px">
+                        <p class="reveal reveal-delay-2">En <strong>SoilTech</strong>, somos un equipo de expertos dedicados a ofrecer soluciones innovadoras que optimizan la toma de decisiones en sectores productivos clave.</p>
+                        <p class="reveal reveal-delay-3">Nuestro enfoque está centrado en el desarrollo sostenible, brindando herramientas precisas para una gestión más eficiente de los recursos naturales mediante <strong>Estudios de Suelo, SIG, Teledetección y capacitaciones especializadas</strong>.</p>
+                    </div>
+                    <div class="about-quote reveal">
+                        <p>"SoilTech es tu aliado estratégico para el cambio con soluciones basadas en datos, tecnología y educación."</p>
+                    </div>
                 </div>
-                <div class="mt-10 p-8 bg-light-green rounded-3xl border-l-8 border-brand">
-                    <p class="text-med-green font-bold text-xl italic leading-snug text-balance">
-                        "SoilTech es tu aliado estratégico para llevar adelante el cambio con soluciones basadas en datos, tecnología y educación."
-                    </p>
+                <div class="about-visual-wrap reveal" id="aboutVisual">
+
+                    <div class="av-back">
+                        <img src="densidad.jpg" alt="Análisis de densidad de suelo" loading="lazy">
+                        <div class="av-label">densidad aparente</div>
+                    </div>
+
+                    <div class="av-front">
+                        <img src="perfil 0 a 30.jpg" alt="Perfil de suelo 0 a 30 cm" loading="lazy">
+                        <div class="av-label">perfil 0–30 cm</div>
+                    </div>
+
+                    <div class="av-badge">
+                        <span class="av-badge-sub">Desde</span>
+                        <span class="av-badge-num">2019</span>
+                    </div>
+
+                    <div class="av-tag">+5 años</div>
+
                 </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 h-[500px]">
-                <div class="bg-gray-200 rounded-3xl overflow-hidden shadow-xl mt-12"><img src="perfil 0 a 30.jpg" class="w-full h-full object-cover"></div>
-                <div class="bg-gray-200 rounded-3xl overflow-hidden shadow-xl"><img src="densidad.jpg" class="w-full h-full object-cover"></div>
             </div>
         </div>
     </section>
 
-<section id="servicios" class="relative py-24 bg-[#132723] overflow-hidden">
-    <div class="absolute inset-0 z-0">
-        <img src="barrenada.jpg" class="w-full h-full object-cover opacity-40">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#132723]"></div>
-    </div>
-
-    <div class="container mx-auto px-6 relative z-10">
-        <div class="text-center mb-20">
-            <h2 class="text-brand text-sm font-black uppercase tracking-[0.3em] mb-4">No Soil = No Food</h2>
-            <h3 class="text-5xl font-black text-white italic uppercase tracking-tighter">Lo que hacemos</h3>
-            <div class="w-20 h-2 bg-brand mx-auto mt-6 rounded-full shadow-[0_0_15px_rgba(52,166,120,0.5)]"></div>
+    <!-- ═══ SERVICIOS ═══════════════════════════════ -->
+    <section id="servicios">
+        <div class="services-bg">
+            <img src="barrenada.jpg" alt="" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,#132723 0%,rgba(19,39,35,0.5) 50%,#132723 100%);"></div>
         </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-white/10 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/10 transition-all hover:-translate-y-2 border-b-8 border-brand group">
-                <div class="w-16 h-16 bg-brand text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg">
-                    <i class="fa-solid fa-vial"></i>
-                </div>
-                <h4 class="text-2xl font-black text-white mb-4 uppercase">Estudios de Suelo</h4>
-                <p class="text-gray-300 leading-relaxed mb-6 font-medium">Ejecutamos proyectos de estudio de suelo, interpretación y recomendación de fertilizantes para optimizar el rendimiento de tus cultivos.</p>
+        <div class="container">
+            <div class="services-header">
+                <span class="section-label reveal" style="color:var(--brand)">No Soil = No Food</span>
+                <h2 class="section-title light reveal reveal-delay-1" style="margin-top:12px;font-style:italic">Lo que hacemos</h2>
+                <div style="width:48px;height:3px;background:var(--brand);margin:24px auto 0;border-radius:2px;" class="reveal reveal-delay-2"></div>
             </div>
-
-            <div class="bg-white/10 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/10 transition-all hover:-translate-y-2 border-b-8 border-brand group text-balance">
-                <div class="w-16 h-16 bg-brand text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg">
-                    <i class="fa-solid fa-map-location-dot"></i>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <div class="service-icon"><i class="fa-solid fa-vial"></i></div>
+                    <h4>Estudios de Suelo</h4>
+                    <p>Proyectos de estudio de suelo, interpretación y recomendación de fertilizantes para optimizar el rendimiento de tus cultivos con precisión científica.</p>
                 </div>
-                <h4 class="text-2xl font-black text-white mb-4 uppercase">Geoprocesamientos</h4>
-                <p class="text-gray-300 leading-relaxed mb-6 font-medium">Implementación de Sistemas de Información Geográfica (SIG) para la gestión eficiente de recursos basada en datos.</p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/10 transition-all hover:-translate-y-2 border-b-8 border-brand group">
-                <div class="w-16 h-16 bg-brand text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg">
-                    <i class="fa-solid fa-graduation-cap"></i>
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <h4>Geoprocesamientos</h4>
+                    <p>Implementación de Sistemas de Información Geográfica (SIG) para la gestión eficiente de recursos naturales basada en datos espaciales.</p>
                 </div>
-                <h4 class="text-2xl font-black text-white mb-4 uppercase">Capacitaciones</h4>
-                <p class="text-gray-300 leading-relaxed mb-6 font-medium">Formación técnica especializada para profesionales del sector agropecuario con enfoque en nuevas tecnologías.</p>
+                <div class="service-card reveal reveal-delay-2">
+                    <div class="service-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h4>Capacitaciones</h4>
+                    <p>Formación técnica especializada para profesionales del sector agropecuario con enfoque en nuevas tecnologías y herramientas de análisis.</p>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand to-transparent opacity-50"></div>
-</section>
+    </section>
 
-<section id="capacitaciones" class="py-24 bg-dark-green text-white">
-    <div class="container mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div class="max-w-2xl">
-                <h2 class="text-brand font-black uppercase tracking-widest text-sm mb-4">Oferta Educativa</h2>
-                <h3 class="text-5xl font-black leading-tight uppercase tracking-tighter">Capacitación Técnica <br> de Alto Nivel</h3>
+    <!-- ═══ CAPACITACIONES ══════════════════════════ -->
+    <section id="capacitaciones">
+        <div class="container">
+            <div class="training-header">
+                <div>
+                    <span class="section-label reveal">Oferta Educativa</span>
+                    <h2 class="section-title light reveal reveal-delay-1">Capacitación Técnica<br>de Alto Nivel</h2>
+                </div>
+                <p class="reveal">Clases grupales o personalizadas adaptadas a tus necesidades profesionales.</p>
             </div>
-            <p class="text-gray-400 max-w-sm mb-2 italic">Clases grupales o personalizadas adaptadas a tus necesidades profesionales.</p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch"> <div class="flex"> <div class="relative w-full bg-gradient-to-br from-white/15 to-golden/5 border-2 border-golden p-10 rounded-[2.5rem] hover:bg-white/20 transition-all duration-500 group overflow-hidden shadow-[0_0_50px_rgba(52,166,120,0.3)] transform hover:-translate-y-2 flex flex-col justify-between">
-                    
-                    <div class="absolute -bottom-10 -right-10 text-golden opacity-10 text-9xl rotate-12 group-hover:rotate-0 transition-transform duration-700">
-                        <i class="fa-solid fa-map-location-dot"></i>
+            <div class="training-grid">
+                <!-- FEATURED -->
+                <div class="training-featured reveal">
+                    <span class="featured-badge">Más Solicitado</span>
+                    <div class="featured-date">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Inicia 18 de Mayo · Modalidad Híbrida</span>
                     </div>
-
-                    <div class="absolute top-6 right-8">
-                        <span class="bg-golden text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-[0.2em] shadow-lg animate-pulse">Más solicitado</span>
+                    <h4>Capacitación en SIG <span>ArcGIS Pro & Online</span></h4>
+                    <div class="sw-logos">
+                        <div class="sw-logo-box"><img src="arcgis_pro.png" alt="ArcGIS Pro"></div>
+                        <div class="sw-logo-box"><img src="arcgis_online.png" alt="ArcGIS Online"></div>
                     </div>
+                    <p>Domina el ecosistema líder de Esri. Un enfoque 100% práctico diseñado para gestión territorial, análisis avanzado y toma de decisiones con datos en tiempo real.</p>
+                    <div class="training-pills">
+                        <div class="training-pill"><i class="fa-solid fa-certificate"></i> 25 Horas Certificadas</div>
+                        <div class="training-pill"><i class="fa-solid fa-key"></i> Licencia Full x 3 Meses</div>
+                    </div>
+                    <a href="https://www.soiltechpy.com/curso_arcgis/" target="_blank" class="btn-primary">
+                        Ver detalles del curso <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
 
-                    <div>
-                        <div class="mb-8 flex items-center gap-4">
-                            <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-brand text-white shadow-lg shadow-brand/30 rotate-3 group-hover:rotate-0 transition-transform">
-                                <i class="fa-solid fa-calendar-check text-xl"></i>
-                            </div>
-                            <div>
-                                <p class="text-brand font-black uppercase text-xs tracking-widest leading-none mb-1">Inicia 18 de Mayo</p>
-                                <p class="text-white/60 text-[10px] uppercase font-bold tracking-tighter">Modalidad Híbrida</p>
-                            </div>
+                <!-- COL 2 -->
+                <div class="training-col reveal reveal-delay-1">
+                    <div class="training-card">
+                        <div class="soon-ribbon">Próximamente</div>
+                        <div>
+                            <h4>Manejo de la Fertilidad</h4>
+                            <p>Interpretación de análisis de suelos y recomendaciones precisas para optimizar rendimientos.</p>
                         </div>
-
-                        <h4 class="text-3xl font-black text-white mb-6 leading-none uppercase tracking-tighter">
-                            Capacitación en SIG <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-green-300">ArcGIS Pro & Online</span>
-                        </h4>
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm border border-white/5 shadow-inner">
-                                <img src="arcgis_pro.png" alt="ArcGIS Pro" class="h-8 md:h-10 object-contain filter brightness-110">
-                            </div>
-                            <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm border border-white/5 shadow-inner">
-                                <img src="arcgis_online.png" alt="ArcGIS Online" class="h-8 md:h-10 object-contain filter brightness-110">
-                            </div>
+                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Manejo%20de%20la%20Fertilidad" target="_blank" class="training-link">
+                            Consultar <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="training-card">
+                        <div>
+                            <h4>Muestreo y Mapas de Fertilidad</h4>
+                            <p>Habilidades para muestreos eficientes y cartografía de fertilidad sostenible.</p>
                         </div>
-                        <p class="text-gray-300 text-base mb-8 leading-relaxed">
-                            Domina el ecosistema líder de Esri. Un enfoque 100% práctico diseñado para gestión territorial, análisis avanzado y toma de decisiones con datos en tiempo real.
-                        </p>
+                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Muestreo%20y%20Mapas%20de%20Fertilidad" target="_blank" class="training-link">
+                            Consultar <i class="fa-solid fa-arrow-right"></i>
+                        </a>
                     </div>
-                    <div class="inline-flex flex-wrap justify-center gap-6 bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 mb-12">
-                        <div class="flex items-center gap-2 text-white text-sm"><i class="fa-solid fa-certificate text-brand"></i> 25 Horas Certificadas</div>
-                        <div class="flex items-center gap-2 text-white text-sm"><i class="fa-solid fa-key text-brand"></i> Licencia Full x 3 Meses</div>
+                    <div class="training-card">
+                        <div>
+                            <h4>Manejo de Suelos Sostenibles</h4>
+                            <p>Estrategias de conservación y manejo integral para garantizar la salud del suelo.</p>
+                        </div>
+                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Manejo%20de%20Suelos%20Sostenibles" target="_blank" class="training-link">
+                            Consultar <i class="fa-solid fa-arrow-right"></i>
+                        </a>
                     </div>
+                </div>
 
-                    <div class="mt-auto">
-                        <a href="https://www.soiltechpy.com/curso_arcgis/" target="_blank" onclick="event.stopPropagation();" class="w-full inline-flex items-center justify-center gap-4 bg-brand text-white px-8 py-5 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-white hover:text-dark-green transition-all shadow-xl group-hover:scale-105 active:scale-95">
-                            Ver detalles del curso 
-                            <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                <!-- COL 3 -->
+                <div class="training-col reveal reveal-delay-2">
+                    <div class="training-card">
+                        <div>
+                            <h4>Power BI Transformación Digital</h4>
+                            <p>Evolucioná del manejo de datos en Excel a la toma de decisiones dinámicas con dashboards interactivos.</p>
+                        </div>
+                        <a href="docs/P0126_POWERBI_SOILTECH.pdf" download class="download-btn">
+                            Descargar programa <i class="fa-solid fa-download"></i>
+                        </a>
+                    </div>
+                    <div class="training-card">
+                        <div>
+                            <h4>Sistemas SIG con QGIS</h4>
+                            <p>Recopilación y visualización de datos geoespaciales aplicados al sector agropecuario con software libre.</p>
+                        </div>
+                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20QGIS" target="_blank" class="training-link">
+                            Consultar <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="training-card">
+                        <div>
+                            <h4>Manejo y Uso de Drones</h4>
+                            <p>Captura de imágenes aéreas e inspecciones técnicas para mejorar la productividad del campo.</p>
+                        </div>
+                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Drones" target="_blank" class="training-link">
+                            Consultar <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
-
-        <div class="space-y-6 flex flex-col">
-            <div class="relative overflow-hidden bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all group flex flex-col justify-between flex-1">
-                <div class="absolute -top-0 -right-0 overflow-hidden w-32 h-32">
-                    <div class="bg-brand text-white text-[10px] font-black uppercase text-center py-1 w-[150%] absolute top-6 left-[-10%] rotate-45">Próximamente</div>
-                </div>
-                <div>
-                    <h4 class="text-xl font-bold text-brand mb-2 uppercase leading-tight">Manejo de la Fertilidad</h4>
-                    <p class="text-gray-400 text-xs mb-4">Interpretación de análisis de suelos y recomendaciones precisas para optimizar rendimientos.</p>
-                </div>
-                <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20realizar%20una%20consulta%20por%20la%20capacitacion%20en%20Manejo%20de%20la%20Fertilidad" 
-                target="_blank" 
-                class="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white hover:text-brand transition-colors">
-                    Consultar por este tema <i class="fa-solid fa-arrow-pointer text-brand animate-pulse"></i>
-                </a>
-            </div>
-
-            <div class="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all group flex flex-col justify-between flex-1 text-balance">
-                <div>
-                    <h4 class="text-xl font-bold text-brand mb-2 uppercase leading-tight">Muestreo y Mapas de Fertilidad</h4>
-                    <p class="text-gray-400 text-xs mb-4">Habilidades para realizar muestreos eficientes y crear cartografía de fertilidad sostenible.</p>
-                </div>
-                <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20realizar%20una%20consulta%20por%20la%20capacitacion%20en%20Muestreo%20y%20Mapas%20de%20Fertilidad" 
-                target="_blank" 
-                class="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white hover:text-brand transition-colors">
-                    Consultar por este tema <i class="fa-solid fa-arrow-pointer text-brand animate-pulse"></i>
-                </a>
-            </div>
-
-            <div class="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all group flex flex-col justify-between flex-1">
-                <div>
-                    <h4 class="text-xl font-bold text-brand mb-2 uppercase leading-tight">Manejo de Suelos Sostenibles</h4>
-                    <p class="text-gray-400 text-xs mb-4">Estrategias de conservación y manejo integral para garantizar la salud del suelo.</p>
-                </div>
-                <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20realizar%20una%20consulta%20por%20la%20capacitacion%20en%20Manejo%20de%20Suelos%20Sostenibles" 
-                target="_blank" 
-                class="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white hover:text-brand transition-colors">
-                    Consultar por este tema <i class="fa-solid fa-arrow-pointer text-brand animate-pulse"></i>
-                </a>
-            </div>
         </div>
+    </section>
 
-            <div class="space-y-6 flex flex-col">
-                <div class="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all group flex flex-col justify-between flex-1">
-                    <div>
-                        <h4 class="text-xl font-bold text-brand mb-2 uppercase leading-tight">POWER BI Transformación Digital</h4>
-                        <p class="text-gray-400 text-xs mb-4 text-balance">Evoluciona del manejo de datos en Excel a la toma de decisiones dinámicas.</p>
+    <!-- ═══ CONTACTO ════════════════════════════════ -->
+    <section id="contacto">
+        <div class="container">
+            <div class="contact-card reveal">
+                <div class="contact-left">
+                    <h2>¿Listo para transformar tu producción?</h2>
+                    <p>Estamos disponibles para consultas sobre servicios técnicos o programas de capacitación personalizada.</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+                            <span>+595 982 369 083</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+                            <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a4c5c0c9cdcae4d7cbcdc8d0c1c7ccd4dd8ac7cbc9">[email&#160;protected]</a></span>
+                        </div>
                     </div>
-                    <a href="docs/P0126_POWERBI_SOILTECH.pdf" download class="inline-flex items-center justify-center gap-3 bg-brand text-white py-3 rounded-xl text-[10px] font-black tracking-widest hover:bg-white hover:text-dark-green transition-all shadow-lg">
-                        Descargar programa <i class="fa-solid fa-download"></i>
-                    </a>
                 </div>
-
-                <div class="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all group flex flex-col justify-between flex-1">
-                    <div>
-                        <h4 class="text-xl font-bold text-brand mb-2 uppercase leading-tight">Sistemas SIG con QGIS</h4>
-                        <p class="text-gray-400 text-xs mb-4">Recopilación y visualización de datos geoespaciales aplicados al sector agropecuario.</p>
-                    </div>
-                    <a href="#" class="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white hover:text-brand transition-colors">
-                        Consultar por este tema <i class="fa-solid fa-chart-line text-brand animate-pulse"></i>
+                <div class="contact-right">
+                    <a href="https://wa.me/595982369083?text=Hola,%20vengo%20desde%20la%20web,%20tengo%20unas%20consultas!" target="_blank" class="btn-contact-main">
+                        <i class="fa-brands fa-whatsapp"></i> Enviar Mensaje
                     </a>
-                </div>
-
-                <div class="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all group flex flex-col justify-between flex-1">
-                    <div>
-                        <h4 class="text-xl font-bold text-brand mb-2 uppercase leading-tight">Manejo y Uso de Drones</h4>
-                        <p class="text-gray-400 text-xs mb-4">Captura de imágenes aéreas e inspecciones técnicas para mejorar la productividad.</p>
-                    </div>
-                    <a href="#" class="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white hover:text-brand transition-colors">
-                        Consultar por este tema <i class="fa-solid fa-ea03 animate-pulse"></i>
+                    <a href="/cdn-cgi/l/email-protection#94f5f0f9fdfad4e7fbfdf8e0f1f7fce4edbaf7fbf9" class="btn-contact-main" style="background:rgba(255,255,255,0.15);color:white;font-size:13px;padding:16px 36px">
+                        <i class="fa-solid fa-envelope"></i> Correo Electrónico
                     </a>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section id="contacto" class="py-24 bg-white relative overflow-hidden">
-    <div class="container mx-auto px-6">
-        <div class="bg-brand rounded-[3rem] p-12 md:p-20 text-white flex flex-col md:flex-row items-center justify-between gap-12 relative">
-            <div class="absolute top-0 right-0 p-10 opacity-10">
-                <i class="fa-solid fa-paper-plane text-9xl -rotate-12"></i>
-            </div>
-            <div class="max-w-lg">
-                <h2 class="text-5xl font-black mb-6 uppercase tracking-tighter">¿Listo para transformar tu producción?</h2>
-                <p class="text-white/80 text-lg mb-8">Estamos disponibles para consultas sobre servicios técnicos o programas de capacitación personalizada.</p>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-phone"></i></div>
-                        <span class="font-bold text-xl">+595 982 369083</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-envelope"></i></div>
-                        <span class="font-bold text-xl">admin@soiltechpy.com</span>
-                    </div>
+    <!-- ═══ FOOTER ══════════════════════════════════ -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="horizontal2_2026.svg" alt="SoilTech">
+                    <p>Consultoría y Capacitaciones.<br>Especialistas en Suelos, SIG y Teledetección para el sector agrícola, forestal y ganadero.</p>
                 </div>
-            </div>
-            <div class="w-full md:w-auto">
-                <a href="https://wa.me/595982369083?text=Hola,%20vengo%20desde%20la%20web,%20tengo%20unas%20consultas!" 
-                   target="_blank" 
-                   class="bg-dark-green text-white px-12 py-6 rounded-3xl font-black text-xl hover:scale-105 transition-all shadow-2xl block text-center uppercase tracking-widest">
-                    Enviar Mensaje
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer class="bg-dark-green text-white pt-20 pb-10 border-t border-white/5">
-    <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16 text-center">
-            
-            <div class="space-y-6">
-                <img src="horizontal2_2026.svg" alt="SoilTech" class="h-16 mx-auto">
-                <p class="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">
-                    Consultoría y Capacitaciones. <br>
-                    Especialistas en Suelos, SIG y Teledetección <br>
-                    en el sector agrícola, forestal y ganadero.
-                </p>
-            </div>
-            
-            <div class="flex flex-col items-center">
-                <h4 class="font-bold text-brand uppercase tracking-widest text-sm mb-8">Contacto Directo</h4>
-                <ul class="space-y-4 text-gray-300">
-                    <li class="flex items-center justify-center gap-3">
-                        <i class="fa-brands fa-whatsapp text-brand"></i>
-                        <a href="https://wa.me/595982369083?text=Hola%20SOILTECH%20tengo%20una%20consulta" 
-                           target="_blank" 
-                           class="hover:text-white transition-colors duration-300">
-                             +595 982 369 083
+                <div class="footer-col">
+                    <h5>Contacto Directo</h5>
+                    <ul>
+                        <li>
+                            <a href="https://wa.me/595982369083" target="_blank">
+                                <i class="fa-brands fa-whatsapp"></i> +595 982 369 083
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/cdn-cgi/l/email-protection#7110151c181f31021e181d0514121901085f121e1c">
+                                <i class="fa-solid fa-envelope"></i> <span class="__cf_email__" data-cfemail="b6d7d2dbdfd8f6c5d9dfdac2d3d5dec6cf98d5d9db">[email&#160;protected]</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-location-dot"></i> San Lorenzo, Paraguay
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Comunidad</h5>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/py.soiltech/" target="_blank" class="social-btn" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
                         </a>
-                    </li>
-                    <li class="flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-envelope text-brand"></i>
-                        <a href="mailto:admin@soiltechpy.com" class="hover:text-white">admin@soiltechpy.com</a>
-                    </li>
-                    <li class="flex items-center justify-center gap-3 italic">
-                        <i class="fa-solid fa-location-dot text-brand"></i>
-                        <span>San Lorenzo, Paraguay</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="flex flex-col items-center">
-                <h4 class="font-bold text-brand uppercase tracking-widest text-sm mb-8">Comunidad</h4>
-                <div class="flex justify-center gap-4">
-                    <a href="https://www.instagram.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all">
-                        <i class="fa-brands fa-instagram"></i>
-                    </a>
-                    <a href="https://www.facebook.com/py.soiltech/" target="_blank" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all">
-                        <i class="fa-brands fa-facebook"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand transition-all">
-                        <i class="fa-brands fa-linkedin"></i>
-                    </a>
+                        <a href="https://www.facebook.com/py.soiltech/" target="_blank" class="social-btn" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-btn" aria-label="LinkedIn">
+                            <i class="fa-brands fa-linkedin"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="border-t border-white/5 pt-8 flex flex-col items-center gap-8 text-center">
-            
-            <div class="text-[10px] text-gray-500 uppercase tracking-[0.2em]">
-                <p>&copy; 2026 SoilTech Paraguay. Todos los derechos reservados.</p>
-                <img src="guiño.png" alt="" class="h-4 mt-4 opacity-30 mx-auto">
-            </div>
-
-            <div class="flex flex-col items-center gap-3">
-                <span class="text-[9px] text-gray-600 uppercase tracking-[0.3em] font-bold">Desarrollado por</span>
-                <a href="#" target="_blank" class="hover:opacity-80 transition-opacity">
-                    <img src="socialtech.png" alt="SocialTech Logo" class="h-10 md:h-12 w-auto object-contain brightness-110">
+            <div class="footer-bottom">
+                <p>© 2026 SoilTech Paraguay · Todos los derechos reservados</p>
+                <a href="#" class="footer-dev">
+                    <span>Desarrollado por</span>
+                    <img src="socialtech.png" alt="SocialTech">
                 </a>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
+
+    <script>
+        // ── Preloader ──────────────────────────────
+        (function () {
+            const preloader = document.getElementById('preloader');
+            const progress  = document.getElementById('preProgress');
+            document.body.classList.add('preloading');
+
+            // animate progress bar
+            let pct = 0;
+            const progressInterval = setInterval(() => {
+                pct = Math.min(pct + Math.random() * 12, 92);
+                if (progress) progress.style.width = pct + '%';
+            }, 200);
+
+            function dismissPreloader() {
+                clearInterval(progressInterval);
+                if (progress) progress.style.width = '100%';
+                setTimeout(() => {
+                    preloader.classList.add('hide');
+                    document.body.classList.remove('preloading');
+                    // trigger hero entrance animations after preloader gone
+                    document.getElementById('inicio').classList.add('loaded');
+                }, 400);
+            }
+
+            // minimum display time = 3.8s (lets the animation play through)
+            // + waits for window load if it takes longer
+            const MIN_TIME = 3800;
+            const startTime = Date.now();
+
+            window.addEventListener('load', () => {
+                const elapsed = Date.now() - startTime;
+                const remaining = Math.max(0, MIN_TIME - elapsed);
+                setTimeout(dismissPreloader, remaining);
+            });
+
+            // Safety fallback: dismiss after 7s no matter what
+            setTimeout(dismissPreloader, 7000);
+        })();
+
+        // ── Custom Cursor ──────────────────────────
+        const cursor = document.getElementById('cursor');
+        const ring = document.getElementById('cursorRing');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+
+        if (window.matchMedia('(pointer: fine)').matches) {
+            document.addEventListener('mousemove', e => {
+                mx = e.clientX; my = e.clientY;
+                cursor.style.left = mx + 'px';
+                cursor.style.top = my + 'px';
+            });
+            function animateRing() {
+                rx += (mx - rx) * 0.12;
+                ry += (my - ry) * 0.12;
+                ring.style.left = rx + 'px';
+                ring.style.top = ry + 'px';
+                requestAnimationFrame(animateRing);
+            }
+            animateRing();
+            document.querySelectorAll('a, button, .service-card, .training-card, .training-featured').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.width = '16px'; cursor.style.height = '16px';
+                    ring.style.width = '56px'; ring.style.height = '56px';
+                    ring.style.opacity = '0.4';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.width = '10px'; cursor.style.height = '10px';
+                    ring.style.width = '36px'; ring.style.height = '36px';
+                    ring.style.opacity = '0.6';
+                });
+            });
+        } else {
+            cursor.style.display = 'none';
+            ring.style.display = 'none';
+        }
+
+        // ── Sticky Nav ────────────────────────────
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 60);
+        }, { passive: true });
+
+        // ── Hero bg parallax ──────────────────────
+        // (loaded class set by preloader dismiss)
+
+        // ── Mobile Menu ───────────────────────────
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const burger = document.getElementById('hamburger');
+            menu.classList.toggle('open');
+            burger.classList.toggle('open');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.getElementById('hamburger').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ── Intersection Observer (reveal) ────────
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ── Counter Animation ─────────────────────
+        function animateCounter(el) {
+            const target = +el.dataset.target;
+            const duration = 1600;
+            const start = performance.now();
+            function update(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(eased * target);
+                if (progress < 1) requestAnimationFrame(update);
+                else el.textContent = target;
+            }
+            requestAnimationFrame(update);
+        }
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.count').forEach(animateCounter);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsEl = document.querySelector('.hero-stats');
+        if (statsEl) counterObserver.observe(statsEl);
+
+        // ── Smooth active nav links ───────────────
+        const sections = document.querySelectorAll('section[id], header[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(a => {
+                        a.style.color = a.getAttribute('href') === '#' + entry.target.id
+                            ? 'var(--brand)' : '';
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+        sections.forEach(s => sectionObserver.observe(s));
+
+        // ── About Section Parallax ────────────────
+        const aboutVisual = document.getElementById('aboutVisual');
+        if (aboutVisual) {
+            const avBack  = aboutVisual.querySelector('.av-back');
+            const avFront = aboutVisual.querySelector('.av-front');
+            const avBadge = aboutVisual.querySelector('.av-badge');
+            const avTag   = aboutVisual.querySelector('.av-tag');
+
+            let avTicking = false;
+            window.addEventListener('scroll', () => {
+                if (!avTicking) {
+                    requestAnimationFrame(() => {
+                        const rect   = aboutVisual.getBoundingClientRect();
+                        const offset = (window.innerHeight / 2 - rect.top - rect.height / 2) * 0.35;
+                        avBack.style.transform  = `translateY(${offset * -0.5}px)`;
+                        avFront.style.transform = `translateY(${offset * -0.2}px)`;
+                        avBadge.style.transform = `translateY(${offset * -0.38}px)`;
+                        avTag.style.transform   = `translateY(${offset * -0.12}px)`;
+                        avTicking = false;
+                    });
+                    avTicking = true;
+                }
+            }, { passive: true });
+        }
+
+    </script>
 
 </body>
 </html>
