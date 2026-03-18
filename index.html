@@ -1048,7 +1048,7 @@
                         <span class="av-badge-num">2019</span>
                     </div>
 
-                    <div class="av-tag">+5 años</div>
+                    <div class="av-tag">San Lorenzo, PY</div>
 
                 </div>
             </div>
@@ -1209,7 +1209,7 @@
                     <a href="https://wa.me/595982369083?text=Hola,%20vengo%20desde%20la%20web,%20tengo%20unas%20consultas!" target="_blank" class="btn-contact-main">
                         <i class="fa-brands fa-whatsapp"></i> Enviar Mensaje
                     </a>
-                    <a href="/cdn-cgi/l/email-protection#94f5f0f9fdfad4e7fbfdf8e0f1f7fce4edbaf7fbf9" class="btn-contact-main" style="background:rgba(255,255,255,0.15);color:white;font-size:13px;padding:16px 36px">
+                    <a href="mailto:admin@soiltech.com.py" class="btn-contact-main" style="background:rgba(255,255,255,0.15);color:white;font-size:13px;padding:16px 36px">
                         <i class="fa-solid fa-envelope"></i> Correo Electrónico
                     </a>
                 </div>
@@ -1234,7 +1234,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/cdn-cgi/l/email-protection#7110151c181f31021e181d0514121901085f121e1c">
+                            <a href="mailto:admin@soiltech.com.py">
                                 <i class="fa-solid fa-envelope"></i> <span class="__cf_email__" data-cfemail="b6d7d2dbdfd8f6c5d9dfdac2d3d5dec6cf98d5d9db">[email&#160;protected]</span>
                             </a>
                         </li>
@@ -1292,6 +1292,8 @@
                     document.body.classList.remove('preloading');
                     // trigger hero entrance animations after preloader gone
                     document.getElementById('inicio').classList.add('loaded');
+                    // start counter animation now that the page is visible
+                    if (typeof window.startCounters === 'function') window.startCounters();
                 }, 400);
             }
 
@@ -1384,7 +1386,7 @@
         // ── Counter Animation ─────────────────────
         function animateCounter(el) {
             const target = +el.dataset.target;
-            const duration = 1600;
+            const duration = 1800;
             const start = performance.now();
             function update(now) {
                 const elapsed = now - start;
@@ -1397,17 +1399,16 @@
             requestAnimationFrame(update);
         }
 
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.querySelectorAll('.count').forEach(animateCounter);
-                    counterObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        const statsEl = document.querySelector('.hero-stats');
-        if (statsEl) counterObserver.observe(statsEl);
+        // Counters fire ONLY after preloader is gone
+        // The preloader calls window.startCounters() when it finishes
+        window.startCounters = function () {
+            const statsEl = document.querySelector('.hero-stats');
+            if (!statsEl) return;
+            // Small delay so the fade-out of preloader completes visually
+            setTimeout(() => {
+                statsEl.querySelectorAll('.count').forEach(animateCounter);
+            }, 300);
+        };
 
         // ── Smooth active nav links ───────────────
         const sections = document.querySelectorAll('section[id], header[id]');
