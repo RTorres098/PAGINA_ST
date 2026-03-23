@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoilTech — Facturación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+  :root { --bg:#F4F0E8; --surface:#fff; --green:#34A678; --green-dark:#18403E; --text:#1A1A1A; --text2:#6B6B6B; --text3:#9CA3AF; --border:#E0DDD5; --danger:#EF4444; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',system-ui,sans-serif; background:var(--green-dark); color:var(--text); height:100vh; overflow:hidden; }
+
+  .app { display:grid; grid-template-columns:400px 1fr; grid-template-rows:48px 1fr; height:100vh; }
+
+  /* Topbar */
+  .topbar { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:var(--green-dark); border-bottom:1px solid rgba(255,255,255,0.1); }
+  .topbar h1 { font-size:14px; color:#fff; } .topbar span { font-size:11px; color:rgba(255,255,255,0.4); margin-left:10px; }
+  .topbar-btns { display:flex; gap:6px; }
+  .btn { padding:6px 12px; border-radius:5px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; border:none; }
+  .btn-g { background:var(--green); color:#fff; } .btn-g:hover { opacity:0.9; }
+  .btn-w { background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.12); } .btn-w:hover { background:rgba(255,255,255,0.12); }
+
+  /* Form */
+  .form-panel { overflow-y:auto; background:var(--bg); padding:12px; }
+  .sec { font-size:9px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px; margin:10px 0 4px; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:6px; }
+  .f { margin-bottom:5px; }
+  .f label { display:block; font-size:9px; font-weight:600; color:var(--text2); text-transform:uppercase; margin-bottom:1px; }
+  .f input, .f select { width:100%; padding:5px 7px; border:1px solid var(--border); border-radius:4px; font-family:inherit; font-size:12px; background:var(--bg); }
+  .f input:focus, .f select:focus { outline:none; border-color:var(--green); }
+  .f input[readonly] { background:#e8e4dc; font-weight:600; }
+  .g2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+
+  .itbl { width:100%; border-collapse:collapse; font-size:11px; }
+  .itbl th { font-size:8px; font-weight:600; color:var(--text3); padding:2px 3px; border-bottom:1px solid var(--border); text-transform:uppercase; text-align:left; }
+  .itbl td { padding:1px 2px; }
+  .itbl input { padding:3px 5px; font-size:11px; }
+  .itbl select { padding:2px; font-size:10px; }
+  .add-b { background:none; border:1px dashed var(--green); color:var(--green); padding:3px 8px; border-radius:4px; cursor:pointer; font-size:10px; font-weight:600; margin-top:4px; }
+  .rm-b { background:none; border:none; color:var(--danger); cursor:pointer; font-size:14px; }
+
+  .summary-card div { display:flex; justify-content:space-between; font-size:12px; padding:2px 0; }
+  .summary-card .total-line { font-size:14px; font-weight:700; color:var(--green-dark); border-top:1px solid var(--border); padding-top:4px; margin-top:2px; }
+
+  .hist-item { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:6px 8px; margin-bottom:3px; cursor:pointer; font-size:10px; display:flex; justify-content:space-between; }
+  .hist-item:hover { border-color:var(--green); }
+
+  /* Preview panel */
+  .preview-panel { overflow:auto; background:#888; display:flex; justify-content:center; align-items:flex-start; padding:16px; }
+
+  /* Print page */
+  .print-page { width:216mm; height:330mm; background:white; position:relative; flex-shrink:0; box-shadow:0 4px 24px rgba(0,0,0,0.3); overflow:hidden; }
+
+  /* Invoice copy - positioned absolutely within print-page */
+  .inv-copy { position:absolute; left:0; width:216mm; height:160mm; overflow:hidden; }
+  .inv-copy.c1 { top:0; }
+  .inv-copy.c2 { top:165mm; }
+
+  /* Field positioned absolutely within each copy */
+  .pf { position:absolute; color:#000; line-height:1.2; }
+
+  /* Item line within items container */
+  .il { display:flex; height:10.2mm; align-items:center; font-size:10px; }
+  .il > span { display:inline-block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .toast { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:var(--green-dark); color:#fff; padding:10px 20px; border-radius:6px; font-size:12px; font-weight:600; opacity:0; transition:opacity 0.3s; z-index:100; }
+  .toast.show { opacity:1; }
+
+  @media print {
+    body, .app { display:block; height:auto; overflow:visible; background:#fff; }
+    .form-panel, .topbar { display:none !important; }
+    .preview-panel { background:#fff; padding:0; display:block; overflow:visible; }
+    .print-page { box-shadow:none; margin:0; width:216mm; height:330mm; }
+    @page { size:216mm 330mm; margin:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center"><h1>SoilTech — Facturación</h1><a href="../" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:11px;margin-left:12px">← Menú</a><a href="../presupuesto/" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:11px;margin-left:16px">Presupuesto →</a></div>
+    <div class="topbar-btns">
+      <button class="btn btn-w" onclick="nuevaFactura()">🆕 Nueva</button>
+      <button class="btn btn-w" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="btn btn-g" onclick="guardarFactura()">💾 Guardar</button>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <div class="sec">Factura</div>
+    <div class="card">
+      <div class="g2">
+        <div class="f"><label>Nro. Factura</label><input id="nroFactura" readonly></div>
+        <div class="f"><label>Fecha</label><input id="fecha" type="date"></div>
+      </div>
+      <div class="g3">
+        <div class="f"><label>Condición</label><select id="condicion" onchange="render()"><option>CONTADO</option><option>CREDITO</option></select></div>
+        <div class="f"><label>Moneda</label><select id="moneda" onchange="render()"><option>GUARANIES</option><option>DOLARES AMERICANOS</option></select></div>
+        <div class="f"><label>IVA</label><select id="tipoIva" onchange="render()"><option value="10">10%</option><option value="5">5%</option></select></div>
+      </div>
+    </div>
+
+    <div class="sec">Cliente</div>
+    <div class="card">
+      <div class="f"><label>Razón Social</label><select id="cliSel" onchange="onCli()"><option value="">— Seleccionar —</option></select></div>
+      <div class="g2">
+        <div class="f"><label>RUC / CI</label><input id="ruc" oninput="render()"></div>
+        <div class="f"><label>Teléfono</label><input id="tel" oninput="render()"></div>
+      </div>
+      <div class="f"><label>Dirección</label><input id="dir" oninput="render()"></div>
+    </div>
+
+    <div class="sec">Ítems</div>
+    <div class="card">
+      <table class="itbl">
+        <thead><tr><th style="width:35px">Cant</th><th style="width:65px">Código</th><th>Servicio</th><th style="width:80px">Precio</th><th style="width:20px"></th></tr></thead>
+        <tbody id="iBody"></tbody>
+      </table>
+      <button class="add-b" onclick="addItem()">+ Línea</button>
+    </div>
+
+    <div class="sec">Resumen</div>
+    <div class="card summary-card" id="sumCard"></div>
+
+    <div class="sec">Historial</div>
+    <div id="histList"></div>
+  </div>
+
+  <div class="preview-panel">
+    <div class="print-page" id="pp"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config.js"></script>
+<script src="../auth-guard.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+var db=firebase.firestore();
+</script>
+
+<script>
+var SVCS=SERVICIOS.map(s=>({c:s.code,n:s.name}));
+
+var clis=[], fNum=270;
+
+/* ─── Positions (mm) - ADJUST THESE TO CALIBRATE ─── */
+const P={
+  /* Header fields */
+  fechaT:27, fechaL:17,
+  condXt:27, contadoL:130, creditoL:158,
+  cliT:33.5, cliL:17,
+  rucT:33.5, rucL:130,
+  dirT:40, dirL:17,
+  telT:40, telL:130,
+  /* Items grid */
+  itemT:52, itemH:10.2, maxItems:7,
+  cCant:8, cCode:18, cDesc:36, cUnit:118, cExent:142, c5:160, c10:178,
+  /* Footer */
+  subT:124, subL10:178,
+  letrasT:129.5, letrasL:8,
+  totalT:126, totalL:175,
+  iva5T:134, iva5L:50,
+  iva10T:134, iva10L:95,
+  ivaTotT:134, ivaTotL:140,
+  /* Second copy offset */
+  copyOffset:165,
+};
+
+const fmt=n=>n.toLocaleString('es-PY',{maximumFractionDigits:0});
+const fmtU=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ─── Init after auth ─── */
+initAuthGuard((user, userData, rol) => {
+  document.getElementById('fecha').valueAsDate=new Date();
+  addItem();
+  loadClis();
+  loadHist();
+  getNext();
+});
+
+function svcOpts(){
+  return '<option value="">—</option>'+SVCS.map(s=>`<option value="${s.c}">${s.c}</option>`).join('');
+}
+
+function addItem(){
+  const tb=document.getElementById('iBody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input type="number" value="1" style="width:35px" oninput="render()"></td>
+    <td><select style="width:65px" onchange="onSvc(this)">${svcOpts()}</select></td>
+    <td><input style="width:100%" oninput="render()"></td>
+    <td><input type="number" value="0" style="width:80px" oninput="render()"></td>
+    <td><button class="rm-b" onclick="this.closest('tr').remove();render()">×</button></td>`;
+  tb.appendChild(tr);
+  render();
+}
+
+function onSvc(sel){
+  const s=SVCS.find(x=>x.c===sel.value);
+  if(s) sel.closest('tr').querySelectorAll('input')[1].value=s.n;
+  render();
+}
+
+function getItems(){
+  return[...document.querySelectorAll('#iBody tr')].map(r=>{
+    const inp=r.querySelectorAll('input');
+    return{cant:parseInt(inp[0].value)||1, code:r.querySelector('select').value, desc:inp[1].value, unit:parseFloat(inp[2].value)||0};
+  });
+}
+
+/* ─── Number to words ─── */
+function n2w(n){
+  const u=['','UN','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ','ONCE','DOCE','TRECE','CATORCE','QUINCE'];
+  const d=['','','VEINTE','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+  const h=['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
+  const x=Math.floor(n); if(x===0)return'CERO'; if(x===100)return'CIEN';
+  if(x<16)return u[x]; if(x<20)return'DIECI'+u[x-10]; if(x===20)return'VEINTE';
+  if(x<30)return'VEINTI'+u[x-20]; if(x<100){const t=Math.floor(x/10),r=x%10;return d[t]+(r?' Y '+u[r]:'');}
+  if(x<1000){const c=Math.floor(x/100),r=x%100;return h[c]+(r?' '+n2w(r):'');}
+  if(x<1000000){const m=Math.floor(x/1000),r=x%1000;return(m===1?'MIL':n2w(m)+' MIL')+(r?' '+n2w(r):'');}
+  if(x<1000000000){const mm=Math.floor(x/1000000),r=x%1000000;return(mm===1?'UN MILLON':n2w(mm)+' MILLONES')+(r?' '+n2w(r):'');}
+  return String(x);
+}
+
+/* ─── Render preview ─── */
+function render(){
+  const items=getItems();
+  const moneda=document.getElementById('moneda').value;
+  const iva=parseInt(document.getElementById('tipoIva').value);
+  const cond=document.getElementById('condicion').value;
+  const isU=moneda.includes('DOLAR');
+
+  const total=items.reduce((s,i)=>s+i.cant*i.unit,0);
+  const ivaAmt=iva===10?total/11:total/21;
+
+  const fd=document.getElementById('fecha').value;
+  const fo=new Date(fd+'T12:00:00');
+  const ms=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+  const fechaStr=isNaN(fo)?'':`${fo.getDate()} DE ${ms[fo.getMonth()]} DE ${fo.getFullYear()}`;
+
+  const cli=document.getElementById('cliSel');
+  const cliName=cli.selectedIndex>0?cli.options[cli.selectedIndex].text:'';
+  const ruc=document.getElementById('ruc').value;
+  const dir=document.getElementById('dir').value;
+  const tel=document.getElementById('tel').value;
+
+  const ts=isU?fmtU(total):fmt(total);
+  const monLabel=isU?'DOLARES AMERICANOS':'GUARANIES';
+  const letras=`${monLabel} ${n2w(Math.floor(total))} con 00/100`;
+
+  // Summary card
+  document.getElementById('sumCard').innerHTML=`
+    <div><span>Subtotal:</span><strong>${ts}</strong></div>
+    <div><span>IVA (${iva}%):</span><strong>${isU?fmtU(ivaAmt):fmt(ivaAmt)}</strong></div>
+    <div class="total-line"><span>Total:</span><span>${ts}</span></div>`;
+
+  // Build one copy HTML
+  function copyHTML(){
+    let h='';
+    // Fecha
+    h+=`<div class="pf" style="top:${P.fechaT}mm;left:${P.fechaL}mm;font-size:11px">${fechaStr}</div>`;
+    // Condicion X
+    h+=`<div class="pf" style="top:${P.condXt}mm;left:${cond==='CONTADO'?P.contadoL:P.creditoL}mm;font-size:14px;font-weight:700">X</div>`;
+    // Cliente
+    h+=`<div class="pf" style="top:${P.cliT}mm;left:${P.cliL}mm;font-size:11px">${cliName}</div>`;
+    // RUC
+    h+=`<div class="pf" style="top:${P.rucT}mm;left:${P.rucL}mm;font-size:11px">${ruc}</div>`;
+    // Direccion
+    h+=`<div class="pf" style="top:${P.dirT}mm;left:${P.dirL}mm;font-size:9px;max-width:108mm;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${dir}</div>`;
+    // Telefono
+    h+=`<div class="pf" style="top:${P.telT}mm;left:${P.telL}mm;font-size:11px">${tel}</div>`;
+
+    // Items
+    items.slice(0,P.maxItems).forEach((it,i)=>{
+      const y=P.itemT+i*P.itemH;
+      const lt=it.cant*it.unit;
+      h+=`<div class="pf" style="top:${y}mm;left:${P.cCant}mm;font-size:10px">${it.cant}</div>`;
+      h+=`<div class="pf" style="top:${y}mm;left:${P.cCode}mm;font-size:9px">${it.code}</div>`;
+      h+=`<div class="pf" style="top:${y}mm;left:${P.cDesc}mm;font-size:8px;max-width:80mm;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.desc}</div>`;
+      h+=`<div class="pf" style="top:${y}mm;left:${P.cUnit}mm;font-size:10px;text-align:right;width:22mm">${isU?fmtU(it.unit):fmt(it.unit)}</div>`;
+      // IVA 10% column
+      h+=`<div class="pf" style="top:${y}mm;left:${P.c10}mm;font-size:10px;text-align:right;width:25mm">${isU?fmtU(lt):fmt(lt)}</div>`;
+    });
+
+    // Sub totales
+    h+=`<div class="pf" style="top:${P.subT}mm;left:${P.c10}mm;font-size:10px;text-align:right;width:25mm;font-weight:600">${ts}</div>`;
+    // Total letras
+    h+=`<div class="pf" style="top:${P.letrasT}mm;left:${P.letrasL}mm;font-size:7px;max-width:135mm;overflow:hidden;white-space:nowrap">${letras}</div>`;
+    // Total pagar
+    h+=`<div class="pf" style="top:${P.totalT}mm;left:${P.totalL}mm;font-size:12px;font-weight:700">${ts}</div>`;
+    // IVA
+    if(iva===5) h+=`<div class="pf" style="top:${P.iva5T}mm;left:${P.iva5L}mm;font-size:9px">${isU?fmtU(ivaAmt):fmt(ivaAmt)}</div>`;
+    else h+=`<div class="pf" style="top:${P.iva10T}mm;left:${P.iva10L}mm;font-size:9px">${isU?fmtU(ivaAmt):fmt(ivaAmt)}</div>`;
+    h+=`<div class="pf" style="top:${P.ivaTotT}mm;left:${P.ivaTotL}mm;font-size:9px">${isU?fmtU(ivaAmt):fmt(ivaAmt)}</div>`;
+
+    return h;
+  }
+
+  const ch=copyHTML();
+  document.getElementById('pp').innerHTML=`
+    <div class="inv-copy c1">${ch}</div>
+    <div class="inv-copy c2">${ch}</div>
+  `;
+}
+
+/* ─── Clients from Firebase ─── */
+async function loadClis(){
+  try{
+    const s=await db.collection('clientes').get();
+    clis=s.docs.map(d=>({id:d.id,...d.data()}));
+    const sel=document.getElementById('cliSel');
+    clis.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre||c.razonSocial||'';sel.appendChild(o);});
+  }catch(e){}
+  render();
+}
+
+function onCli(){
+  const c=clis.find(x=>x.id===document.getElementById('cliSel').value);
+  if(c){
+    document.getElementById('ruc').value=c.ruc||c.documento||'';
+    document.getElementById('dir').value=c.direccion||'';
+    document.getElementById('tel').value=c.telefono||'';
+  }
+  render();
+}
+
+/* ─── Firebase save/load ─── */
+async function getNext(){
+  try{const s=await db.collection('facturas').orderBy('numero','desc').limit(1).get();if(!s.empty)fNum=s.docs[0].data().numero;}catch(e){}
+  fNum++;
+  document.getElementById('nroFactura').value=`001-001-${String(fNum).padStart(7,'0')}`;
+}
+
+async function guardarFactura(){
+  const items=getItems();
+  const total=items.reduce((s,i)=>s+i.cant*i.unit,0);
+  const iva=parseInt(document.getElementById('tipoIva').value);
+  try{
+    await db.collection('facturas').add({
+      numero:fNum, nroFormateado:document.getElementById('nroFactura').value,
+      fecha:document.getElementById('fecha').value, condicion:document.getElementById('condicion').value,
+      moneda:document.getElementById('moneda').value, tipoIva:iva,
+      cliente:document.getElementById('cliSel').selectedOptions[0]?.textContent||'',
+      clienteId:document.getElementById('cliSel').value,
+      ruc:document.getElementById('ruc').value, direccion:document.getElementById('dir').value,
+      telefono:document.getElementById('tel').value,
+      items, total, ivaAmount:iva===10?total/11:total/21,
+      estado:'activa', impresa:false, enviada:false, pagada:false,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    toast('✅ Factura guardada');loadHist();getNext();
+  }catch(e){toast('❌ '+e.message);}
+}
+
+async function loadHist(){
+  try{
+    const s=await db.collection('facturas').orderBy('numero','desc').limit(20).get();
+    document.getElementById('histList').innerHTML=s.docs.map(d=>{
+      const f=d.data();const v=f.estado==='anulada';const id=d.id;
+      const chk=(field,label,color)=>f[field]?`<span style="font-size:8px;padding:1px 4px;border-radius:6px;background:${color};color:#fff;margin-left:2px">${label}</span>`:`<span onclick="event.stopPropagation();toggleField('${id}','${field}')" style="font-size:8px;padding:1px 4px;border-radius:6px;background:rgba(0,0,0,0.06);color:var(--text3);cursor:pointer;margin-left:2px" title="Click para marcar">${label}</span>`;
+      return`<div class="hist-item">
+        <div onclick="loadFact('${id}')" style="flex:1;cursor:pointer">
+          <strong>${f.nroFormateado||''}</strong><br>
+          <span style="color:var(--text2)">${f.cliente||''}</span>
+          ${!v?`<div style="margin-top:2px">${chk('impresa','🖨 Impresa','#6B7280')}${chk('enviada','📤 Enviada','#3B82F6')}${chk('pagada','💰 Pagada','#34A678')}</div>`:''}
+        </div>
+        <div style="text-align:right"><strong>${f.total?.toLocaleString()||0}</strong><br>
+        <span style="font-size:9px;padding:1px 5px;border-radius:8px;background:${v?'rgba(239,68,68,0.1)':'rgba(52,166,120,0.1)'};color:${v?'var(--danger)':'var(--green)'}">${v?'ANULADA':'ACTIVA'}</span>
+        ${!v?`<button onclick="event.stopPropagation();anularFactura('${id}','${f.nroFormateado||''}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:9px;margin-left:4px">Anular</button>`:''}</div>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+async function toggleField(id,field){
+  try{await db.collection('facturas').doc(id).update({[field]:true});toast(`✅ Marcada como ${field}`);loadHist();}catch(e){toast('❌ '+e.message)}
+}
+
+async function loadFact(id){
+  const d=await db.collection('facturas').doc(id).get();const f=d.data();
+  document.getElementById('nroFactura').value=f.nroFormateado||'';
+  document.getElementById('fecha').value=f.fecha||'';
+  document.getElementById('condicion').value=f.condicion||'CONTADO';
+  document.getElementById('moneda').value=f.moneda||'GUARANIES';
+  document.getElementById('tipoIva').value=String(f.tipoIva||10);
+  document.getElementById('ruc').value=f.ruc||'';
+  document.getElementById('dir').value=f.direccion||'';
+  document.getElementById('tel').value=f.telefono||'';
+  const tb=document.getElementById('iBody');tb.innerHTML='';
+  (f.items||[]).forEach(it=>{addItem();const tr=tb.lastElementChild;const inp=tr.querySelectorAll('input');inp[0].value=it.cant;tr.querySelector('select').value=it.code;inp[1].value=it.desc;inp[2].value=it.unit;});
+  render();
+}
+
+function nuevaFactura(){
+  document.getElementById('cliSel').value='';
+  document.getElementById('ruc').value='';document.getElementById('dir').value='';document.getElementById('tel').value='';
+  document.getElementById('iBody').innerHTML='';addItem();
+  document.getElementById('fecha').valueAsDate=new Date();
+  document.getElementById('condicion').value='CONTADO';
+  document.getElementById('moneda').value='GUARANIES';
+  getNext();render();
+}
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+async function anularFactura(id,nro){
+  if(!confirm(`¿Anular factura ${nro}? Esta acción no se puede deshacer.`))return;
+  try{await db.collection('facturas').doc(id).update({estado:'anulada'});toast('✅ Factura anulada');loadHist();}catch(e){toast('❌ '+e.message);}
+}
+</script>
+</body>
+</html>

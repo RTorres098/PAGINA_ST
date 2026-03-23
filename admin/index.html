@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoilTech — Admin</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',system-ui,sans-serif;background:#18403E;height:100vh;display:flex;align-items:center;justify-content:center}
+  .back{position:fixed;top:20px;left:20px;color:rgba(255,255,255,0.4);text-decoration:none;font-size:12px}.back:hover{color:#fff}
+  .login-box{background:#fff;border-radius:16px;padding:40px;width:380px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.3);display:none}
+  .login-box h1{font-size:22px;font-weight:700;color:#18403E;margin-bottom:4px}
+  .login-box .sub{font-size:12px;color:#6B6B6B;margin-bottom:24px}
+  .login-box .f{margin-bottom:12px;text-align:left}
+  .login-box .f label{display:block;font-size:10px;font-weight:600;color:#6B6B6B;text-transform:uppercase;margin-bottom:3px}
+  .login-box .f input{width:100%;padding:10px 14px;border:1px solid #E0DDD5;border-radius:8px;font-family:inherit;font-size:14px;background:#F4F0E8}
+  .login-box .f input:focus{outline:none;border-color:#34A678;box-shadow:0 0 0 3px rgba(52,166,120,0.1)}
+  .login-box .btn{width:100%;padding:12px;border-radius:8px;border:none;background:#34A678;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
+  .login-box .btn:hover{background:#2D9068}.login-box .btn:disabled{opacity:0.5;cursor:not-allowed}
+  .login-box .error{color:#EF4444;font-size:12px;margin-top:8px;min-height:18px}
+  .hub{text-align:center;display:none}
+  .hub h1{font-size:28px;color:#fff;margin-bottom:4px}
+  .hub .user-info{color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:32px}
+  .hub .user-info strong{color:rgba(255,255,255,0.8)}
+  .cards{display:flex;gap:20px;justify-content:center}
+  .card{background:#fff;border-radius:16px;padding:40px 36px;width:260px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#1A1A1A}
+  .card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+  .card .icon{font-size:48px;margin-bottom:16px}
+  .card h2{font-size:17px;font-weight:700;color:#18403E;margin-bottom:6px}
+  .card p{font-size:12px;color:#6B6B6B;line-height:1.5}
+  .logout{position:fixed;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:6px 14px;border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;display:none}.logout:hover{background:rgba(255,255,255,0.2)}
+  .loading{color:rgba(255,255,255,0.5);font-size:14px}
+  .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.15);border-top-color:#34A678;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 12px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<a class="back" href="/">← Volver al sitio</a>
+<button class="logout" id="logoutBtn" onclick="logout()">Cerrar sesión</button>
+<div class="loading" id="loadingState"><div class="spinner"></div>Verificando acceso...</div>
+<div class="login-box" id="loginBox">
+  <h1>SoilTech Admin</h1>
+  <div class="sub">Ingresá con tu cuenta de la app</div>
+  <div class="f"><label>Email</label><input id="email" type="email" placeholder="tu@email.com"></div>
+  <div class="f"><label>Contraseña</label><input id="password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"></div>
+  <button class="btn" id="loginBtn" onclick="login()">Ingresar</button>
+  <div class="error" id="errorMsg"></div>
+</div>
+<div class="hub" id="hubPanel">
+  <h1>SoilTech</h1>
+  <div class="user-info" id="userInfo"></div>
+  <div class="cards">
+    <a class="card" href="presupuesto/"><div class="icon">📊</div><h2>Presupuesto</h2><p>Calcular presupuestos, generar propuestas y crear proyectos</p></a>
+    <a class="card" href="facturacion/"><div class="icon">🧾</div><h2>Facturación</h2><p>Emitir facturas, gestionar clientes e imprimir sobre hojas pre-impresas</p></a>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth=firebase.auth(), db=firebase.firestore();
+
+auth.onAuthStateChanged(async(user)=>{
+  document.getElementById('loadingState').style.display='none';
+  if(!user){showLogin();return;}
+  try{
+    const doc=await db.collection('usuarios').doc(user.uid).get();
+    if(!doc.exists){showError('Tu cuenta no tiene perfil en la app.');auth.signOut();showLogin();return;}
+    const data=doc.data(), rol=data.rol||'operativo';
+    if(rol!=='super_admin'&&rol!=='admin'){showError('Acceso restringido. Solo administradores.');auth.signOut();showLogin();return;}
+    showHub(data,rol);
+  }catch(e){showError('Error: '+e.message);showLogin();}
+});
+
+function showLogin(){document.getElementById('loginBox').style.display='block';document.getElementById('hubPanel').style.display='none';document.getElementById('logoutBtn').style.display='none';}
+function showHub(d,rol){
+  document.getElementById('loginBox').style.display='none';document.getElementById('hubPanel').style.display='block';document.getElementById('logoutBtn').style.display='block';
+  const n=d.nombre&&d.apellido?`${d.nombre} ${d.apellido}`:d.email||'';
+  document.getElementById('userInfo').innerHTML=`<strong>${n}</strong> — ${rol==='super_admin'?'Super Admin':'Administrador'}`;
+}
+function showError(m){document.getElementById('errorMsg').textContent=m;}
+async function login(){
+  const e=document.getElementById('email').value.trim(),p=document.getElementById('password').value,b=document.getElementById('loginBtn');
+  if(!e||!p){showError('Completá email y contraseña');return;}
+  b.disabled=true;b.textContent='Verificando...';showError('');
+  try{await auth.signInWithEmailAndPassword(e,p);}
+  catch(err){const m={'auth/user-not-found':'Email no registrado','auth/wrong-password':'Contraseña incorrecta','auth/invalid-email':'Email inválido','auth/too-many-requests':'Demasiados intentos','auth/invalid-credential':'Email o contraseña incorrectos'};showError(m[err.code]||err.message);}
+  b.disabled=false;b.textContent='Ingresar';
+}
+function logout(){auth.signOut();}
+</script>
+</body>
+</html>
