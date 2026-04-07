@@ -148,8 +148,23 @@
     <link rel="apple-touch-icon" href="circulo_soiltech_2026.png">
     <script src="components/ui/glow-card.tsx"></script>
 
-<!-- Evento ClickWhatsApp - versión segura -->
-<script>
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+
+        fbq('init', '950455411014147');
+        fbq('track', 'PageView');
+        </script>
+        <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=950455411014147&ev=PageView&noscript=1"/></noscript>
+
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
     var waLinks = document.querySelectorAll('a[href*="wa.me"]');
     waLinks.forEach(function(link) {
@@ -163,7 +178,9 @@
         });
     });
     });
-</script>
+    </script>
+
+    <meta name="facebook-domain-verification" content="uqkaun7vd987q4qu0se7q9ouu1ef2a" />
 </head>
 <body class="antialiased">
 
@@ -185,7 +202,7 @@
                 <a href="https://www.soiltechpy.com/#capacitaciones" class="hover:text-brand transition-colors">Capacitaciones</a>
             </nav>
 
-            <a href="https://wa.me/595982369083?text=Hola%20SoilTech%2C%20quiero%20inscribirme" 
+            <a href="https://wa.me/595982369083?text=Hola%20SoilTech%2C%20quiero%20inscribirme"
                target="_blank"
                class="group relative bg-brand text-white px-6 py-3 rounded-full font-bold transition-all duration-500 shadow-[0_0_20px_rgba(52,166,120,0.4)] flex items-center gap-3 overflow-hidden border border-brand hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-dark-green">
                 
