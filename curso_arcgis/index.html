@@ -148,37 +148,25 @@
     <link rel="apple-touch-icon" href="circulo_soiltech_2026.png">
     <script src="components/ui/glow-card.tsx"></script>
 
-    <!-- Meta Pixel - SOILTECH ARCGIS -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-
-fbq('init', '950455411014147');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=950455411014147&ev=PageView&noscript=1"/></noscript>
-
-<!-- Evento ClickWhatsApp automático -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var waLinks = document.querySelectorAll('a[href*="wa.me"]');
-  waLinks.forEach(function(link) {
-    link.addEventListener('click', function() {
-      fbq('track', 'Contact', {
-        content_name: 'WhatsApp - ArcGIS',
-        content_category: 'CursoArcGIS'
-      });
-    });
-  });
-});
-</script>
+    <!-- Meta Pixel - SOILTECH ARCGIS - Evento ClickWhatsApp con beacon-->
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var waLinks = document.querySelectorAll('a[href*="wa.me"]');
+        waLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+            var href = this.href;
+            e.preventDefault();
+            fbq('track', 'Contact', {
+                content_name: 'WhatsApp - ArcGIS',
+                content_category: 'CursoArcGIS'
+            });
+            setTimeout(function() {
+                window.open(href, '_blank');
+            }, 300);
+            });
+        });
+        });
+     </script>
 
 </head>
 <body class="antialiased">
