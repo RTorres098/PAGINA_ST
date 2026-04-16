@@ -184,24 +184,7 @@ firebase.initializeApp(FIREBASE_CONFIG);
 var db=firebase.firestore();
 var ALL=[],CLIS=[],R={},editingId=null,approvingProject=null,currentFilter='all';
 
-/* ═══════════════════════════════════════ */
-/*  CATÁLOGOS (mismo que Excel)            */
-/* ═══════════════════════════════════════ */
-var SERVICIOS=[
-  {code:'ST-01',name:'Estudio de suelos agrícolas'},
-  {code:'ST-02',name:'Estudio de suelos forestales'},
-  {code:'ST-03',name:'Estudio ambiental'},
-  {code:'ST-04',name:'Relevamiento de humedales'},
-  {code:'ST-05',name:'Mapa de carbono orgánico'},
-  {code:'ST-06',name:'Consultoría técnica'},
-  {code:'ST-07',name:'Estudio edafológico completo'},
-  {code:'ST-08',name:'Estudio de suelos ganaderos'},
-  {code:'ST-09',name:'Planificación de uso de suelos'},
-  {code:'ST-10',name:'Monitoreo ambiental'}
-];
-var CARGOS=['Director de Proyecto','Coordinador de Campo','Técnico','Ayudante','Consultor Externo','Traductor','Diseñador SIG'];
-
-/* Equipos — depreciación (espejo hoja Equipos del Excel) */
+/* Equipos — depreciación (nuevo, no está en config.js) */
 var EQUIPOS=[
   {id:'penetrometro',name:'Penetrómetro',costoAdq:6240000,vidaMeses:60},
   {id:'dron',name:'Dron',costoAdq:8000000,vidaMeses:60},
@@ -211,16 +194,13 @@ var EQUIPOS=[
 ];
 EQUIPOS.forEach(function(e){e.costoMes=Math.round(e.costoAdq/e.vidaMeses)});
 
-/* Análisis de laboratorio — espejo hoja Laboratorio */
-var LAB_ANALISIS=[
+/* Config de laboratorio extendida para presupuesto (appliesTo para auto-cantidades) */
+var LAB_PRES=[
   {id:'quimico_completo',name:'Químico COMPLETO + textura',price:255000,defaultOn:true,appliesTo:'calicatas'},
   {id:'quimico_basico',name:'Químico Básico + textura',price:190000,defaultOn:false,appliesTo:'barrenadas'},
   {id:'conductividad',name:'Conductividad Eléctrica',price:55000,defaultOn:true,appliesTo:'calicatas'},
   {id:'densidad',name:'Densidad aparente',price:75000,defaultOn:true,appliesTo:'todas'}
 ];
-
-function fmtGs(n){return Math.round(n).toLocaleString('es-PY')}
-function fmtUsd(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 
 /* Loading indicator */
 document.getElementById('dashStats').innerHTML='<div class="ds" style="flex:3"><div class="v" style="font-size:12px">⏳ Cargando...</div><div class="l">Conectando a Firebase</div></div>';
@@ -469,7 +449,7 @@ function buildEquipTable(){
 
 function buildLabTable(){
   var tb=document.getElementById('labBody');
-  tb.innerHTML=LAB_ANALISIS.map(function(a,i){
+  tb.innerHTML=LAB_PRES.map(function(a,i){
     return '<tr data-lab="'+a.id+'"><td>'+(i+1)+'</td><td>'+a.name+'</td><td><input type="number" value="0" style="width:100%" oninput="calc()" id="labQty_'+a.id+'"></td><td>Muestra</td><td><input type="number" value="'+a.price+'" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td></tr>';
   }).join('');
 }
@@ -615,7 +595,7 @@ function calc(){
 
   /* — Laboratorio — */
   // Auto-set quantities based on analysis type
-  LAB_ANALISIS.forEach(function(a){
+  LAB_PRES.forEach(function(a){
     var el=document.getElementById('labQty_'+a.id);
     if(el){
       if(a.appliesTo==='calicatas')el.value=tmCal;
