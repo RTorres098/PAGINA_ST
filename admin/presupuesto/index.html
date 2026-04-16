@@ -9,7 +9,7 @@
 :root{--bg:#F4F0E8;--sf:#fff;--sf2:#EDE9E0;--g:#34A678;--gd:#18403E;--gl:rgba(52,166,120,0.08);--tx:#1A1A1A;--tx2:#6B6B6B;--tx3:#9CA3AF;--bd:#E0DDD5;--dg:#EF4444;--warn:#F59E0B;--info:#3B82F6;--r:10px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(--tx);height:100vh;overflow:hidden}
-.app{display:grid;grid-template-columns:1fr 380px;grid-template-rows:48px 1fr;height:100vh}
+.app{display:grid;grid-template-columns:1fr 400px;grid-template-rows:48px 1fr;height:100vh}
 .tb{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--gd);border-bottom:1px solid rgba(255,255,255,0.08)}
 .tb h1{font-size:15px;color:#fff}.tb a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:11px;margin-left:12px}.tb a:hover{color:#fff}
 .tb-r{display:flex;gap:6px}
@@ -40,25 +40,35 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 /* Form */
 .sc{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1.2px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}.sc::after{content:'';flex:1;height:1px;background:var(--bd)}.sc:first-child{margin-top:0}
 .cd{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
-.cd-t{font-size:11px;font-weight:700;color:var(--gd);margin-bottom:8px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.cd-t{font-size:11px;font-weight:700;color:var(--gd);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cd-t .pct{font-size:9px;color:var(--tx3);font-weight:500}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px}
 .f{margin-bottom:6px}.f label{display:block;font-size:9px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px}
 .f input,.f select{width:100%;padding:6px 9px;border:1px solid var(--bd);border-radius:5px;font-family:inherit;font-size:12px;background:var(--bg)}
 .f input:focus,.f select:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 2px var(--gl)}
 .f input[readonly]{background:var(--sf2);font-weight:600;color:var(--gd)}
+.f-hint{font-size:8px;color:var(--tx3);margin-top:1px}
 .ht{width:100%;border-collapse:collapse;font-size:11px}.ht th{font-size:9px;font-weight:600;color:var(--tx3);padding:3px 4px;border-bottom:1px solid var(--bd);text-transform:uppercase;text-align:left}.ht td{padding:2px 3px}.ht input,.ht select{padding:4px 6px;font-size:11px}
+.ht .sub-row td{background:var(--sf2);font-weight:700;font-size:10px;color:var(--gd)}
 .ab{background:none;border:1px dashed var(--g);color:var(--g);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;font-weight:600;margin-top:4px}.ab:hover{background:var(--gl)}
 .rm{background:none;border:none;color:var(--dg);cursor:pointer;font-size:14px}
-.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-.lab-item{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;font-size:11px;cursor:pointer}.lab-item:hover{background:var(--gl)}
-.lab-item input[type=checkbox]{accent-color:var(--g);width:14px;height:14px}.lab-item .price{margin-left:auto;font-weight:600;color:var(--g);font-size:10px}
+.aux-box{background:var(--sf2);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:10px;color:var(--tx2)}
+.aux-box .aux-row{display:flex;justify-content:space-between;padding:1px 0}
+.aux-box .aux-row strong{color:var(--gd)}
 /* Results panel */
-.rr{display:flex;justify-content:space-between;padding:4px 0;font-size:11px;color:rgba(255,255,255,0.65)}.rr .rv{font-weight:600;color:#fff}
+.rr{display:flex;justify-content:space-between;padding:4px 0;font-size:11px;color:rgba(255,255,255,0.65)}.rr .rv{font-weight:600;color:#fff;text-align:right}
 .rr.sub{font-weight:700;color:rgba(255,255,255,0.9);border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px;margin-bottom:2px}.rr.sub .rv{color:var(--g)}
 .rr.total{border-top:2px solid var(--g);margin-top:6px;padding-top:8px;font-size:15px;color:#fff;font-weight:700}.rr.total .rv{color:var(--g);font-size:17px}
+.rr.sol{border:2px solid var(--g);border-radius:6px;padding:8px;margin-top:6px;font-size:14px;color:#fff;font-weight:700;background:rgba(52,166,120,0.1)}.rr.sol .rv{color:var(--g);font-size:18px}
 .rs{font-size:9px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-top:12px;margin-bottom:1px}
 .rdiv{height:1px;background:rgba(255,255,255,0.05);margin:6px 0}
 .rp-empty{color:rgba(255,255,255,0.3);font-size:12px;text-align:center;padding:40px 20px}
+.margin-box{background:rgba(52,166,120,0.08);border:1px solid rgba(52,166,120,0.2);border-radius:6px;padding:8px 10px;margin-top:8px}
+.margin-box .rr{color:rgba(255,255,255,0.7);font-size:10px;padding:2px 0}
+.margin-box .rr .rv{font-size:10px}
+.flow-box{margin-top:8px}
+.flow-box .flow-col{display:inline-block;width:48%;vertical-align:top;padding:4px}
+.flow-box .flow-h{font-size:8px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
 /* Modals */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}.modal-bg.show{display:flex}
 .modal{background:#fff;border-radius:12px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;position:relative}
@@ -125,7 +135,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
   <div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-g" style="flex:1;padding:10px" onclick="confirmApprove()">✅ Confirmar</button><button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="hideModal('approveModal')">Cancelar</button></div>
 </div></div>
 
-<!-- Post-approve: go to facturacion? -->
+<!-- Post-approve -->
 <div class="modal-bg" id="postApproveModal"><div class="modal" style="max-width:380px;text-align:center">
   <h3>✅ Proyecto activado</h3>
   <p style="font-size:12px;color:var(--tx2);margin-bottom:16px" id="postApproveMsg"></p>
@@ -158,6 +168,44 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 firebase.initializeApp(FIREBASE_CONFIG);
 var db=firebase.firestore();
 var ALL=[],CLIS=[],R={},editingId=null,approvingProject=null,currentFilter='all';
+
+/* ═══════════════════════════════════════ */
+/*  CATÁLOGOS (mismo que Excel)            */
+/* ═══════════════════════════════════════ */
+var SERVICIOS=[
+  {code:'ST-01',name:'Estudio de suelos agrícolas'},
+  {code:'ST-02',name:'Estudio de suelos forestales'},
+  {code:'ST-03',name:'Estudio ambiental'},
+  {code:'ST-04',name:'Relevamiento de humedales'},
+  {code:'ST-05',name:'Mapa de carbono orgánico'},
+  {code:'ST-06',name:'Consultoría técnica'},
+  {code:'ST-07',name:'Estudio edafológico completo'},
+  {code:'ST-08',name:'Estudio de suelos ganaderos'},
+  {code:'ST-09',name:'Planificación de uso de suelos'},
+  {code:'ST-10',name:'Monitoreo ambiental'}
+];
+var CARGOS=['Director de Proyecto','Coordinador de Campo','Técnico','Ayudante','Consultor Externo','Traductor','Diseñador SIG'];
+
+/* Equipos — depreciación (espejo hoja Equipos del Excel) */
+var EQUIPOS=[
+  {id:'penetrometro',name:'Penetrómetro',costoAdq:6240000,vidaMeses:60},
+  {id:'dron',name:'Dron',costoAdq:8000000,vidaMeses:60},
+  {id:'camara',name:'Cámara digital',costoAdq:3000000,vidaMeses:60},
+  {id:'tablet',name:'Tablet',costoAdq:2200000,vidaMeses:36},
+  {id:'cilindro',name:'Cilindro (paq.10)',costoAdq:400000,vidaMeses:12}
+];
+EQUIPOS.forEach(function(e){e.costoMes=Math.round(e.costoAdq/e.vidaMeses)});
+
+/* Análisis de laboratorio — espejo hoja Laboratorio */
+var LAB_ANALISIS=[
+  {id:'quimico_completo',name:'Químico COMPLETO + textura',price:255000,defaultOn:true,appliesTo:'calicatas'},
+  {id:'quimico_basico',name:'Químico Básico + textura',price:190000,defaultOn:false,appliesTo:'barrenadas'},
+  {id:'conductividad',name:'Conductividad Eléctrica',price:55000,defaultOn:true,appliesTo:'calicatas'},
+  {id:'densidad',name:'Densidad aparente',price:75000,defaultOn:true,appliesTo:'todas'}
+];
+
+function fmtGs(n){return Math.round(n).toLocaleString('es-PY')}
+function fmtUsd(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 
 initAuthGuard(function(){loadAll()});
 
@@ -207,7 +255,6 @@ function openCot(id){
   editingId=id;
   var p=ALL.find(function(x){return x._id===id});
   if(!p)return;
-  // Update summary panel with this cotización's data
   if(p.presupuesto){
     R=p.presupuesto;
     renderSummary();
@@ -216,13 +263,12 @@ function openCot(id){
     document.getElementById('rc').innerHTML='<div class="rp-empty">Sin datos de presupuesto</div>';
     document.getElementById('rpTitle').textContent='Resumen: '+p.nombre;
   }
-  // Load form with data
   showForm();
   populateForm(p);
 }
 
 /* ═══════════════════════════════════════ */
-/*  FORM                                   */
+/*  FORM — espejo fiel del TEMPLATE XLSX  */
 /* ═══════════════════════════════════════ */
 function newPresupuesto(){
   editingId=null;R={};
@@ -246,25 +292,128 @@ function backToDash(){
 
 function buildFormHTML(){
   document.getElementById('formContent').innerHTML=
+  /* ── SUPUESTOS: Datos del Proyecto ── */
   '<div class="sc">Datos del Proyecto</div>'+
   '<div class="g2" style="gap:10px">'+
     '<div class="cd"><div class="cd-t">CLIENTE</div><div class="f" style="display:flex;gap:4px"><select id="cliSel" onchange="onCli()" style="flex:1"><option value="">— Seleccionar —</option></select><button class="btn btn-g" style="padding:4px 8px;font-size:10px" onclick="showModal(\'newCliModal\')">+</button></div><div class="f"><label>Contacto</label><input id="cliContacto"></div></div>'+
-    '<div class="cd"><div class="cd-t">PROYECTO</div><div class="f"><label>Nombre</label><input id="proyNombre" placeholder="Estancia Voirons"></div><div class="f"><label>Tipo de Servicio</label><select id="tipoServicio"><option value="">— Seleccionar —</option></select></div><div class="g3"><div class="f"><label>Ubicación</label><input id="proyUbi" placeholder="San Pedro"></div><div class="f"><label>Superficie (ha)</label><input id="superficie" type="number" value="2200" oninput="calc()"></div><div class="f"><label>Cotización USD</label><input id="cotizacion" type="number" value="7100" oninput="calc()"></div></div></div>'+
+    '<div class="cd"><div class="cd-t">PROYECTO</div><div class="f"><label>Nombre</label><input id="proyNombre" placeholder="Estancia Santa Isabel"></div><div class="f"><label>Tipo de Servicio</label><select id="tipoServicio"><option value="">— Seleccionar —</option></select></div><div class="g2"><div class="f"><label>Ubicación</label><input id="proyUbi" placeholder="San Pedro"></div><div class="f"><label>Superficie (ha)</label><input id="superficie" type="number" value="2000" oninput="calc()"></div></div></div>'+
   '</div>'+
+
+  /* ── SUPUESTOS: Parámetros Generales ── */
+  '<div class="sc">Parámetros Generales</div>'+
+  '<div class="cd"><div class="g5">'+
+    '<div class="f"><label>Cotización Gs/USD</label><input id="cotizacion" type="number" value="6500" oninput="calc()"><div class="f-hint">Tipo cambio BCP</div></div>'+
+    '<div class="f"><label>Imprevisto (%)</label><input id="pImp" type="number" value="10" oninput="calc()"><div class="f-hint">Colchón operativo</div></div>'+
+    '<div class="f"><label>Retención IVA (%)</label><input id="pRet" type="number" value="7" oninput="calc()"><div class="f-hint">Retención DNIT</div></div>'+
+    '<div class="f"><label>Anticipo (%)</label><input id="pAnt" type="number" value="50" oninput="calc()"><div class="f-hint">Política comercial</div></div>'+
+    '<div class="f"><label>Saldo (%)</label><input id="pSaldo" readonly><div class="f-hint">Contra entrega</div></div>'+
+  '</div></div>'+
+
+  /* ── SUPUESTOS: Muestreo ── */
   '<div class="sc">Muestreo</div>'+
-  '<div class="cd"><div class="g4"><div class="f"><label>Calicatas</label><input id="calicatas" type="number" value="19" oninput="calc()"></div><div class="f"><label>Muestras/cal</label><input id="mpc" type="number" value="3" oninput="calc()"></div><div class="f"><label>Barrenadas</label><input id="barrenadas" type="number" value="15" oninput="calc()"></div><div class="f"><label>Densidad</label><input id="densidad" readonly></div></div><div class="g3"><div class="f"><label>Días</label><input id="dias" type="number" value="8" oninput="calc()"></div><div class="f"><label>Personas</label><input id="personas" type="number" value="4" oninput="calc()"></div><div class="f"><label>Total muestras</label><input id="totalM" readonly></div></div></div>'+
-  '<div class="sc">Costos Operativos</div>'+
-  '<div class="g2" style="gap:10px"><div class="cd"><div class="cd-t">MAQUINARIA</div><div class="g2"><div class="f"><label>Costo/hora</label><input id="cMaq" type="number" value="330000" oninput="calc()"></div><div class="f"><label>Horas</label><input id="hMaq" type="number" value="19" oninput="calc()"></div></div></div><div class="cd"><div class="cd-t">CAMIONETA</div><div class="g3"><div class="f"><label>Distancia ida km</label><input id="distKm" type="number" value="230" oninput="calc()"></div><div class="f"><label>Alquiler/día</label><input id="cAlq" type="number" value="1065000" oninput="calc()"></div><div class="f"><label>Combustible Gs/L</label><input id="pComb" type="number" value="10000" oninput="calc()"></div></div><div class="f"><label>Consumo L/100km</label><input id="consumo" type="number" value="12" oninput="calc()"></div></div></div>'+
-  '<div class="g2" style="gap:10px"><div class="cd"><div class="cd-t">VIÁTICOS</div><div class="g2"><div class="f"><label>Consumición/pers/día</label><input id="cCons" type="number" value="100000" oninput="calc()"></div><div class="f"><label>Hospedaje/pers/día</label><input id="cHosp" type="number" value="100000" oninput="calc()"></div></div></div><div class="cd"><div class="cd-t">EQUIPOS (USO/DÍA)</div><div class="g4"><div class="f"><label>Penetrómetro</label><input id="cPen" type="number" value="104000" oninput="calc()"></div><div class="f"><label>Dron</label><input id="cDron" type="number" value="134000" oninput="calc()"></div><div class="f"><label>Cámara</label><input id="cCam" type="number" value="50000" oninput="calc()"></div><div class="f"><label>Tablet</label><input id="cTab" type="number" value="60000" oninput="calc()"></div></div></div></div>'+
-  '<div class="g2" style="gap:10px"><div class="cd"><div class="cd-t">PEAJE</div><table class="ht"><thead><tr><th>Tramo</th><th style="width:80px">Precio</th><th style="width:40px">Cant</th><th style="width:20px"></th></tr></thead><tbody id="peajeBody"><tr><td><input value="Ida y vuelta" style="width:100%" oninput="calc()"></td><td><input type="number" value="30000" style="width:100%" oninput="calc()"></td><td><input type="number" value="2" style="width:100%" oninput="calc()"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr></tbody></table><button class="ab" onclick="addPeaje()">+ Peaje</button></div><div class="cd"><div class="cd-t">FARMACIA</div><div class="f"><label>Monto total (Gs)</label><input id="cFarm" type="number" value="0" oninput="calc()"></div></div></div>'+
-  '<div class="sc">Honorarios</div>'+
-  '<div class="cd"><table class="ht"><thead><tr><th>Nombre</th><th>Cargo</th><th>Honorario (Gs)</th><th></th></tr></thead><tbody id="honBody"><tr><td><input value="Encina" style="width:100%"></td><td><select style="width:100%"></select></td><td><input type="number" value="45000000" oninput="calc()" style="width:100%"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr><tr><td><input value="Ramón Torres" style="width:100%"></td><td><select style="width:100%"></select></td><td><input type="number" value="4000000" oninput="calc()" style="width:100%"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr></tbody></table><button class="ab" onclick="addHon()">+ Consultor</button></div>'+
-  '<div class="sc">Laboratorio</div>'+
-  '<div class="cd"><div class="cd-t">ANÁLISIS</div><div class="lab-grid" id="labGrid"></div><div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><div class="g2"><div class="f"><label>Total Lab Gs</label><input id="totalLab" readonly></div><div class="f"><label>Total Lab USD</label><input id="totalLabUsd" readonly></div></div></div></div>'+
-  '<div class="sc">Informe Final</div>'+
-  '<div class="cd"><div class="g3"><div class="f"><label>SIG/Geoportal</label><input id="cSIG" type="number" value="3000000" oninput="calc()"></div><div class="f"><label>Informe</label><input id="cInf" type="number" value="40000000" oninput="calc()"></div><div class="f"><label>Traducción</label><input id="cTrad" type="number" value="2130000" oninput="calc()"></div></div></div>'+
-  '<div class="sc">Ajustes</div>'+
-  '<div class="cd"><div class="g4"><div class="f"><label>% Imprevistos</label><input id="pImp" type="number" value="10" oninput="calc()"></div><div class="f"><label>% Ret. IVA</label><input id="pRet" type="number" value="7" oninput="calc()"></div><div class="f"><label>% Anticipo</label><input id="pAnt" type="number" value="60" oninput="calc()"></div><div class="f"><label>Materiales</label><input id="cMat" type="number" value="380000" oninput="calc()"></div></div><div class="f"><label>Envíos</label><input id="cEnv" type="number" value="280000" oninput="calc()"></div></div>';
+  '<div class="cd"><div class="g5">'+
+    '<div class="f"><label>Nº Calicatas</label><input id="calicatas" type="number" value="11" oninput="calc()"></div>'+
+    '<div class="f"><label>Muestras/calicata</label><input id="mpc" type="number" value="3" oninput="calc()"></div>'+
+    '<div class="f"><label>Nº Barrenadas</label><input id="barrenadas" type="number" value="11" oninput="calc()"></div>'+
+    '<div class="f"><label>Muestras/barrenada</label><input id="mpb" type="number" value="1" oninput="calc()"></div>'+
+    '<div class="f"><label>Total muestras</label><input id="totalM" readonly></div>'+
+  '</div><div class="g4">'+
+    '<div class="f"><label>Muest. calicatas</label><input id="tmCal" readonly></div>'+
+    '<div class="f"><label>Muest. barrenadas</label><input id="tmBar" readonly></div>'+
+    '<div class="f"><label>Densidad ha/cal</label><input id="densidad" readonly></div>'+
+    '<div class="f"><label>Superficie (ha)</label><input id="supRef" readonly></div>'+
+  '</div></div>'+
+
+  /* ── SUPUESTOS: Movilidad y Logística ── */
+  '<div class="sc">Movilidad y Logística</div>'+
+  '<div class="cd"><div class="g5">'+
+    '<div class="f"><label>Nº Vehículos</label><input id="nVehiculos" type="number" value="2" oninput="calc()"></div>'+
+    '<div class="f"><label>Días de campo</label><input id="diasCampo" type="number" value="4" oninput="calc()"></div>'+
+    '<div class="f"><label>Días totales (incl. traslado)</label><input id="diasTotal" type="number" value="5" oninput="calc()"></div>'+
+    '<div class="f"><label>Km ida+vuelta</label><input id="distKm" type="number" value="350" oninput="calc()"></div>'+
+    '<div class="f"><label>Nº Viajes</label><input id="nViajes" type="number" value="2" oninput="calc()"></div>'+
+  '</div><div class="g5">'+
+    '<div class="f"><label>Consumo L/100km</label><input id="consumo" type="number" value="12" oninput="calc()"></div>'+
+    '<div class="f"><label>Precio Gs/Litro</label><input id="pComb" type="number" value="9000" oninput="calc()"></div>'+
+    '<div class="f"><label>Alquiler/día (Gs)</label><input id="cAlq" type="number" value="715000" oninput="calc()"></div>'+
+    '<div class="f"><label>Nº Personas campo</label><input id="personas" type="number" value="4" oninput="calc()"></div>'+
+    '<div class="f"><label></label></div>'+
+  '</div><div class="g2">'+
+    '<div class="f"><label>Viático/pers/día (Gs)</label><input id="cCons" type="number" value="100000" oninput="calc()"></div>'+
+    '<div class="f"><label>Hospedaje/pers/día (Gs)</label><input id="cHosp" type="number" value="100000" oninput="calc()"></div>'+
+  '</div>'+
+  '<div class="aux-box" id="auxMovilidad"></div>'+
+  '</div>'+
+
+  /* ── PREPARACIÓN DE CAMPO: Honorarios ── */
+  '<div class="sc">Preparación de Campo — Honorarios Profesionales</div>'+
+  '<div class="cd">'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Categoría</th><th>Concepto / Nombre</th><th style="width:50px">Cant.</th><th style="width:80px">Unidad</th><th style="width:50px">Días</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="honBody">'+
+      '<tr><td>1.1</td><td><select style="width:100%"><option>Honorarios Profesional Senior</option><option>Honorarios</option></select></td><td><input value="Dr. Arnulfo Encina" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Por calicata</option><option>Honorario fijo</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="1500000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
+      '<tr><td>1.2</td><td><select style="width:100%"><option>Honorarios Coordinador Campo</option><option>Honorarios</option></select></td><td><input value="David Leckie" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="5000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
+      '<tr><td>1.3</td><td><select style="width:100%"><option>Honorarios</option><option>Honorarios Profesional Senior</option></select></td><td><input value="Técnico 2" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="2000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
+      '<tr><td>1.4</td><td><select style="width:100%"><option>Honorarios</option></select></td><td><input value="Ayudante 1" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="600000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
+      '<tr><td>1.5</td><td><select style="width:100%"><option>Honorarios</option></select></td><td><input value="Ayudante 2" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="600000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
+    '</tbody></table>'+
+    '<button class="ab" onclick="addHon()">+ Agregar persona</button>'+
+  '</div>'+
+
+  /* ── PREPARACIÓN DE CAMPO: Equipos ── */
+  '<div class="sc">Uso de Equipos</div>'+
+  '<div class="cd">'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Equipo</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:60px">Días</th><th style="width:100px">Costo uso/mes</th><th style="width:100px">Subtotal (Gs)</th></tr></thead><tbody id="equipBody"></tbody></table>'+
+  '</div>'+
+
+  /* ── PREPARACIÓN DE CAMPO: Otros Gastos ── */
+  '<div class="sc">Otros Gastos de Campo</div>'+
+  '<div class="cd">'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Concepto</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:60px">Días</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="otrosBody">'+
+      '<tr><td>5.1</td><td><input value="Gabinete (impresiones)" style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Global</td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="100000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
+      '<tr><td>5.2</td><td><input value="Materiales varios" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Global</td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="380000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
+      '<tr><td>5.3</td><td><input value="Encomienda/documentos" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Envío</td><td><input type="number" value="4" style="width:100%" oninput="calc()"></td><td><input type="number" value="30000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
+      '<tr><td>5.4</td><td><input value="Encomienda/laboratorio" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Envío</td><td><input type="number" value="4" style="width:100%" oninput="calc()"></td><td><input type="number" value="40000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
+    '</tbody></table>'+
+    '<button class="ab" onclick="addOtro()">+ Agregar gasto</button>'+
+  '</div>'+
+
+  /* ── PEAJE ── */
+  '<div class="sc">Peaje</div>'+
+  '<div class="cd"><table class="ht"><thead><tr><th>Tramo</th><th style="width:80px">Precio</th><th style="width:40px">Cant</th><th style="width:20px"></th></tr></thead><tbody id="peajeBody"><tr><td><input value="Ida y vuelta" style="width:100%" oninput="calc()"></td><td><input type="number" value="30000" style="width:100%" oninput="calc()"></td><td><input type="number" value="2" style="width:100%" oninput="calc()"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr></tbody></table><button class="ab" onclick="addPeaje()">+ Peaje</button></div>'+
+
+  /* ── LABORATORIO ── */
+  '<div class="sc">Análisis de Laboratorio</div>'+
+  '<div class="cd"><div class="cd-t">LABORATORIO <span class="pct" id="labHeader"></span></div>'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Análisis</th><th style="width:80px">Cantidad</th><th style="width:70px">Unidad</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Costo Total (Gs)</th><th style="width:80px">Costo USD</th></tr></thead><tbody id="labBody"></tbody></table>'+
+  '</div>'+
+
+  /* ── INFORME FINAL ── */
+  '<div class="sc">Informe Final — Honorarios de Gabinete</div>'+
+  '<div class="cd">'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Concepto</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Costo Total (Gs)</th><th style="width:80px">Costo USD</th><th style="width:20px"></th></tr></thead><tbody id="infBody">'+
+      '<tr><td>1</td><td><input value="Trabajos SIG y Geoportal" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Consultor</td><td><input type="number" value="1000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td></td></tr>'+
+      '<tr><td>2</td><td><input value="Informe técnico" style="width:100%"></td><td><input type="number" value="2" style="width:100%" oninput="calc()"></td><td>Consultor</td><td><input type="number" value="7000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td></td></tr>'+
+      '<tr><td>3</td><td><input value="Traducción" style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Traductor</td><td><input type="number" value="1950000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr>'+
+    '</tbody></table>'+
+    '<button class="ab" onclick="addInf()">+ Agregar ítem</button>'+
+  '</div>'+
+
+  /* ── RESUMEN: Pesos de riesgo ── */
+  '<div class="sc">Pesos de Riesgo (Imprevisto Ponderado)</div>'+
+  '<div class="cd"><div class="cd-t">Distribución del imprevisto por categoría</div>'+
+    '<div class="g3">'+
+      '<div class="f"><label>Peso Preparación</label><input id="pesoPrep" type="number" value="60" oninput="calc()"><div class="f-hint">% del imprevisto asignado a campo</div></div>'+
+      '<div class="f"><label>Peso Laboratorio</label><input id="pesoLab" type="number" value="15" oninput="calc()"><div class="f-hint">% del imprevisto asignado a lab</div></div>'+
+      '<div class="f"><label>Peso Informe</label><input id="pesoInf" type="number" value="25" oninput="calc()"><div class="f-hint">% del imprevisto asignado a informe</div></div>'+
+    '</div>'+
+    '<div class="aux-box" id="auxPesos"></div>'+
+  '</div>'+
+
+  /* ── RESUMEN: Margen y Monto a Solicitar ── */
+  '<div class="sc">Monto a Solicitar</div>'+
+  '<div class="cd"><div class="g2">'+
+    '<div class="f"><label>Monto a solicitar (USD)</label><input id="montoSolicitar" type="number" oninput="calcSolicitar()"><div class="f-hint">Cifra redondeada para propuesta al cliente</div></div>'+
+    '<div class="f"><label>Margen resultante</label><input id="margenResult" readonly style="background:var(--sf2);font-weight:700;color:var(--g)"></div>'+
+  '</div></div>';
 }
 
 function initFormWidgets(){
@@ -274,98 +423,429 @@ function initFormWidgets(){
   var ts=document.getElementById('tipoServicio');
   ts.innerHTML='<option value="">— Seleccionar —</option>';
   SERVICIOS.forEach(function(s){var o=document.createElement('option');o.value=s.code;o.textContent=s.code+' — '+s.name;ts.appendChild(o)});
-  document.getElementById('labGrid').innerHTML=LAB_ANALISIS.map(function(a){var chk=['quimico','conductividad','densidad'].includes(a.id)?'checked':'';return'<label class="lab-item"><input type="checkbox" data-price="'+a.price+'" onchange="calc()" '+chk+'><span>'+a.name+'</span><span class="price">'+fmtGs(a.price)+'</span></label>'}).join('');
-  document.querySelectorAll('#honBody select').forEach(function(s,i){s.innerHTML=cargoOpts();if(i===0)s.value='Director de Proyecto';if(i===1)s.value='Coordinador de Campo'});
+  buildEquipTable();
+  buildLabTable();
+}
+
+function buildEquipTable(){
+  var tb=document.getElementById('equipBody');
+  tb.innerHTML=EQUIPOS.map(function(e,i){
+    return '<tr data-equip="'+e.id+'"><td>4.'+(i+1)+'</td><td>'+e.name+'</td><td><input type="number" value="'+(e.id==='cilindro'?0:1)+'" style="width:100%" oninput="calc()"></td><td>'+(e.id==='cilindro'?'Paq. 10 cilindros':'Unidad')+'</td><td><input type="number" value="'+(e.id==='penetrometro'?1:8)+'" style="width:100%" oninput="calc()"></td><td style="text-align:right;font-size:10px;color:var(--tx2)">'+fmtGs(e.costoMes)+'</td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td></tr>';
+  }).join('');
+}
+
+function buildLabTable(){
+  var tb=document.getElementById('labBody');
+  tb.innerHTML=LAB_ANALISIS.map(function(a,i){
+    return '<tr data-lab="'+a.id+'"><td>'+(i+1)+'</td><td>'+a.name+'</td><td><input type="number" value="0" style="width:100%" oninput="calc()" id="labQty_'+a.id+'"></td><td>Muestra</td><td><input type="number" value="'+a.price+'" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td></tr>';
+  }).join('');
 }
 
 function populateForm(p){
   buildFormHTML();initFormWidgets();
   document.getElementById('proyNombre').value=p.nombre||'';
   document.getElementById('proyUbi').value=p.ubicacion||'';
-  document.getElementById('superficie').value=p.superficie||2200;
-  document.getElementById('cotizacion').value=p.cotizacion||7100;
+  document.getElementById('superficie').value=p.superficie||2000;
+  document.getElementById('cotizacion').value=p.cotizacion||6500;
   document.getElementById('tipoServicio').value=p.tipoServicio||'';
   var sel=document.getElementById('cliSel');
   for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===p.cliente){sel.selectedIndex=i;break}}
   var pr=p.presupuesto||{};
   if(pr.cal)document.getElementById('calicatas').value=pr.cal;
   if(pr.bar)document.getElementById('barrenadas').value=pr.bar;
-  if(pr.tm&&pr.cal){document.getElementById('mpc').value=Math.round((pr.tm-pr.bar)/pr.cal)}
+  if(pr.mpc)document.getElementById('mpc').value=pr.mpc;
+  if(pr.mpb)document.getElementById('mpb').value=pr.mpb||1;
+  if(pr.nVehiculos)document.getElementById('nVehiculos').value=pr.nVehiculos;
+  if(pr.diasCampo)document.getElementById('diasCampo').value=pr.diasCampo;
+  if(pr.diasTotal)document.getElementById('diasTotal').value=pr.diasTotal;
+  if(pr.nViajes)document.getElementById('nViajes').value=pr.nViajes;
+  if(pr.pAnt)document.getElementById('pAnt').value=pr.pAnt;
+  if(pr.montoSolicitar)document.getElementById('montoSolicitar').value=pr.montoSolicitar;
   calc();
 }
 
 function onCli(){var c=CLIS.find(function(x){return x.id===document.getElementById('cliSel').value});if(c)document.getElementById('cliContacto').value=c.contacto||c.nombre||'';}
-function cargoOpts(){return'<option value="">—</option>'+CARGOS.map(function(c){return'<option>'+c+'</option>'}).join('')}
-function addHon(){var tb=document.getElementById('honBody'),tr=document.createElement('tr');tr.innerHTML='<td><input style="width:100%"></td><td><select style="width:100%" onchange="calc()">'+cargoOpts()+'</select></td><td><input type="number" value="0" oninput="calc()" style="width:100%"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';tb.appendChild(tr)}
+
+/* ═══════════════════════════════════════ */
+/*  TABLE HELPERS                          */
+/* ═══════════════════════════════════════ */
+function renumberHon(){
+  document.querySelectorAll('#honBody tr').forEach(function(r,i){r.querySelector('td').textContent='1.'+(i+1)});
+}
+function addHon(){
+  var tb=document.getElementById('honBody'),n=tb.rows.length+1;
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>1.'+n+'</td><td><select style="width:100%"><option>Honorarios</option><option>Honorarios Profesional Senior</option><option>Honorarios Coordinador Campo</option></select></td><td><input style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td>';
+  tb.appendChild(tr);
+}
 function addPeaje(){var tb=document.getElementById('peajeBody'),tr=document.createElement('tr');tr.innerHTML='<td><input style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';tb.appendChild(tr)}
-function getLabTotal(){var tm=parseInt(document.getElementById('totalM').value)||0,t=0;document.querySelectorAll('#labGrid input:checked').forEach(function(cb){t+=parseFloat(cb.dataset.price)*tm});return t}
+function addOtro(){
+  var tb=document.getElementById('otrosBody'),n=tb.rows.length+1;
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>5.'+n+'</td><td><input style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Global</td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';
+  tb.appendChild(tr);
+}
+function addInf(){
+  var tb=document.getElementById('infBody'),n=tb.rows.length+1;
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>'+n+'</td><td><input style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Consultor</td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';
+  tb.appendChild(tr);
+}
+
 function getPeajeTotal(){return Array.from(document.querySelectorAll('#peajeBody tr')).reduce(function(s,r){var inp=r.querySelectorAll('input');return s+(parseFloat(inp[1]&&inp[1].value)||0)*(parseInt(inp[2]&&inp[2].value)||0)},0)}
 
 /* ═══════════════════════════════════════ */
-/*  CALC + REACTIVE SUMMARY                */
+/*  CALC — Espejo fiel del TEMPLATE XLSX  */
 /* ═══════════════════════════════════════ */
 function calc(){
   var V=function(id){var el=document.getElementById(id);return el?parseFloat(el.value)||0:0};
-  var cal=V('calicatas'),mpc=V('mpc'),bar=V('barrenadas'),sup=V('superficie'),dias=V('dias'),pers=V('personas'),cot=V('cotizacion');
-  var tm=cal*mpc+bar;
-  var dEl=document.getElementById('densidad');if(dEl)dEl.value=(cal>0?(sup/cal).toFixed(1):0)+' ha/cal';
-  var tmEl=document.getElementById('totalM');if(tmEl)tmEl.value=tm;
-  var maq=V('cMaq')*V('hMaq');
-  var hon=Array.from(document.querySelectorAll('#honBody tr')).reduce(function(s,r){var i=r.querySelectorAll('input');return s+(parseFloat(i[1]&&i[1].value)||0)},0);
-  var kmT=V('distKm')*2*(Math.ceil(dias/4)||1),comb=kmT*V('consumo')/100*V('pComb'),alq=V('cAlq')*dias;
-  var camioneta=alq+comb;
-  var cons=V('cCons')*pers*dias,hosp=V('cHosp')*pers*dias,equip=(V('cPen')+V('cDron')+V('cCam')+V('cTab'))*dias;
-  var peaje=getPeajeTotal(),farm=V('cFarm'),mat=V('cMat'),env=V('cEnv');
-  var sPrep=maq+hon+camioneta+cons+hosp+equip+peaje+farm+mat+env;
-  var sLab=getLabTotal();
-  var tlEl=document.getElementById('totalLab');if(tlEl)tlEl.value=fmtGs(sLab);
-  var tuEl=document.getElementById('totalLabUsd');if(tuEl)tuEl.value=cot>0?fmtUsd(sLab/cot):'0';
-  var sInf=V('cSIG')+V('cInf')+V('cTrad'),sub=sPrep+sLab+sInf,imp=sub*(V('pImp')/100),subI=sub+imp,ret=subI*(V('pRet')/100),totGs=subI+ret,totU=cot>0?totGs/cot:0;
-  var pP=sub>0?sPrep/sub:0,pL=sub>0?sLab/sub:0,pI=sub>0?sInf/sub:0;
-  var prP=sPrep+imp*pP+ret*pP,prL=sLab+imp*pL+ret*pL,prI=sInf+imp*pI+ret*pI;
-  var antic=totU*(V('pAnt')/100),saldo=totU-antic;
-  R={maq:maq,hon:hon,camioneta:camioneta,alq:alq,comb:comb,cons:cons,hosp:hosp,equip:equip,peaje:peaje,farm:farm,mat:mat,env:env,sPrep:sPrep,sLab:sLab,sInf:sInf,sub:sub,imp:imp,ret:ret,totGs:totGs,totU:totU,prP:prP,prL:prL,prI:prI,antic:antic,saldo:saldo,tm:tm,dens:cal>0?(sup/cal).toFixed(1):'0',cal:cal,sup:sup,bar:bar,pAnt:V('pAnt')};
+  var cot=V('cotizacion');if(cot===0)cot=6500;
+
+  /* — Muestreo — */
+  var cal=V('calicatas'),mpc=V('mpc'),bar=V('barrenadas'),mpb=V('mpb'),sup=V('superficie');
+  var tmCal=cal*mpc, tmBar=bar*mpb, tm=tmCal+tmBar;
+  var setV=function(id,v){var el=document.getElementById(id);if(el)el.value=v};
+  setV('tmCal',tmCal); setV('tmBar',tmBar); setV('totalM',tm);
+  setV('densidad',cal>0?(sup/cal).toFixed(1):'—');
+  setV('supRef',sup);
+  setV('pSaldo',(100-V('pAnt')));
+
+  /* — Movilidad (cálculos auxiliares como en SUPUESTOS del Excel) — */
+  var nVeh=V('nVehiculos'),diasCampo=V('diasCampo'),diasTotal=V('diasTotal'),distKm=V('distKm'),nViajes=V('nViajes');
+  var consumoL=V('consumo'),pComb=V('pComb'),cAlq=V('cAlq'),pers=V('personas');
+  var litrosViaje=distKm*consumoL/100;
+  var litrosReserva=litrosViaje*1.2;
+  var costoCombTotal=litrosReserva*pComb*nViajes*nVeh;
+  var costoAlqTotal=cAlq*diasTotal*nVeh;
+  var costoViaticos=V('cCons')*pers*diasTotal;
+  var costoHospedaje=V('cHosp')*pers*diasTotal;
+
+  var auxMov=document.getElementById('auxMovilidad');
+  if(auxMov)auxMov.innerHTML=
+    '<div class="aux-row"><span>Litros/viaje (1 veh.)</span><strong>'+litrosViaje.toFixed(0)+' L</strong></div>'+
+    '<div class="aux-row"><span>Litros con 20% reserva</span><strong>'+litrosReserva.toFixed(1)+' L</strong></div>'+
+    '<div class="aux-row"><span>Costo combustible total</span><strong>₲ '+fmtGs(costoCombTotal)+'</strong></div>'+
+    '<div class="aux-row"><span>Costo alquiler total ('+nVeh+' veh × '+diasTotal+' días)</span><strong>₲ '+fmtGs(costoAlqTotal)+'</strong></div>'+
+    '<div class="aux-row"><span>Costo viáticos total</span><strong>₲ '+fmtGs(costoViaticos)+'</strong></div>'+
+    '<div class="aux-row"><span>Costo hospedaje total</span><strong>₲ '+fmtGs(costoHospedaje)+'</strong></div>';
+
+  /* — Honorarios — */
+  var hon=0;
+  Array.from(document.querySelectorAll('#honBody tr')).forEach(function(r){
+    var inp=r.querySelectorAll('input');
+    var sels=r.querySelectorAll('select');
+    var cantidad=parseFloat(inp[0]&&inp[0].value)||0;
+    var unidad=(sels[1]&&sels[1].value)||'Honorario fijo';
+    var dias=parseFloat(inp[1]&&inp[1].value)||0;
+    var costoUnit=parseFloat(inp[2]&&inp[2].value)||0;
+    var sub=0;
+    if(unidad==='Por calicata'){sub=cantidad*costoUnit*cal;}
+    else if(unidad==='Por día'){sub=cantidad*costoUnit*dias;}
+    else{sub=cantidad*costoUnit*dias;}
+    if(inp[3])inp[3].value=fmtGs(sub);
+    hon+=sub;
+  });
+
+  /* — Equipos (depreciación) — */
+  var equipTotal=0;
+  Array.from(document.querySelectorAll('#equipBody tr')).forEach(function(r){
+    var inp=r.querySelectorAll('input');
+    var cant=parseFloat(inp[0]&&inp[0].value)||0;
+    var dias_e=parseFloat(inp[1]&&inp[1].value)||0;
+    var eqId=r.dataset.equip;
+    var eq=EQUIPOS.find(function(e){return e.id===eqId});
+    var costoMes=eq?eq.costoMes:0;
+    var sub=cant*costoMes*dias_e/30*30; // uso diario proporcional al mes, simplificado como en Excel
+    // Excel formula: cant * (costoAdq/vidaMeses) * dias / 30 * 30 → simplificado: cant * costoMes * dias_e
+    // Actually looking at Excel: penetrometro = 2 units × 1 day → 208000. costoMes=104000. 2*104000=208000. OK.
+    // Dron: 1 unit × 8 days → 1066666. costoMes=133333. 1*133333*8=1066664 ≈ 1066666. YES.
+    sub=cant*costoMes*dias_e;
+    var stEl=r.querySelectorAll('input')[2]||r.querySelector('input[readonly]');
+    var roInputs=r.querySelectorAll('input[readonly]');
+    if(roInputs[0])roInputs[0].value=fmtGs(sub);
+    equipTotal+=sub;
+  });
+
+  /* — Otros gastos — */
+  var otrosTotal=0;
+  Array.from(document.querySelectorAll('#otrosBody tr')).forEach(function(r){
+    var inp=r.querySelectorAll('input');
+    var cant=parseFloat(inp[1]&&inp[1].value)||0;
+    var dias_o=parseFloat(inp[2]&&inp[2].value)||0;
+    var costoU=parseFloat(inp[3]&&inp[3].value)||0;
+    var sub=cant*costoU*dias_o;
+    if(inp[4])inp[4].value=fmtGs(sub);
+    otrosTotal+=sub;
+  });
+
+  /* — Peaje — */
+  var peaje=getPeajeTotal();
+
+  /* — TOTAL PREPARACIÓN — */
+  var sPrep=hon+costoAlqTotal+costoCombTotal+costoViaticos+costoHospedaje+equipTotal+otrosTotal+peaje;
+
+  /* — Laboratorio — */
+  // Auto-set quantities based on analysis type
+  LAB_ANALISIS.forEach(function(a){
+    var el=document.getElementById('labQty_'+a.id);
+    if(el){
+      if(a.appliesTo==='calicatas')el.value=tmCal;
+      else if(a.appliesTo==='barrenadas')el.value=tmBar;
+      else el.value=tm;
+    }
+  });
+  var sLab=0;
+  Array.from(document.querySelectorAll('#labBody tr')).forEach(function(r){
+    var inp=r.querySelectorAll('input');
+    var qty=parseFloat(inp[0]&&inp[0].value)||0;
+    var price=parseFloat(inp[1]&&inp[1].value)||0;
+    var total=qty*price;
+    var roInputs=r.querySelectorAll('input[readonly]');
+    if(roInputs[0])roInputs[0].value=fmtGs(total);
+    if(roInputs[1])roInputs[1].value=cot>0?fmtUsd(total/cot):'—';
+    sLab+=total;
+  });
+  var labH=document.getElementById('labHeader');
+  if(labH)labH.textContent='Calicatas: '+cal+' × '+mpc+' = '+tmCal+' | Barrenadas: '+bar+' × '+mpb+' = '+tmBar+' | Total: '+tm;
+
+  /* — Informe — */
+  var sInf=0;
+  Array.from(document.querySelectorAll('#infBody tr')).forEach(function(r){
+    var inp=r.querySelectorAll('input');
+    var cant=parseFloat(inp[1]&&inp[1].value)||0;
+    var costoU=parseFloat(inp[2]&&inp[2].value)||0;
+    var total=cant*costoU;
+    var roInputs=r.querySelectorAll('input[readonly]');
+    if(roInputs[0])roInputs[0].value=fmtGs(total);
+    if(roInputs[1])roInputs[1].value=cot>0?fmtUsd(total/cot):'—';
+    sInf+=total;
+  });
+
+  /* — CONSOLIDACIÓN (espejo hoja Resumen del Excel) — */
+  var subDirecto=sPrep+sLab+sInf;
+
+  /* Imprevisto ponderado por riesgo */
+  var pImp=V('pImp')/100;
+  var wPrep=V('pesoPrep')/100, wLab=V('pesoLab')/100, wInf=V('pesoInf')/100;
+  var impPrep=sPrep*pImp*wPrep/( (sPrep>0?wPrep:0)+(sLab>0?wLab:0)+(sInf>0?wInf:0) || 1);
+  // Simplified: weighted by risk as in Excel
+  var totalPeso=wPrep+wLab+wInf;
+  impPrep=subDirecto*pImp*(wPrep/totalPeso);
+  var impLab=subDirecto*pImp*(wLab/totalPeso);
+  var impInf=subDirecto*pImp*(wInf/totalPeso);
+  // Excel zeroes informe imprevisto if peso=0.25 but applies 0 anyway when small. Let's keep weighted.
+  var impTotal=impPrep+impLab+impInf;
+
+  var auxPesos=document.getElementById('auxPesos');
+  if(auxPesos)auxPesos.innerHTML=
+    '<div class="aux-row"><span>Imprevisto Preparación ('+V('pesoPrep')+'%)</span><strong>₲ '+fmtGs(impPrep)+' / USD '+fmtUsd(cot>0?impPrep/cot:0)+'</strong></div>'+
+    '<div class="aux-row"><span>Imprevisto Laboratorio ('+V('pesoLab')+'%)</span><strong>₲ '+fmtGs(impLab)+' / USD '+fmtUsd(cot>0?impLab/cot:0)+'</strong></div>'+
+    '<div class="aux-row"><span>Imprevisto Informe ('+V('pesoInf')+'%)</span><strong>₲ '+fmtGs(impInf)+' / USD '+fmtUsd(cot>0?impInf/cot:0)+'</strong></div>'+
+    '<div class="aux-row" style="border-top:1px solid var(--bd);padding-top:3px;margin-top:3px"><span>TOTAL IMPREVISTO</span><strong>₲ '+fmtGs(impTotal)+' / USD '+fmtUsd(cot>0?impTotal/cot:0)+'</strong></div>';
+
+  /* Cálculo del monto final */
+  var subConImp=subDirecto+impTotal;
+  var pRet=V('pRet')/100;
+  var retIva=subConImp*pRet;
+
+  /* Margen = montoSolicitar*cot - costoDirecto. Se calcula en calcSolicitar() */
+  var montoSol=V('montoSolicitar');
+  var totalProyectoGs=0;
+  var margen=0;
+  if(montoSol>0){
+    totalProyectoGs=montoSol*cot;
+    margen=totalProyectoGs-subDirecto;
+  }else{
+    totalProyectoGs=subConImp+retIva;
+    // Auto-suggest rounded monto
+    var sugUsd=cot>0?totalProyectoGs/cot:0;
+    var rounded=Math.ceil(sugUsd/100)*100;
+    var mEl=document.getElementById('montoSolicitar');
+    if(mEl&&!mEl.dataset.manual)mEl.value=rounded;
+    montoSol=rounded;
+    totalProyectoGs=montoSol*cot;
+    margen=totalProyectoGs-subDirecto;
+  }
+
+  var margenPct=totalProyectoGs>0?margen/totalProyectoGs:0;
+  setV('margenResult',fmtUsd(margen/cot)+' USD ('+Math.round(margenPct*100)+'%)');
+
+  /* Anticipo / Saldo */
+  var pAntV=V('pAnt')/100;
+  var antic=montoSol*pAntV;
+  var saldo=montoSol-antic;
+
+  /* Propuesta desglose a/b/c — proporcional como en Excel */
+  var pP=subDirecto>0?sPrep/subDirecto:0;
+  var pL=subDirecto>0?sLab/subDirecto:0;
+  var pI=subDirecto>0?sInf/subDirecto:0;
+  // Add proportional imprevisto + retención + margen
+  var prP=montoSol*pP;
+  var prL=montoSol*pL;
+  var prI=montoSol*pI;
+  // Adjust so they sum to montoSol
+  var prSum=prP+prL+prI;
+  if(prSum>0&&Math.abs(prSum-montoSol)>1){
+    var adj=montoSol/prSum;prP*=adj;prL*=adj;prI*=adj;
+  }
+  // Round to nice numbers (hundreds)
+  prP=Math.round(prP/100)*100;
+  prL=Math.round(prL/100)*100;
+  prI=montoSol-prP-prL;
+
+  /* Flujo de caja 50/50 */
+  var anticGs=antic*cot, saldoGs=saldo*cot;
+  var egresosT1=sPrep+sLab; // campo + lab en tramo 1
+  var egresosT2=sInf; // informe en tramo 2
+  var saldoT1=anticGs-egresosT1;
+  var saldoT2=saldoGs-egresosT2;
+
+  /* Store R */
+  R={
+    /* Supuestos */
+    cot:cot,cal:cal,mpc:mpc,bar:bar,mpb:mpb,tm:tm,tmCal:tmCal,tmBar:tmBar,sup:sup,
+    nVehiculos:nVeh,diasCampo:diasCampo,diasTotal:diasTotal,nViajes:nViajes,
+    /* Preparación campo */
+    hon:hon,alq:costoAlqTotal,comb:costoCombTotal,cons:costoViaticos,hosp:costoHospedaje,
+    equip:equipTotal,otros:otrosTotal,peaje:peaje,sPrep:sPrep,
+    /* Lab e Informe */
+    sLab:sLab,sInf:sInf,
+    /* Consolidación */
+    subDirecto:subDirecto,impPrep:impPrep,impLab:impLab,impInf:impInf,impTotal:impTotal,
+    subConImp:subConImp,retIva:retIva,
+    /* Monto final */
+    montoSolicitar:montoSol,totalProyectoGs:totalProyectoGs,margen:margen,margenPct:margenPct,
+    totU:montoSol,totGs:totalProyectoGs,
+    /* Propuesta */
+    prP:prP,prL:prL,prI:prI,
+    /* Pagos */
+    pAnt:V('pAnt'),antic:antic,saldo:saldo,
+    /* Flujo */
+    anticGs:anticGs,saldoGs:saldoGs,egresosT1:egresosT1,egresosT2:egresosT2,
+    saldoFlT1:saldoT1,saldoFlT2:saldoT2,
+    /* Ratios */
+    costoHa:cot>0?subDirecto/cot/sup:0,
+    costoCal:cot>0?subDirecto/cot/cal:0,
+    costoMuestra:cot>0?subDirecto/cot/tm:0,
+    costoLabMuestra:cot>0?sLab/cot/tm:0,
+    densHa:cal>0?sup/cal:0,
+    /* Pesos */
+    pesoPrep:V('pesoPrep'),pesoLab:V('pesoLab'),pesoInf:V('pesoInf'),
+    pImp:V('pImp'),pRet:V('pRet')
+  };
   renderSummary();
 }
 
+function calcSolicitar(){
+  var el=document.getElementById('montoSolicitar');
+  if(el)el.dataset.manual='1';
+  calc();
+}
+
+/* ═══════════════════════════════════════ */
+/*  SUMMARY PANEL — espejo hoja Resumen   */
+/* ═══════════════════════════════════════ */
 function renderSummary(){
-  var cot=R.totU?R.totGs/R.totU:7100;
+  var c=R.cot||6500;
+  var usd=function(gs){return c>0?fmtUsd(gs/c):'—'};
   document.getElementById('rc').innerHTML=
-    '<div class="rs">Preparación</div>'+
-    '<div class="rr"><span>Maquinaria</span><span class="rv">₲ '+fmtGs(R.maq||0)+'</span></div>'+
-    '<div class="rr"><span>Honorarios</span><span class="rv">₲ '+fmtGs(R.hon||0)+'</span></div>'+
-    '<div class="rr"><span>Camioneta</span><span class="rv">₲ '+fmtGs(R.camioneta||0)+'</span></div>'+
-    '<div class="rr"><span>Consumición</span><span class="rv">₲ '+fmtGs(R.cons||0)+'</span></div>'+
-    '<div class="rr"><span>Hospedaje</span><span class="rv">₲ '+fmtGs(R.hosp||0)+'</span></div>'+
-    '<div class="rr"><span>Equipos</span><span class="rv">₲ '+fmtGs(R.equip||0)+'</span></div>'+
-    '<div class="rr"><span>Peaje</span><span class="rv">₲ '+fmtGs(R.peaje||0)+'</span></div>'+
-    '<div class="rr"><span>Farmacia</span><span class="rv">₲ '+fmtGs(R.farm||0)+'</span></div>'+
-    '<div class="rr"><span>Implementos</span><span class="rv">₲ '+fmtGs((R.mat||0)+(R.env||0))+'</span></div>'+
-    '<div class="rr sub"><span>Sub. Preparación</span><span class="rv">₲ '+fmtGs(R.sPrep||0)+'</span></div>'+
-    '<div class="rs">Laboratorio</div><div class="rr sub"><span>Sub. Lab ('+(R.tm||0)+' muest.)</span><span class="rv">₲ '+fmtGs(R.sLab||0)+'</span></div>'+
-    '<div class="rs">Informe</div><div class="rr sub"><span>Sub. Informe</span><span class="rv">₲ '+fmtGs(R.sInf||0)+'</span></div>'+
+    /* Consolidación */
+    '<div class="rs">Consolidación de Costos Directos</div>'+
+    '<div class="rr"><span>1. Preparación / campo</span><span class="rv">₲ '+fmtGs(R.sPrep||0)+' <small style="opacity:.5">'+usd(R.sPrep||0)+'</small></span></div>'+
+    '<div class="rr"><span>2. Laboratorio</span><span class="rv">₲ '+fmtGs(R.sLab||0)+' <small style="opacity:.5">'+usd(R.sLab||0)+'</small></span></div>'+
+    '<div class="rr"><span>3. Informe final</span><span class="rv">₲ '+fmtGs(R.sInf||0)+' <small style="opacity:.5">'+usd(R.sInf||0)+'</small></span></div>'+
+    '<div class="rr sub"><span>SUBTOTAL DIRECTOS</span><span class="rv">₲ '+fmtGs(R.subDirecto||0)+'</span></div>'+
     '<div class="rdiv"></div>'+
-    '<div class="rr"><span>Subtotal</span><span class="rv">₲ '+fmtGs(R.sub||0)+'</span></div>'+
-    '<div class="rr"><span>Imprevistos</span><span class="rv">₲ '+fmtGs(R.imp||0)+'</span></div>'+
-    '<div class="rr"><span>Ret. IVA</span><span class="rv">₲ '+fmtGs(R.ret||0)+'</span></div>'+
-    '<div class="rr total"><span>TOTAL</span><span class="rv">USD '+fmtUsd(R.totU||0)+'</span></div>'+
-    '<div class="rdiv"></div><div class="rs">Propuesta</div>'+
-    '<div class="rr"><span>a) Campo</span><span class="rv">USD '+fmtUsd(cot>0?(R.prP||0)/cot:0)+'</span></div>'+
-    '<div class="rr"><span>b) Lab</span><span class="rv">USD '+fmtUsd(cot>0?(R.prL||0)/cot:0)+'</span></div>'+
-    '<div class="rr"><span>c) Informe</span><span class="rv">USD '+fmtUsd(cot>0?(R.prI||0)/cot:0)+'</span></div>'+
+
+    /* Imprevisto ponderado */
+    '<div class="rs">Imprevisto Ponderado</div>'+
+    '<div class="rr"><span>Prep. (peso '+(R.pesoPrep||0)+'%)</span><span class="rv">₲ '+fmtGs(R.impPrep||0)+'</span></div>'+
+    '<div class="rr"><span>Lab (peso '+(R.pesoLab||0)+'%)</span><span class="rv">₲ '+fmtGs(R.impLab||0)+'</span></div>'+
+    '<div class="rr"><span>Informe (peso '+(R.pesoInf||0)+'%)</span><span class="rv">₲ '+fmtGs(R.impInf||0)+'</span></div>'+
+    '<div class="rr sub"><span>TOTAL IMPREVISTO</span><span class="rv">₲ '+fmtGs(R.impTotal||0)+'</span></div>'+
     '<div class="rdiv"></div>'+
+
+    /* Monto final */
+    '<div class="rs">Cálculo Monto Final</div>'+
+    '<div class="rr"><span>Subtotal directos</span><span class="rv">'+usd(R.subDirecto||0)+'</span></div>'+
+    '<div class="rr"><span>Imprevisto ponderado</span><span class="rv">'+usd(R.impTotal||0)+'</span></div>'+
+    '<div class="rr"><span>Sub. con imprevisto</span><span class="rv">'+usd(R.subConImp||0)+'</span></div>'+
+    '<div class="rr"><span>Retención IVA ('+(R.pRet||0)+'%)</span><span class="rv">'+usd(R.retIva||0)+'</span></div>'+
+    '<div class="rr"><span>Margen</span><span class="rv">'+usd(R.margen||0)+'</span></div>'+
+    '<div class="rr sol"><span>MONTO A SOLICITAR</span><span class="rv">USD '+fmtUsd(R.montoSolicitar||0)+'</span></div>'+
+    '<div class="rdiv"></div>'+
+
+    /* Propuesta al cliente */
+    '<div class="rs">Detalle para Propuesta</div>'+
+    '<div class="rr"><span>a) Preparación, muestreos</span><span class="rv">USD '+fmtUsd(R.prP||0)+'</span></div>'+
+    '<div class="rr"><span>b) Laboratorio</span><span class="rv">USD '+fmtUsd(R.prL||0)+'</span></div>'+
+    '<div class="rr"><span>c) Informe final</span><span class="rv">USD '+fmtUsd(R.prI||0)+'</span></div>'+
+    '<div class="rr sub"><span>TOTAL PROPUESTA</span><span class="rv">USD '+fmtUsd((R.prP||0)+(R.prL||0)+(R.prI||0))+'</span></div>'+
+    '<div class="rdiv"></div>'+
+
+    /* Forma de pago */
+    '<div class="rs">Forma de Pago ('+(R.pAnt||0)+'% / '+(100-(R.pAnt||0))+'%)</div>'+
     '<div class="rr" style="color:var(--g)"><span>Anticipo ('+(R.pAnt||0)+'%)</span><span class="rv" style="color:var(--g)">USD '+fmtUsd(R.antic||0)+'</span></div>'+
-    '<div class="rr"><span>Saldo</span><span class="rv">USD '+fmtUsd(R.saldo||0)+'</span></div>';
+    '<div class="rr"><span>Saldo contra entrega</span><span class="rv">USD '+fmtUsd(R.saldo||0)+'</span></div>'+
+    '<div class="rdiv"></div>'+
+
+    /* Margen */
+    '<div class="margin-box">'+
+      '<div class="rs" style="margin-top:0;color:#fff">Análisis de Margen SoilTech</div>'+
+      '<div class="rr"><span>Total facturado</span><span class="rv">₲ '+fmtGs(R.totalProyectoGs||0)+'</span></div>'+
+      '<div class="rr"><span>(-) Costos campo</span><span class="rv">-₲ '+fmtGs(R.sPrep||0)+'</span></div>'+
+      '<div class="rr"><span>(-) Costos laboratorio</span><span class="rv">-₲ '+fmtGs(R.sLab||0)+'</span></div>'+
+      '<div class="rr"><span>(-) Costos informe</span><span class="rv">-₲ '+fmtGs(R.sInf||0)+'</span></div>'+
+      '<div class="rr sub"><span>Margen bruto</span><span class="rv">₲ '+fmtGs(R.margen||0)+' ('+Math.round((R.margenPct||0)*100)+'%)</span></div>'+
+      '<div class="rr sub"><span>Margen USD</span><span class="rv">'+usd(R.margen||0)+'</span></div>'+
+    '</div>'+
+
+    /* Ratios */
+    '<div class="rs" style="margin-top:12px">Ratios del Proyecto</div>'+
+    '<div class="rr"><span>Costo/hectárea</span><span class="rv">USD '+(R.costoHa?fmtUsd(R.costoHa):'—')+'</span></div>'+
+    '<div class="rr"><span>Costo/calicata</span><span class="rv">USD '+(R.costoCal?fmtUsd(R.costoCal):'—')+'</span></div>'+
+    '<div class="rr"><span>Costo/muestra total</span><span class="rv">USD '+(R.costoMuestra?fmtUsd(R.costoMuestra):'—')+'</span></div>'+
+    '<div class="rr"><span>Costo lab/muestra</span><span class="rv">USD '+(R.costoLabMuestra?fmtUsd(R.costoLabMuestra):'—')+'</span></div>'+
+    '<div class="rr"><span>Densidad muestreo</span><span class="rv">'+(R.densHa?(R.densHa).toFixed(1):'—')+' ha/cal</span></div>'+
+    '<div class="rdiv"></div>'+
+
+    /* Flujo de caja */
+    '<div class="rs">Flujo de Caja</div>'+
+    '<div class="flow-box">'+
+      '<div class="flow-col">'+
+        '<div class="flow-h">Tramo 1: Anticipo</div>'+
+        '<div class="rr"><span>Cobro</span><span class="rv" style="color:var(--g)">₲ '+fmtGs(R.anticGs||0)+'</span></div>'+
+        '<div class="rr"><span>Egresos</span><span class="rv">-₲ '+fmtGs(R.egresosT1||0)+'</span></div>'+
+        '<div class="rr sub"><span>Saldo</span><span class="rv" style="color:'+(R.saldoFlT1>=0?'var(--g)':'var(--dg)')+'">₲ '+fmtGs(R.saldoFlT1||0)+'</span></div>'+
+      '</div>'+
+      '<div class="flow-col">'+
+        '<div class="flow-h">Tramo 2: Entrega</div>'+
+        '<div class="rr"><span>Cobro</span><span class="rv" style="color:var(--g)">₲ '+fmtGs(R.saldoGs||0)+'</span></div>'+
+        '<div class="rr"><span>Egresos</span><span class="rv">-₲ '+fmtGs(R.egresosT2||0)+'</span></div>'+
+        '<div class="rr sub"><span>Saldo</span><span class="rv" style="color:'+(R.saldoFlT2>=0?'var(--g)':'var(--dg)')+'">₲ '+fmtGs(R.saldoFlT2||0)+'</span></div>'+
+      '</div>'+
+    '</div>'+
+    (R.saldoFlT1<0?'<div style="margin-top:6px;padding:6px 8px;background:rgba(239,68,68,0.1);border-radius:4px;font-size:9px;color:var(--dg)">⚠ Capital de trabajo necesario: ₲ '+fmtGs(Math.abs(R.saldoFlT1))+' (USD '+fmtUsd(Math.abs(R.saldoFlT1)/c)+')</div>':'');
 }
 
 /* ═══════════════════════════════════════ */
 /*  SAVE                                   */
 /* ═══════════════════════════════════════ */
-function getHonorarios(){return Array.from(document.querySelectorAll('#honBody tr')).map(function(r){var i=r.querySelectorAll('input');return{nombre:i[0].value,cargo:r.querySelector('select').value,monto:parseFloat(i[1].value)||0}})}
+function getHonorarios(){return Array.from(document.querySelectorAll('#honBody tr')).map(function(r){var inp=r.querySelectorAll('input');var sels=r.querySelectorAll('select');return{categoria:sels[0]?sels[0].value:'',nombre:inp.length>0?inp[0].value:'',cantidad:parseFloat(inp[1]&&inp[1].value)||0,unidad:sels[1]?sels[1].value:'',dias:parseFloat(inp[2]&&inp[2].value)||0,costoUnit:parseFloat(inp[3]&&inp[3].value)||0}})}
+
 function guardar(){
   var n=document.getElementById('proyNombre').value||'Sin nombre';
   var sel=document.getElementById('cliSel');var cN=sel.selectedIndex>0?sel.options[sel.selectedIndex].text:'Sin cliente';
-  var data={nombre:n.toUpperCase(),cliente:cN.toUpperCase(),estado:'Cotización',valorUsd:R.totU,cotizacion:parseFloat(document.getElementById('cotizacion').value)||0,ubicacion:document.getElementById('proyUbi').value,superficie:parseFloat(document.getElementById('superficie').value)||0,calicatas:parseInt(document.getElementById('calicatas').value)||0,totalMuestras:R.tm,tipoServicio:document.getElementById('tipoServicio').value,presupuesto:R,honorarios:getHonorarios()};
+  var data={
+    nombre:n.toUpperCase(),cliente:cN.toUpperCase(),estado:'Cotización',
+    valorUsd:R.montoSolicitar||R.totU,cotizacion:parseFloat(document.getElementById('cotizacion').value)||6500,
+    ubicacion:document.getElementById('proyUbi').value,
+    superficie:parseFloat(document.getElementById('superficie').value)||0,
+    calicatas:parseInt(document.getElementById('calicatas').value)||0,
+    totalMuestras:R.tm,
+    tipoServicio:document.getElementById('tipoServicio').value,
+    presupuesto:R,honorarios:getHonorarios()
+  };
   if(editingId){
     data.fechaCreacion=firebase.firestore.FieldValue.serverTimestamp();
     db.collection('proyectos').doc(editingId).update(data).then(function(){toast('✅ Cotización actualizada');backToDash()}).catch(function(e){toast('❌ '+e.message)});
@@ -377,7 +857,7 @@ function guardar(){
 }
 
 /* ═══════════════════════════════════════ */
-/*  CLIENTS (schema-compliant: 8 fields)   */
+/*  CLIENTS                                */
 /* ═══════════════════════════════════════ */
 function saveCli(){
   var n=document.getElementById('ncNombre').value.trim();
@@ -411,7 +891,7 @@ function showApprove(id){
     document.getElementById('apValor').value=(data.valorUsd||0).toFixed(2);
     document.getElementById('apIva').value='7';
     document.getElementById('apFecha').valueAsDate=new Date();
-    document.getElementById('apPct').value=data.presupuesto&&data.presupuesto.pAnt?data.presupuesto.pAnt:60;
+    document.getElementById('apPct').value=data.presupuesto&&data.presupuesto.pAnt?data.presupuesto.pAnt:50;
     updateApPreview();
     showModal('approveModal');
   });
@@ -429,7 +909,7 @@ function confirmApprove(){
   var valorUsd=parseFloat(document.getElementById('apValor').value)||0;
   var descIva=(parseFloat(document.getElementById('apIva').value)||7)/100;
   var fechaInicio=document.getElementById('apFecha').value;
-  var pct=parseFloat(document.getElementById('apPct').value)||60;
+  var pct=parseFloat(document.getElementById('apPct').value)||50;
   var montoAnticipo=valorUsd*pct/100;
   var moneda=document.getElementById('apMoneda').value;
   db.collection('proyectos').doc(p.id).update({
@@ -439,7 +919,7 @@ function confirmApprove(){
     fechaRegistro:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){
     var pres=p.presupuesto||{};
-    var asig={Maquinaria:pres.maq||0,Camioneta:pres.alq||0,Combustible:pres.comb||0,'Consumición':pres.cons||0,Hospedaje:pres.hosp||0,Colaboradores:pres.hon||0,'Implementos de trabajo':pres.mat||0,Laboratorio:pres.sLab||0,Peaje:pres.peaje||0,Farmacia:pres.farm||0,Varios:(pres.env||0)+(pres.equip||0)};
+    var asig={Maquinaria:pres.alq||0,Combustible:pres.comb||0,'Consumición':pres.cons||0,Hospedaje:pres.hosp||0,Colaboradores:pres.hon||0,'Implementos de trabajo':pres.otros||0,Laboratorio:pres.sLab||0,Peaje:pres.peaje||0,Varios:pres.equip||0};
     var promises=[];
     Object.keys(asig).forEach(function(k){if(asig[k]>0)promises.push(db.collection('proyectos').doc(p.id).collection('asignaciones').doc(k).set({monto:asig[k],categoria:k}))});
     return Promise.all(promises);
@@ -457,13 +937,12 @@ function confirmApprove(){
       estado:'activa',impresa:false,enviada:false,pagada:false,
       proyectoId:p.id,tipo:'anticipo',createdAt:firebase.firestore.FieldValue.serverTimestamp()
     }).then(function(){
-      // Schema-compliant pago_recibido: retencion as decimal, montoFinalUsd calculated
       var retencion=descIva;
       var montoFinalUsd=montoAnticipo-(montoAnticipo*retencion);
       return db.collection('pagos_recibidos').add({
         proyectoId:p.id,proyectoNombre:nombre.toUpperCase(),concepto:'Anticipo '+pct+'%',
         montoUsd:montoAnticipo,retencion:retencion,montoFinalUsd:montoFinalUsd,
-        cotizacion:p.cotizacion||7100,montoFinalGs:montoFinalUsd*(p.cotizacion||7100),
+        cotizacion:p.cotizacion||6500,montoFinalGs:montoFinalUsd*(p.cotizacion||6500),
         fecha:new Date()
       });
     });
@@ -476,15 +955,34 @@ function confirmApprove(){
 function goToFacturacion(){hideModal('postApproveModal');window.location.href='../facturacion/'}
 
 /* ═══════════════════════════════════════ */
+/*  PROPUESTA                              */
+/* ═══════════════════════════════════════ */
+function showProp(){
+  var n=document.getElementById('proyNombre').value||'PROYECTO';
+  var sel=document.getElementById('cliSel');
+  var cl=sel.selectedIndex>0?sel.options[sel.selectedIndex].text:'CLIENTE';
+  var ub=document.getElementById('proyUbi').value;
+  document.getElementById('propContent').innerHTML=
+    '<p style="text-align:right;color:var(--tx2)">San Lorenzo, '+new Date().toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'</p>'+
+    '<p>Estimados Señores<br><strong>'+cl+'</strong></p>'+
+    '<p><strong>Asunto:</strong> Presupuesto para estudio de suelo de '+R.cal+' perfiles, '+n+', '+ub+'.</p>'+
+    '<h3>Presupuesto</h3>'+
+    '<table><tr><th>Descripción del servicio</th><th style="text-align:right">USD</th></tr>'+
+    '<tr><td>a) Preparación de calicatas, descripción y muestreos, resistencia a la penetración.</td><td style="text-align:right"><strong>'+fmtUsd(R.prP||0)+'</strong></td></tr>'+
+    '<tr><td>b) Análisis de Laboratorio con determinaciones químicas y físicas.</td><td style="text-align:right"><strong>'+fmtUsd(R.prL||0)+'</strong></td></tr>'+
+    '<tr><td>c) Informe final, humedales, carbono orgánico, degradación, descripciones detalladas, cartografía.</td><td style="text-align:right"><strong>'+fmtUsd(R.prI||0)+'</strong></td></tr>'+
+    '<tr style="background:var(--gd);color:#fff"><td><strong>TOTAL</strong></td><td style="text-align:right"><strong>USD '+fmtUsd(R.montoSolicitar||0)+'</strong></td></tr></table>'+
+    '<h3>Forma de Pago</h3>'+
+    '<p>Anticipo '+R.pAnt+'%: <strong>USD '+fmtUsd(R.antic||0)+'</strong> — Inicio del proyecto<br>'+
+    'Saldo '+(100-R.pAnt)+'%: <strong>USD '+fmtUsd(R.saldo||0)+'</strong> — Contra entrega de informe final</p>';
+  showModal('propModal');
+}
+
+/* ═══════════════════════════════════════ */
 /*  MISC                                   */
 /* ═══════════════════════════════════════ */
 function deleteCot(id){if(!confirm('¿Eliminar cotización?'))return;db.collection('proyectos').doc(id).delete().then(function(){toast('🗑 Eliminada');loadAll()}).catch(function(e){toast('❌ '+e.message)})}
 function finishProject(id){if(!confirm('¿Finalizar proyecto?'))return;db.collection('proyectos').doc(id).update({estado:'Finalizado'}).then(function(){toast('✔ Finalizado');loadAll()}).catch(function(e){toast('❌ '+e.message)})}
-function showProp(){
-  var n=document.getElementById('proyNombre').value||'PROYECTO';var sel=document.getElementById('cliSel');var cl=sel.selectedIndex>0?sel.options[sel.selectedIndex].text:'CLIENTE';var ub=document.getElementById('proyUbi').value;var cot=parseFloat(document.getElementById('cotizacion').value)||7100;
-  document.getElementById('propContent').innerHTML='<p style="text-align:right;color:var(--tx2)">San Lorenzo, '+new Date().toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'</p><p>Estimados Señores<br><strong>'+cl+'</strong></p><p><strong>Asunto:</strong> Presupuesto para estudio de suelo de '+R.cal+' perfiles, '+n+', '+ub+'.</p><h3>Presupuesto</h3><table><tr><th>Concepto</th><th style="text-align:right">USD</th></tr><tr><td>a) Preparación, muestreos</td><td style="text-align:right"><strong>'+fmtUsd(cot>0?R.prP/cot:0)+'</strong></td></tr><tr><td>b) Laboratorio</td><td style="text-align:right"><strong>'+fmtUsd(cot>0?R.prL/cot:0)+'</strong></td></tr><tr><td>c) Informe final</td><td style="text-align:right"><strong>'+fmtUsd(cot>0?R.prI/cot:0)+'</strong></td></tr><tr style="background:var(--gd);color:#fff"><td><strong>TOTAL</strong></td><td style="text-align:right"><strong>USD '+fmtUsd(R.totU)+'</strong></td></tr></table><h3>Forma de Pago</h3><p>Anticipo '+R.pAnt+'%: <strong>USD '+fmtUsd(R.antic)+'</strong><br>Saldo: <strong>USD '+fmtUsd(R.saldo)+'</strong></p>';
-  showModal('propModal');
-}
 function resetForm(){if(confirm('¿Limpiar?'))location.reload()}
 </script>
 </body>
