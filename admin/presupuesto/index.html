@@ -17,7 +17,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .btn-g{background:var(--g);color:#fff}.btn-g:hover{background:#2D9068}
 .btn-w{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.12)}.btn-w:hover{background:rgba(255,255,255,0.15)}
 .btn-warn{background:var(--warn);color:#fff}.btn-info{background:var(--info);color:#fff}.btn-dg{background:var(--dg);color:#fff}
-.fp{overflow-y:auto;background:var(--bg);padding:20px 24px 80px;scrollbar-width:thin;display:none}.fp.active{display:block}
+.fp{overflow-y:auto;background:var(--bg);padding:20px 24px 80px;scrollbar-width:thin;display:none;height:100%}.fp.active{display:block}
 .rp{overflow-y:auto;background:var(--gd);padding:16px;border-left:1px solid rgba(255,255,255,0.08);scrollbar-width:thin}
 /* Cards dashboard */
 .dash-stats{display:flex;gap:10px;margin-bottom:14px}
@@ -90,7 +90,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
     </div>
   </div>
   <!-- LEFT: Dashboard (default) or Form -->
-  <div>
+  <div style="overflow:hidden">
     <div class="fp active" id="panelDash">
       <div class="dash-stats" id="dashStats"></div>
       <div class="dash-filters">
@@ -530,23 +530,24 @@ function calc(){
     '<div class="aux-row"><span>Costo hospedaje total</span><strong>₲ '+fmtGs(costoHospedaje)+'</strong></div>';
 
   /* — Honorarios — */
+  /* Tabla: td(num) td(sel-cat) td(inp0-nombre) td(inp1-cant) td(sel-unidad) td(inp2-dias) td(inp3-costoUnit) td(inp4-subtotal) td(btn) */
   var hon=0;
   Array.from(document.querySelectorAll('#honBody tr')).forEach(function(r){
     var inp=r.querySelectorAll('input');
     var sels=r.querySelectorAll('select');
-    var cantidad=parseFloat(inp[0]&&inp[0].value)||0;
+    var cantidad=parseFloat(inp[1]&&inp[1].value)||0;
     var unidad=(sels[1]&&sels[1].value)||'Honorario fijo';
-    var dias=parseFloat(inp[1]&&inp[1].value)||0;
-    var costoUnit=parseFloat(inp[2]&&inp[2].value)||0;
+    var dias=parseFloat(inp[2]&&inp[2].value)||0;
+    var costoUnit=parseFloat(inp[3]&&inp[3].value)||0;
     var sub=0;
     if(unidad==='Por calicata'){sub=cantidad*costoUnit*cal;}
     else if(unidad==='Por día'){sub=cantidad*costoUnit*dias;}
     else{sub=cantidad*costoUnit*dias;}
-    if(inp[3])inp[3].value=fmtGs(sub);
+    if(inp[4])inp[4].value=fmtGs(sub);
     hon+=sub;
   });
 
-  /* — Equipos (depreciación) — */
+  /* — Equipos (depreciación: costo_mes × cant × días) — */
   var equipTotal=0;
   Array.from(document.querySelectorAll('#equipBody tr')).forEach(function(r){
     var inp=r.querySelectorAll('input');
@@ -555,12 +556,7 @@ function calc(){
     var eqId=r.dataset.equip;
     var eq=EQUIPOS.find(function(e){return e.id===eqId});
     var costoMes=eq?eq.costoMes:0;
-    var sub=cant*costoMes*dias_e/30*30; // uso diario proporcional al mes, simplificado como en Excel
-    // Excel formula: cant * (costoAdq/vidaMeses) * dias / 30 * 30 → simplificado: cant * costoMes * dias_e
-    // Actually looking at Excel: penetrometro = 2 units × 1 day → 208000. costoMes=104000. 2*104000=208000. OK.
-    // Dron: 1 unit × 8 days → 1066666. costoMes=133333. 1*133333*8=1066664 ≈ 1066666. YES.
-    sub=cant*costoMes*dias_e;
-    var stEl=r.querySelectorAll('input')[2]||r.querySelector('input[readonly]');
+    var sub=cant*costoMes*dias_e;
     var roInputs=r.querySelectorAll('input[readonly]');
     if(roInputs[0])roInputs[0].value=fmtGs(sub);
     equipTotal+=sub;
