@@ -743,11 +743,8 @@ function populateForm(p){
   document.getElementById('pesoPrep').value=pr.pesoPrep||60;
   document.getElementById('pesoLab').value=pr.pesoLab||15;
   document.getElementById('pesoInf').value=pr.pesoInf||25;
-  /* Monto a solicitar — si guardado, marcarlo como manual */
-  if(pr.montoSolicitar){
-    document.getElementById('montoSolicitar').value=pr.montoSolicitar;
-    document.getElementById('montoSolicitar').dataset.manual='1';
-  }
+  /* Monto a solicitar — dejar que recalcule según los costos actuales */
+  /* Si el usuario quiere fijar un monto, lo escribe manualmente en el campo */
   calc();
 }
 
