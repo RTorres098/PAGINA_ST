@@ -377,6 +377,7 @@ function renderDetail(p){
 
   /* === Preparation breakdown for bar chart === */
   var prepItems=[
+    {name:'Maquinaria',val:pr.maq||0,color:'#DC2626'},
     {name:'Honorarios',val:pr.hon||0,color:'#34A678'},
     {name:'Alquiler vehículo',val:pr.alq||0,color:'#2D9068'},
     {name:'Combustible',val:pr.comb||0,color:'#F59E0B'},
@@ -468,6 +469,26 @@ function renderDetail(p){
       '</div>'+
 
     '</div>'+/* close det-grid */
+
+    /* Asignación por categoría */
+    '<div class="det-card full"><h4>Asignación por Categoría de Gasto</h4>'+
+      '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">'+
+      [
+        {name:'Maquinaria',val:pr.maq||0,icon:'🔧',color:'#DC2626'},
+        {name:'Camioneta',val:pr.alq||0,icon:'🚙',color:'#2D9068'},
+        {name:'Combustible',val:pr.comb||0,icon:'⛽',color:'#F59E0B'},
+        {name:'Consumición',val:pr.cons||0,icon:'🍽',color:'#3B82F6'},
+        {name:'Hospedaje',val:pr.hosp||0,icon:'🏨',color:'#6366F1'},
+        {name:'Colaboradores',val:pr.hon||0,icon:'👷',color:'#34A678'},
+        {name:'Implementos',val:pr.otros||0,icon:'🧰',color:'#8B5CF6'},
+        {name:'Laboratorio',val:pr.sLab||0,icon:'🔬',color:'#0891B2'},
+        {name:'Peaje',val:pr.peaje||0,icon:'🛣',color:'#EC4899'},
+        {name:'Equipos',val:pr.equip||0,icon:'📦',color:'#78716C'}
+      ].filter(function(c){return c.val>0}).map(function(cat){
+        return '<div style="text-align:center;padding:10px 6px;background:var(--sf2);border-radius:8px;border-left:3px solid '+cat.color+'"><div style="font-size:16px">'+cat.icon+'</div><div style="font-size:13px;font-weight:700;color:var(--gd);margin:4px 0">₲ '+fmtGs(cat.val)+'</div><div style="font-size:9px;color:var(--tx2);text-transform:uppercase">'+cat.name+'</div></div>';
+      }).join('')+
+      '</div>'+
+    '</div>'+
 
     /* Propuesta al cliente */
     '<div class="det-card full" style="margin-bottom:0"><h4>Propuesta al Cliente</h4>'+
@@ -629,6 +650,16 @@ function buildFormHTML(){
   '</div>'+
   '<div class="aux-box" id="auxMovilidad"></div>'+
   '<div class="sub-bar" style="margin-top:8px"><span class="sb-label">Subtotal Movilidad + Viáticos</span><span class="sb-vals"><span class="sb-gs" id="subMovGs">—</span><span class="sb-usd" id="subMovUsd">—</span><span class="sb-pct" id="subMovPct">—</span></span></div>'+
+  '</div>'+
+
+  /* ── PREPARACIÓN DE CAMPO: Maquinaria ── */
+  '<div class="sc">Preparación de Campo — Maquinaria</div>'+
+  '<div class="cd">'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Máquina</th><th style="width:60px">Cant.</th><th style="width:80px">Horas</th><th style="width:110px">Precio/hora (Gs)</th><th style="width:110px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="maqBody">'+
+      '<tr><td>1</td><td><input value="Retropala" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="330000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr>'+
+    '</tbody></table>'+
+    '<button class="ab" onclick="addMaq()">+ Agregar máquina</button>'+
+    '<div class="sub-bar"><span class="sb-label">Subtotal Maquinaria</span><span class="sb-vals"><span class="sb-gs" id="subMaqGs">—</span><span class="sb-usd" id="subMaqUsd">—</span><span class="sb-pct" id="subMaqPct">—</span></span></div>'+
   '</div>'+
 
   /* ── PREPARACIÓN DE CAMPO: Honorarios ── */
@@ -800,6 +831,12 @@ function onCli(){var c=CLIS.find(function(x){return x.id===document.getElementBy
 function renumberHon(){
   document.querySelectorAll('#honBody tr').forEach(function(r,i){r.querySelector('td').textContent='1.'+(i+1)});
 }
+function addMaq(){
+  var tb=document.getElementById('maqBody'),n=tb.rows.length+1;
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>'+n+'</td><td><input style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="330000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';
+  tb.appendChild(tr);
+}
 function addHon(){
   var tb=document.getElementById('honBody'),n=tb.rows.length+1;
   var tr=document.createElement('tr');
@@ -857,6 +894,19 @@ function calc(){
     '<div class="aux-row"><span>Costo viáticos total</span><strong>₲ '+fmtGs(costoViaticos)+'</strong></div>'+
     '<div class="aux-row"><span>Costo hospedaje total</span><strong>₲ '+fmtGs(costoHospedaje)+'</strong></div>';
 
+  /* — Maquinaria — */
+  var maq=0;
+  Array.from(document.querySelectorAll('#maqBody tr')).forEach(function(r){
+    var inp=r.querySelectorAll('input');
+    var cant=parseFloat(inp[1]&&inp[1].value)||0;
+    var horas=parseFloat(inp[2]&&inp[2].value)||0;
+    var precio=parseFloat(inp[3]&&inp[3].value)||0;
+    var sub=cant*horas*precio;
+    var roInputs=r.querySelectorAll('input[readonly]');
+    if(roInputs[0])roInputs[0].value=fmtGs(sub);
+    maq+=sub;
+  });
+
   /* — Honorarios — */
   /* Tabla: td(num) td(sel-cat) td(inp0-nombre) td(inp1-cant) td(sel-unidad) td(inp2-dias) td(inp3-costoUnit) td(inp4-subtotal) td(btn) */
   var hon=0;
@@ -906,7 +956,7 @@ function calc(){
   var peaje=getPeajeTotal();
 
   /* — TOTAL PREPARACIÓN — */
-  var sPrep=hon+costoAlqTotal+costoCombTotal+costoViaticos+costoHospedaje+equipTotal+otrosTotal+peaje;
+  var sPrep=maq+hon+costoAlqTotal+costoCombTotal+costoViaticos+costoHospedaje+equipTotal+otrosTotal+peaje;
 
   /* — Laboratorio — */
   // Auto-set quantities based on analysis type
@@ -956,6 +1006,7 @@ function calc(){
     if(el2)el2.textContent='USD '+fmtUsd(cot>0?gs/cot:0);
     if(el3)el3.textContent=total>0?Math.round(gs/total*100)+'%':'—';
   };
+  setSub('subMaq',maq,subDirecto);
   setSub('subHon',hon,subDirecto);
   setSub('subMov',movilidad,subDirecto);
   setSub('subEquip',equipTotal,subDirecto);
@@ -1089,7 +1140,7 @@ function calc(){
     cCons:V('cCons'),cHosp:V('cHosp'),
     /* Preparación campo */
     hon:hon,alq:costoAlqTotal,comb:costoCombTotal,cons:costoViaticos,hosp:costoHospedaje,
-    equip:equipTotal,otros:otrosTotal,peaje:peaje,sPrep:sPrep,
+    maq:maq,equip:equipTotal,otros:otrosTotal,peaje:peaje,sPrep:sPrep,
     /* Lab e Informe */
     sLab:sLab,sInf:sInf,
     /* Consolidación */
@@ -1215,7 +1266,43 @@ function renderSummary(){
         '<div class="rr sub"><span>Saldo</span><span class="rv" style="color:'+(R.saldoFlT2>=0?'var(--g)':'var(--dg)')+'">₲ '+fmtGs(R.saldoFlT2||0)+'</span></div>'+
       '</div>'+
     '</div>'+
-    (R.saldoFlT1<0?'<div style="margin-top:6px;padding:6px 8px;background:rgba(239,68,68,0.1);border-radius:4px;font-size:9px;color:var(--dg)">⚠ Capital de trabajo necesario: ₲ '+fmtGs(Math.abs(R.saldoFlT1))+' (USD '+fmtUsd(Math.abs(R.saldoFlT1)/c)+')</div>':'');
+    (R.saldoFlT1<0?'<div style="margin-top:6px;padding:6px 8px;background:rgba(239,68,68,0.1);border-radius:4px;font-size:9px;color:var(--dg)">⚠ Capital de trabajo necesario: ₲ '+fmtGs(Math.abs(R.saldoFlT1))+' (USD '+fmtUsd(Math.abs(R.saldoFlT1)/c)+')</div>':'')+
+
+    /* Resumen de asignación por categoría de gasto */
+    '<div class="rs" style="margin-top:14px">Asignación por Categoría de Gasto</div>'+
+    '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:6px">Montos que se asignarán al aprobar el proyecto</div>'+
+    buildCatSummary(R,c);
+}
+
+function buildCatSummary(pr,cot){
+  var cats=[
+    {name:'Maquinaria',val:pr.maq||0,icon:'🔧'},
+    {name:'Camioneta',val:pr.alq||0,icon:'🚙'},
+    {name:'Combustible',val:pr.comb||0,icon:'⛽'},
+    {name:'Consumición',val:pr.cons||0,icon:'🍽'},
+    {name:'Hospedaje',val:pr.hosp||0,icon:'🏨'},
+    {name:'Colaboradores',val:pr.hon||0,icon:'👷'},
+    {name:'Implementos',val:pr.otros||0,icon:'🧰'},
+    {name:'Laboratorio',val:pr.sLab||0,icon:'🔬'},
+    {name:'Peaje',val:pr.peaje||0,icon:'🛣'},
+    {name:'Varios (Equipos)',val:pr.equip||0,icon:'📦'}
+  ];
+  var total=cats.reduce(function(s,c){return s+c.val},0);
+  var html='';
+  cats.forEach(function(cat){
+    if(cat.val<=0)return;
+    var pct=total>0?Math.round(cat.val/total*100):0;
+    html+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)">'+
+      '<span style="font-size:12px;width:18px;text-align:center">'+cat.icon+'</span>'+
+      '<span style="flex:1;font-size:11px;color:rgba(255,255,255,0.7)">'+cat.name+'</span>'+
+      '<span style="font-size:10px;color:rgba(255,255,255,0.4);margin-right:6px">'+pct+'%</span>'+
+      '<span style="font-size:11px;font-weight:600;color:#fff;min-width:80px;text-align:right">₲ '+fmtGs(cat.val)+'</span>'+
+    '</div>';
+  });
+  html+='<div style="display:flex;justify-content:space-between;padding:8px 0 2px;border-top:1px solid var(--g);margin-top:4px;font-weight:700;font-size:12px;color:#fff">'+
+    '<span>TOTAL ASIGNADO</span><span style="color:var(--g)">₲ '+fmtGs(total)+'</span></div>'+
+    '<div style="text-align:right;font-size:10px;color:var(--g)">USD '+fmtUsd(cot>0?total/cot:0)+'</div>';
+  return html;
 }
 
 /* ═══════════════════════════════════════ */
@@ -1309,7 +1396,18 @@ function confirmApprove(){
     fechaRegistro:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){
     var pres=p.presupuesto||{};
-    var asig={Maquinaria:pres.alq||0,Combustible:pres.comb||0,'Consumición':pres.cons||0,Hospedaje:pres.hosp||0,Colaboradores:pres.hon||0,'Implementos de trabajo':pres.otros||0,Laboratorio:pres.sLab||0,Peaje:pres.peaje||0,Varios:pres.equip||0};
+    var asig={
+      Maquinaria:pres.maq||0,
+      Camioneta:pres.alq||0,
+      Combustible:pres.comb||0,
+      'Consumición':pres.cons||0,
+      Hospedaje:pres.hosp||0,
+      Colaboradores:pres.hon||0,
+      'Implementos de trabajo':pres.otros||0,
+      Laboratorio:pres.sLab||0,
+      Peaje:pres.peaje||0,
+      Varios:pres.equip||0
+    };
     var promises=[];
     Object.keys(asig).forEach(function(k){if(asig[k]>0)promises.push(db.collection('proyectos').doc(p.id).collection('asignaciones').doc(k).set({monto:asig[k],categoria:k}))});
     return Promise.all(promises);
