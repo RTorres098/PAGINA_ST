@@ -676,12 +676,22 @@ function buildFormHTML(){
     '<div class="aux-box" id="auxPesos"></div>'+
   '</div>'+
 
-  /* ── RESUMEN: Margen y Monto a Solicitar ── */
+  /* ── RESUMEN: Monto a Solicitar ── */
   '<div class="sc">Monto a Solicitar</div>'+
-  '<div class="cd"><div class="g2">'+
-    '<div class="f"><label>Monto a solicitar (USD)</label><input id="montoSolicitar" type="number" oninput="calcSolicitar()"><div class="f-hint">Cifra redondeada para propuesta al cliente</div></div>'+
-    '<div class="f"><label>Margen resultante</label><input id="margenResult" readonly style="background:var(--sf2);font-weight:700;color:var(--g)"></div>'+
-  '</div></div>';
+  '<div class="cd">'+
+    '<div style="background:var(--sf2);border-radius:8px;padding:12px 14px;margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase">Total calculado (costos + imprevisto + retención)</span></div>'+
+      '<div class="g3" style="gap:6px">'+
+        '<div class="f" style="margin:0"><label>Guaraníes</label><input id="totalCalcGs" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Dólares (exacto)</label><input id="totalCalcUsd" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Sugerido (redondeado)</label><input id="totalSugerido" readonly style="background:#fff;font-weight:700;color:var(--g);font-size:13px"></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="g2">'+
+      '<div class="f"><label>Monto a solicitar (USD)</label><input id="montoSolicitar" type="number" oninput="calcSolicitar()" style="font-size:14px;font-weight:700"><div class="f-hint">Escribí tu cifra final — dejá vacío para usar el sugerido</div></div>'+
+      '<div class="f"><label>Margen resultante</label><input id="margenResult" readonly style="background:var(--sf2);font-weight:700;color:var(--g)"></div>'+
+    '</div>'+
+  '</div>';
 }
 
 function initFormWidgets(){
@@ -927,6 +937,14 @@ function calc(){
   var subConImp=subDirecto+impTotal;
   var pRet=V('pRet')/100;
   var retIva=subConImp*pRet;
+  var totalCalcGs=subConImp+retIva;
+  var totalCalcUsd=cot>0?totalCalcGs/cot:0;
+  var totalSugerido=Math.ceil(totalCalcUsd/100)*100;
+
+  /* Mostrar totales calculados */
+  setV('totalCalcGs','₲ '+fmtGs(totalCalcGs));
+  setV('totalCalcUsd','USD '+fmtUsd(totalCalcUsd));
+  setV('totalSugerido','USD '+fmtUsd(totalSugerido));
 
   /* Margen = montoSolicitar*cot - costoDirecto */
   var mEl=document.getElementById('montoSolicitar');
@@ -941,10 +959,8 @@ function calc(){
     totalProyectoGs=montoSol*cot;
     margen=totalProyectoGs-subDirecto;
   }else{
-    /* Auto-calcular redondeado a centenas */
-    totalProyectoGs=subConImp+retIva;
-    var sugUsd=cot>0?totalProyectoGs/cot:0;
-    montoSol=Math.ceil(sugUsd/100)*100;
+    /* Auto-calcular usando el sugerido redondeado */
+    montoSol=totalSugerido;
     if(mEl)mEl.value=montoSol;
     totalProyectoGs=montoSol*cot;
     margen=totalProyectoGs-subDirecto;
