@@ -1299,202 +1299,102 @@ function exportXlsx(){
   if(typeof XLSX==='undefined'){toast('❌ Librería XLSX no cargó');return;}
   var p=ALL.find(function(x){return x._id===editingId});
   if(!p||!p.presupuesto){toast('❌ Sin datos de presupuesto');return;}
-  var pr=p.presupuesto;
-  var c=pr.cot||p.cotizacion||6500;
+  toast('⏳ Generando Excel...');
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET','TEMPLATE_PRESUPUESTO.xlsx',true);
+  xhr.responseType='arraybuffer';
+  xhr.onload=function(){
+    if(xhr.status!==200){toast('❌ Template no encontrado — copiá TEMPLATE_PRESUPUESTO.xlsx a la carpeta presupuesto/');return;}
+    try{
+      var wb=XLSX.read(new Uint8Array(xhr.response),{type:'array',cellStyles:true,cellFormula:true});
+      fillTemplate(wb,p);
+      var safeName=(p.nombre||'PRESUPUESTO').replace(/[^\w]/g,'_');
+      XLSX.writeFile(wb,'Presupuesto_'+safeName+'.xlsx',{cellStyles:true});
+      toast('✅ Excel exportado con formato');
+    }catch(e){console.error('Export error:',e);toast('❌ Error: '+e.message);}
+  };
+  xhr.onerror=function(){toast('❌ Error de red al cargar template');};
+  xhr.send();
+}
+function fillTemplate(wb,p){
+  var pr=p.presupuesto||{};var c=pr.cot||p.cotizacion||6500;
   var u=function(gs){return c>0?gs/c:0};
-
-  var wb=XLSX.utils.book_new();
-
-  /* ─── Hoja 1: SUPUESTOS ─── */
-  var sup=[
-    ['HOJA DE SUPUESTOS — PARÁMETROS GENERALES'],
-    [],['','PARÁMETROS GENERALES'],
-    ['','Cotización USD (Gs/USD)',c,'','Tipo cambio BCP referencial'],
-    ['','Imprevisto (%)',(pr.pImp||10)/100,'','Colchón operativo sobre subtotal directo'],
-    ['','Retención IVA (%)',(pr.pRet||7)/100,'','Retención DNIT'],
-    ['','Anticipo (%)',(pr.pAnt||50)/100,'','Política comercial fija — todos los clientes'],
-    ['','Saldo contra entrega (%)',(100-(pr.pAnt||50))/100,'','Contra entrega de informe final'],
-    [],['','DATOS DEL PROYECTO'],
-    ['','Nombre del proyecto',p.nombre||''],
-    ['','Nº Calicatas',pr.cal||0],
-    ['','Muestras por calicata',pr.mpc||3],
-    ['','Nº Barrenadas',pr.bar||0],
-    ['','Muestras por barrenada',pr.mpb||1],
-    ['','Total muestras calicatas',pr.tmCal||0],
-    ['','Total muestras barrenadas',pr.tmBar||0],
-    ['','Total muestras',pr.tm||0],
-    ['','Superficie (ha)',pr.sup||0],
-    ['','Densidad (ha/calicata)',pr.densHa||0],
-    [],['','MOVILIDAD Y LOGÍSTICA'],
-    ['','Nº Vehículos',pr.nVehiculos||2,'','Camionetas 4x4'],
-    ['','Días de campo',pr.diasCampo||4,'','Duración trabajo de campo'],
-    ['','Días totales (incl. traslado)',pr.diasTotal||5,'','Campo + movilización'],
-    ['','Km por viaje (ida+vuelta)',pr.distKm||350,'','Distancia al sitio'],
-    ['','Nº Viajes',pr.nViajes||2,'','Viajes totales durante el proyecto'],
-    ['','Consumo (L/100km)',pr.consumo||12,'','Consumo estimado camioneta 4x4'],
-    ['','Precio combustible (Gs/L)',pr.pComb||9000,'','Precio actual gasoil'],
-    ['','Precio alquiler/día (Gs)',pr.cAlq||715000],
-    ['','Nº Personas equipo campo',pr.personas||4,'','Para cálculo de viáticos'],
-    ['','Viático/persona/día (Gs)',pr.cCons||100000,'','Alimentación'],
-    ['','Hospedaje/persona/día (Gs)',pr.cHosp||100000,'','Alojamiento rural']
-  ];
-  var ws1=XLSX.utils.aoa_to_sheet(sup);
-  ws1['!cols']=[{wch:4},{wch:32},{wch:16},{wch:4},{wch:40}];
-  XLSX.utils.book_append_sheet(wb,ws1,'SUPUESTOS');
-
-  /* ─── Hoja 2: Preparación_campo ─── */
-  var prep=[
-    ['PREPARACIÓN / DESCRIPCIÓN DE CALICATAS — COSTOS DE CAMPO'],
-    ['Nº','Categoría','Concepto','Cant.','Unidad','Días','Costo Unit. (Gs)','Subtotal (Gs)','Subtotal (USD)'],
-    [],['','HONORARIOS PROFESIONALES']
-  ];
-  var honData=p.honorarios||[];
-  honData.forEach(function(h,i){
-    var sub=0;
-    if(h.unidad==='Por calicata')sub=(h.cantidad||1)*(h.costoUnit||0)*(pr.cal||0);
-    else sub=(h.cantidad||1)*(h.costoUnit||0)*(h.dias||1);
-    prep.push(['1.'+(i+1),h.categoria||'Honorarios',h.nombre||'',h.cantidad||1,h.unidad||'Honorario fijo',h.dias||1,h.costoUnit||0,sub,u(sub)]);
-  });
-  prep.push(['','Subtotal','','','','','',pr.hon||0,u(pr.hon||0)]);
-  prep.push([],['','MOVILIDAD']);
-  prep.push(['2.1','Movilidad','Alquiler de vehículo','','Camioneta 4x4','','',pr.alq||0,u(pr.alq||0)]);
-  prep.push(['2.2','Movilidad','Combustible','','Global','','',pr.comb||0,u(pr.comb||0)]);
-  prep.push(['','Subtotal','','','','','',(pr.alq||0)+(pr.comb||0),u((pr.alq||0)+(pr.comb||0))]);
-  prep.push([],['','VIÁTICOS / HOSPEDAJE']);
-  prep.push(['3.1','Viáticos','Consumición','','Global','','',pr.cons||0,u(pr.cons||0)]);
-  prep.push(['3.2','Viáticos','Hospedaje','','Global','','',pr.hosp||0,u(pr.hosp||0)]);
-  prep.push(['','Subtotal','','','','','',(pr.cons||0)+(pr.hosp||0),u((pr.cons||0)+(pr.hosp||0))]);
-  prep.push([],['','USO DE EQUIPOS']);
-  EQUIPOS.forEach(function(eq,i){
-    prep.push(['4.'+(i+1),'Equipos',eq.name,'','Unidad','',eq.costoMes]);
-  });
-  prep.push(['','Subtotal','','','','','',pr.equip||0,u(pr.equip||0)]);
-  prep.push([],['','OTROS GASTOS']);
-  prep.push(['5.1','Otros','Materiales y envíos','','Global','','',pr.otros||0,u(pr.otros||0)]);
-  prep.push(['5.2','Otros','Peaje','','','','',pr.peaje||0,u(pr.peaje||0)]);
-  prep.push(['','Subtotal','','','','','',(pr.otros||0)+(pr.peaje||0),u((pr.otros||0)+(pr.peaje||0))]);
-  prep.push([]);
-  prep.push(['TOTAL PREPARACIÓN DE CAMPO','','','','','','',pr.sPrep||0,u(pr.sPrep||0)]);
-  var ws2=XLSX.utils.aoa_to_sheet(prep);
-  ws2['!cols']=[{wch:8},{wch:24},{wch:24},{wch:6},{wch:14},{wch:6},{wch:14},{wch:16},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws2,'Preparación_campo');
-
-  /* ─── Hoja 3: Laboratorio ─── */
-  var lab=[
-    ['ANÁLISIS DE LABORATORIO'],
-    ['Calicatas: '+(pr.cal||0)+' × '+(pr.mpc||3)+' muestras = '+(pr.tmCal||0)+' | Barrenadas: '+(pr.bar||0)+' × '+(pr.mpb||1)+' = '+(pr.tmBar||0)+' | Total: '+(pr.tm||0)],
-    ['Nº','Concepto','Cantidad','Unidad','Costo unitario (Gs)','Costo total (Gs)','Costo total (USD)']
-  ];
-  LAB_PRES.forEach(function(a,i){
-    var qty=a.appliesTo==='calicatas'?(pr.tmCal||0):a.appliesTo==='barrenadas'?(pr.tmBar||0):(pr.tm||0);
-    var total=qty*a.price;
-    lab.push([i+1,a.name,qty,'Muestra',a.price,total,u(total)]);
-  });
-  lab.push(['TOTAL LABORATORIO','','','','',pr.sLab||0,u(pr.sLab||0)]);
-  var ws3=XLSX.utils.aoa_to_sheet(lab);
-  ws3['!cols']=[{wch:6},{wch:32},{wch:10},{wch:10},{wch:16},{wch:16},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws3,'Laboratorio');
-
-  /* ─── Hoja 4: Informe_final ─── */
-  var inf=[
-    ['INFORME FINAL — HONORARIOS DE GABINETE'],
-    ['Nº','Concepto','Cantidad','Unidad','Costo unitario (Gs)','Costo total (Gs)','Costo total (USD)'],
-    [1,'Trabajos SIG y Geoportal',1,'Consultor',1000000,1000000,u(1000000)],
-    [2,'Informe técnico',2,'Consultor',7000000,14000000,u(14000000)],
-    [3,'Traducción',0,'Traductor',1950000,0,0],
-    ['TOTAL INFORME FINAL','','','','',pr.sInf||0,u(pr.sInf||0)]
-  ];
-  var ws4=XLSX.utils.aoa_to_sheet(inf);
-  ws4['!cols']=[{wch:6},{wch:28},{wch:10},{wch:10},{wch:16},{wch:16},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws4,'Informe_final');
-
-  /* ─── Hoja 5: Resumen ─── */
-  var totalProy=pr.montoSolicitar||pr.totU||0;
-  var totalProyGs=totalProy*c;
-  var res=[
-    ['CONSOLIDACIÓN DE COSTOS DIRECTOS','','','','','','','ANÁLISIS DE MARGEN SOILTECH'],
-    ['Nº','Descripción','Costo directo (Gs)','Costo directo (USD)','%','Peso riesgo','','Total facturado (=Total proyecto)',totalProyGs],
-    [1,'Preparación / descripción de campo',pr.sPrep||0,u(pr.sPrep||0),(pr.subDirecto>0?(pr.sPrep/pr.subDirecto):0),(pr.pesoPrep||60)/100,'','(-) Costos campo (100%)',-(pr.sPrep||0)],
-    [2,'Análisis de laboratorio',pr.sLab||0,u(pr.sLab||0),(pr.subDirecto>0?(pr.sLab/pr.subDirecto):0),(pr.pesoLab||15)/100,'','(-) Costos laboratorio',-(pr.sLab||0)],
-    [3,'Informe final y gabinete',pr.sInf||0,u(pr.sInf||0),(pr.subDirecto>0?(pr.sInf/pr.subDirecto):0),(pr.pesoInf||25)/100,'','(-) Costos informe final',-(pr.sInf||0)],
-    ['','SUBTOTAL COSTOS DIRECTOS',pr.subDirecto||0,u(pr.subDirecto||0),1,1,'','(=) Margen bruto',pr.margen||0],
-    ['','','','','','','','Margen bruto (%)',pr.margenPct||0],
-    ['','','','','','','','Margen bruto (USD)',u(pr.margen||0)],
-    [],
-    ['IMPREVISTO PONDERADO POR RIESGO'],
-    ['Nº','Rubro','Base imponible','Peso riesgo','Imprevisto asignado (Gs)','Imprevisto asignado (USD)','','RATIOS DEL PROYECTO'],
-    [1,'Preparación campo',pr.sPrep||0,(pr.pesoPrep||60)/100,pr.impPrep||0,u(pr.impPrep||0),'','Costo / hectárea (USD)',pr.costoHa||0],
-    [2,'Laboratorio',pr.sLab||0,(pr.pesoLab||15)/100,pr.impLab||0,u(pr.impLab||0),'','Costo / calicata (USD)',pr.costoCal||0],
-    [3,'Informe final',pr.sInf||0,(pr.pesoInf||25)/100,pr.impInf||0,u(pr.impInf||0),'','Costo / muestra total (USD)',pr.costoMuestra||0],
-    ['','TOTAL IMPREVISTO',pr.subDirecto||0,1,pr.impTotal||0,u(pr.impTotal||0),'','Costo lab / muestra (USD)',pr.costoLabMuestra||0],
-    ['','','','','','','','Densidad muestreo (ha/calicata)',pr.densHa||0],
-    [],
-    ['CÁLCULO DEL MONTO FINAL'],
-    ['','Subtotal costos directos',pr.subDirecto||0,u(pr.subDirecto||0)],
-    ['','Imprevisto ponderado',pr.impTotal||0,u(pr.impTotal||0)],
-    ['','Subtotal con imprevisto',pr.subConImp||0,u(pr.subConImp||0)],
-    ['','Retención IVA ('+(pr.pRet||7)+'%)',pr.retIva||0,u(pr.retIva||0)],
-    ['','Margen',pr.margen||0,u(pr.margen||0)],
-    ['','TOTAL PROYECTO',totalProyGs,totalProy],
-    ['','MONTO A SOLICITAR (USD)','',totalProy],
-    [],
-    ['DETALLE PARA PROPUESTA AL CLIENTE'],
-    ['','Descripción del servicio','Costo (Gs)','Costo (USD)'],
-    ['a)','Preparación de calicatas, descripción y muestreos, resistencia a la penetración.',(pr.prP||0)*c,pr.prP||0],
-    ['b)','Análisis de Laboratorio con determinaciones químicas y físicas.',(pr.prL||0)*c,pr.prL||0],
-    ['c)','Informe final, humedales, carbono orgánico, degradación, descripciones detalladas, cartografía.',(pr.prI||0)*c,pr.prI||0],
-    ['','TOTAL (verificación = Total proyecto)',totalProyGs,(pr.prP||0)+(pr.prL||0)+(pr.prI||0)]
-  ];
-  var ws5=XLSX.utils.aoa_to_sheet(res);
-  ws5['!cols']=[{wch:6},{wch:40},{wch:18},{wch:16},{wch:18},{wch:18},{wch:4},{wch:36},{wch:18}];
-  XLSX.utils.book_append_sheet(wb,ws5,'Resumen');
-
-  /* ─── Hoja 6: Flujo_hitos ─── */
-  var pAntV=(pr.pAnt||50)/100;
-  var pSalV=1-pAntV;
-  var flow=[
-    ['FLUJO DE CAJA — ESTRUCTURA '+(pr.pAnt||50)+'/'+(100-(pr.pAnt||50))],
-    ['','Concepto','Anticipo ('+(pr.pAnt||50)+'%)  Inicio del proyecto','Saldo ('+(100-(pr.pAnt||50))+'%)  Contra entrega','TOTAL'],
-    ['INGRESOS (cobro al cliente)'],
-    ['','% del monto total',pAntV,pSalV,1],
-    ['','Monto cobrado (Gs)',pr.anticGs||0,pr.saldoGs||0,totalProyGs],
-    ['','Monto cobrado (USD)',pr.antic||0,pr.saldo||0,totalProy],
-    ['EGRESOS (costos por tramo)'],
-    ['','Honorarios campo',pr.hon||0,0,pr.hon||0],
-    ['','Movilidad + combustible',(pr.alq||0)+(pr.comb||0),0,(pr.alq||0)+(pr.comb||0)],
-    ['','Viáticos + hospedaje',(pr.cons||0)+(pr.hosp||0),0,(pr.cons||0)+(pr.hosp||0)],
-    ['','Equipos de campo',pr.equip||0,0,pr.equip||0],
-    ['','Otros gastos de campo',(pr.otros||0)+(pr.peaje||0),0,(pr.otros||0)+(pr.peaje||0)],
-    ['','Laboratorio',pr.sLab||0,0,pr.sLab||0],
-    ['','Informe final + gabinete',0,pr.sInf||0,pr.sInf||0],
-    ['','TOTAL EGRESOS',pr.egresosT1||0,pr.egresosT2||0,(pr.egresosT1||0)+(pr.egresosT2||0)],
-    ['POSICIÓN DE CAJA'],
-    ['','Saldo del tramo (Gs)',pr.saldoFlT1||0,pr.saldoFlT2||0,pr.margen||0],
-    ['','Saldo acumulado (Gs)',pr.saldoFlT1||0,pr.margen||0,pr.margen||0],
-    ['','Saldo acumulado (USD)',u(pr.saldoFlT1||0),u(pr.margen||0),u(pr.margen||0)],
-    ['NECESIDAD DE CAPITAL DE TRABAJO'],
-    ['','Déficit máximo del proyecto (Gs)',pr.saldoFlT1<0?pr.saldoFlT1:0,'','← Monto que SoilTech financia con capital propio'],
-    ['','Déficit máximo (USD)',pr.saldoFlT1<0?u(pr.saldoFlT1):0],
-    ['','Recuperación del capital en tramo 2',pr.saldoFlT2||0],
-    ['','Margen final (= saldo acumulado final)',pr.margen||0,u(pr.margen||0)]
-  ];
-  var ws6=XLSX.utils.aoa_to_sheet(flow);
-  ws6['!cols']=[{wch:4},{wch:36},{wch:18},{wch:18},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws6,'Flujo_hitos');
-
-  /* ─── Hoja 7: Equipos ─── */
-  var eqSheet=[['#','Equipo','Costo adquisición','Vida útil (meses)','Costo uso/mes']];
-  EQUIPOS.forEach(function(eq,i){
-    eqSheet.push([i+1,eq.name,eq.costoAdq,eq.vidaMeses,eq.costoMes]);
-  });
-  var ws7=XLSX.utils.aoa_to_sheet(eqSheet);
-  ws7['!cols']=[{wch:4},{wch:20},{wch:18},{wch:16},{wch:16}];
-  XLSX.utils.book_append_sheet(wb,ws7,'Equipos');
-
-  /* ─── Descargar ─── */
-  var safeName=(p.nombre||'PRESUPUESTO').replace(/[^\w]/g,'_');
-  XLSX.writeFile(wb,'Presupuesto_'+safeName+'.xlsx');
-  toast('📥 Excel exportado');
+  var S=function(ws,ref,val){if(!ws[ref])ws[ref]={};ws[ref].v=val;ws[ref].t=(typeof val==='string')?'s':'n'};
+  /* ═══ SUPUESTOS ═══ */
+  var ws=wb.Sheets['SUPUESTOS'];
+  if(ws){
+    S(ws,'C4',c);S(ws,'C5',(pr.pImp||10)/100);S(ws,'C6',(pr.pRet||7)/100);S(ws,'C7',(pr.pAnt||50)/100);S(ws,'C8',(100-(pr.pAnt||50))/100);
+    S(ws,'C12',p.nombre||'');S(ws,'C13',pr.cal||0);S(ws,'C14',pr.mpc||3);S(ws,'C15',pr.bar||0);S(ws,'C16',pr.mpb||1);
+    S(ws,'C17',pr.tmCal||0);S(ws,'C18',pr.tmBar||0);S(ws,'C19',pr.tm||0);S(ws,'C20',pr.sup||0);S(ws,'C21',pr.densHa||0);
+    S(ws,'C24',pr.nVehiculos||2);S(ws,'C25',pr.diasCampo||4);S(ws,'C26',pr.diasTotal||5);S(ws,'C27',pr.distKm||350);S(ws,'C28',pr.nViajes||2);
+    S(ws,'C29',pr.consumo||12);S(ws,'C30',pr.pComb||9000);S(ws,'C31',pr.cAlq||715000);S(ws,'C32',pr.personas||4);S(ws,'C33',pr.cCons||100000);S(ws,'C34',pr.cHosp||100000);
+    var litros=(pr.distKm||350)*(pr.consumo||12)/100;
+    S(ws,'C37',litros);S(ws,'C38',litros*1.2);S(ws,'C39',pr.comb||0);S(ws,'C40',pr.alq||0);S(ws,'C41',pr.cons||0);S(ws,'C42',pr.hosp||0);
+  }
+  /* ═══ Preparación_campo ═══ */
+  ws=wb.Sheets['Preparación_campo'];
+  if(ws){
+    var hon=p.honorarios||[];
+    for(var i=0;i<7;i++){var row=5+i;var h=hon[i]||{};
+      S(ws,'C'+row,h.nombre||'');S(ws,'D'+row,h.cantidad||0);S(ws,'E'+row,h.unidad||'Honorario fijo');S(ws,'F'+row,h.dias||0);S(ws,'G'+row,h.costoUnit||0);
+      var sub=0;if(h.unidad==='Por calicata')sub=(h.cantidad||0)*(h.costoUnit||0)*(pr.cal||0);else sub=(h.cantidad||0)*(h.costoUnit||0)*(h.dias||0);
+      S(ws,'H'+row,sub);S(ws,'I'+row,u(sub));
+    }
+    S(ws,'H12',pr.hon||0);S(ws,'I12',u(pr.hon||0));
+    S(ws,'H14',pr.alq||0);S(ws,'I14',u(pr.alq||0));S(ws,'H15',pr.comb||0);S(ws,'I15',u(pr.comb||0));
+    S(ws,'H16',(pr.alq||0)+(pr.comb||0));S(ws,'I16',u((pr.alq||0)+(pr.comb||0)));
+    S(ws,'H18',pr.cons||0);S(ws,'I18',u(pr.cons||0));S(ws,'H19',pr.hosp||0);S(ws,'I19',u(pr.hosp||0));
+    S(ws,'H20',(pr.cons||0)+(pr.hosp||0));S(ws,'I20',u((pr.cons||0)+(pr.hosp||0)));
+    S(ws,'H27',pr.equip||0);S(ws,'I27',u(pr.equip||0));
+    S(ws,'H33',(pr.otros||0)+(pr.peaje||0));S(ws,'I33',u((pr.otros||0)+(pr.peaje||0)));
+    S(ws,'H35',pr.sPrep||0);S(ws,'I35',u(pr.sPrep||0));
+  }
+  /* ═══ Laboratorio ═══ */
+  ws=wb.Sheets['Laboratorio'];
+  if(ws){
+    S(ws,'A2','Calicatas: '+(pr.cal||0)+' × '+(pr.mpc||3)+' = '+(pr.tmCal||0)+' | Barrenadas: '+(pr.bar||0)+' × '+(pr.mpb||1)+' = '+(pr.tmBar||0)+' | Total: '+(pr.tm||0));
+    var lq=[pr.tmCal||0,pr.tmBar||0,pr.tmCal||0,pr.tm||0],lp=[255000,190000,55000,75000];
+    for(var j=0;j<4;j++){var r2=5+j;S(ws,'C'+r2,lq[j]);S(ws,'F'+r2,lq[j]*lp[j]);S(ws,'G'+r2,u(lq[j]*lp[j]));}
+    S(ws,'F10',pr.sLab||0);S(ws,'G10',u(pr.sLab||0));
+  }
+  /* ═══ Informe_final ═══ */
+  ws=wb.Sheets['Informe_final'];
+  if(ws){S(ws,'F8',pr.sInf||0);S(ws,'G8',u(pr.sInf||0));}
+  /* ═══ Resumen ═══ */
+  ws=wb.Sheets['Resumen'];
+  if(ws){
+    var tp=pr.montoSolicitar||pr.totU||0,tpg=tp*c;
+    S(ws,'C3',pr.sPrep||0);S(ws,'D3',u(pr.sPrep||0));S(ws,'C4',pr.sLab||0);S(ws,'D4',u(pr.sLab||0));S(ws,'C5',pr.sInf||0);S(ws,'D5',u(pr.sInf||0));
+    S(ws,'C6',pr.subDirecto||0);S(ws,'D6',u(pr.subDirecto||0));
+    S(ws,'F3',(pr.pesoPrep||60)/100);S(ws,'F4',(pr.pesoLab||15)/100);S(ws,'F5',(pr.pesoInf||25)/100);
+    S(ws,'I2',tpg);S(ws,'I3',-(pr.sPrep||0));S(ws,'I4',-(pr.sLab||0));S(ws,'I5',-(pr.sInf||0));
+    S(ws,'I6',pr.margen||0);S(ws,'I7',pr.margenPct||0);S(ws,'I8',u(pr.margen||0));
+    S(ws,'E10',pr.impPrep||0);S(ws,'F10',u(pr.impPrep||0));S(ws,'E11',pr.impLab||0);S(ws,'F11',u(pr.impLab||0));
+    S(ws,'E12',pr.impInf||0);S(ws,'F12',u(pr.impInf||0));S(ws,'E13',pr.impTotal||0);S(ws,'F13',u(pr.impTotal||0));
+    S(ws,'I11',pr.costoHa||0);S(ws,'I12',pr.costoCal||0);S(ws,'I13',pr.costoMuestra||0);S(ws,'I14',pr.costoLabMuestra||0);S(ws,'I15',pr.densHa||0);
+    S(ws,'C17',pr.subDirecto||0);S(ws,'D17',u(pr.subDirecto||0));S(ws,'C18',pr.impTotal||0);S(ws,'D18',u(pr.impTotal||0));
+    S(ws,'C19',pr.subConImp||0);S(ws,'D19',u(pr.subConImp||0));S(ws,'C20',pr.retIva||0);S(ws,'D20',u(pr.retIva||0));
+    S(ws,'C21',pr.margen||0);S(ws,'D21',u(pr.margen||0));S(ws,'C22',tpg);S(ws,'D22',tp);S(ws,'D23',tp);
+    S(ws,'C28',(pr.prP||0)*c);S(ws,'D28',pr.prP||0);S(ws,'C29',(pr.prL||0)*c);S(ws,'D29',pr.prL||0);
+    S(ws,'C30',(pr.prI||0)*c);S(ws,'D30',pr.prI||0);S(ws,'C31',tpg);S(ws,'D31',tp);
+  }
+  /* ═══ Flujo_hitos ═══ */
+  ws=wb.Sheets['Flujo_hitos'];
+  if(ws){
+    var tp3=pr.montoSolicitar||pr.totU||0,tpg3=tp3*c,pa3=(pr.pAnt||50)/100;
+    S(ws,'C5',pa3);S(ws,'D5',1-pa3);S(ws,'C6',pr.anticGs||0);S(ws,'D6',pr.saldoGs||0);S(ws,'E6',tpg3);
+    S(ws,'C7',pr.antic||0);S(ws,'D7',pr.saldo||0);S(ws,'E7',tp3);
+    S(ws,'C10',pr.hon||0);S(ws,'E10',pr.hon||0);S(ws,'C11',(pr.alq||0)+(pr.comb||0));S(ws,'E11',(pr.alq||0)+(pr.comb||0));
+    S(ws,'C12',(pr.cons||0)+(pr.hosp||0));S(ws,'E12',(pr.cons||0)+(pr.hosp||0));S(ws,'C13',pr.equip||0);S(ws,'E13',pr.equip||0);
+    S(ws,'C14',(pr.otros||0)+(pr.peaje||0));S(ws,'E14',(pr.otros||0)+(pr.peaje||0));S(ws,'C15',pr.sLab||0);S(ws,'E15',pr.sLab||0);
+    S(ws,'D16',pr.sInf||0);S(ws,'E16',pr.sInf||0);
+    S(ws,'C18',pr.egresosT1||0);S(ws,'D18',pr.egresosT2||0);S(ws,'E18',(pr.egresosT1||0)+(pr.egresosT2||0));
+    S(ws,'C21',pr.saldoFlT1||0);S(ws,'D21',pr.saldoFlT2||0);S(ws,'E21',pr.margen||0);
+    S(ws,'C22',pr.saldoFlT1||0);S(ws,'D22',pr.margen||0);S(ws,'E22',pr.margen||0);
+    S(ws,'C23',u(pr.saldoFlT1||0));S(ws,'D23',u(pr.margen||0));S(ws,'E23',u(pr.margen||0));
+    S(ws,'C26',pr.saldoFlT1<0?pr.saldoFlT1:0);S(ws,'C27',pr.saldoFlT1<0?u(pr.saldoFlT1):0);
+    S(ws,'C28',pr.saldoFlT2||0);S(ws,'C30',pr.margen||0);S(ws,'D30',u(pr.margen||0));
+  }
 }
 </script>
 </body>
