@@ -235,7 +235,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-populate@1.21.0/browser/xlsx-populate.min.js"></script>
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
 <script>
@@ -706,11 +706,18 @@ function buildFormHTML(){
   '<div class="sc">Monto a Solicitar</div>'+
   '<div class="cd">'+
     '<div style="background:var(--sf2);border-radius:8px;padding:12px 14px;margin-bottom:10px">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase">Total calculado (costos + imprevisto + retención)</span></div>'+
-      '<div class="g3" style="gap:6px">'+
+      '<div style="font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;margin-bottom:8px">Total calculado (costos + imprevisto + retención)</div>'+
+      '<div class="g4" style="gap:6px;margin-bottom:6px">'+
         '<div class="f" style="margin:0"><label>Guaraníes</label><input id="totalCalcGs" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Margen SoilTech Gs</label><div style="display:flex;gap:4px;align-items:center"><input id="pctMargen" type="number" value="15" style="width:50px;font-size:12px;text-align:center" oninput="calc()"><span style="font-size:10px;color:var(--tx3)">%</span><input id="margenSoilGs" readonly style="flex:1;background:#fff;font-weight:600;color:var(--gd);font-size:12px"></div></div>'+
+        '<div class="f" style="margin:0"><label>Monto total Gs.</label><input id="montoTotalGs" readonly style="background:#fff;font-weight:700;color:var(--g);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"></div>'+
+      '</div>'+
+      '<div class="g4" style="gap:6px">'+
         '<div class="f" style="margin:0"><label>Dólares (exacto)</label><input id="totalCalcUsd" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
-        '<div class="f" style="margin:0"><label>Sugerido (redondeado)</label><input id="totalSugerido" readonly style="background:#fff;font-weight:700;color:var(--g);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Margen SoilTech USD</label><input id="margenSoilUsd" readonly style="background:#fff;font-weight:600;color:var(--gd);font-size:12px"></div>'+
+        '<div class="f" style="margin:0"><label>Monto total USD</label><input id="montoTotalUsd" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Sugerido Redondeado USD</label><input id="totalSugerido" readonly style="background:#fff;font-weight:700;color:var(--g);font-size:14px"></div>'+
       '</div>'+
     '</div>'+
     '<div class="g2">'+
@@ -779,6 +786,7 @@ function populateForm(p){
   document.getElementById('pesoPrep').value=pr.pesoPrep||60;
   document.getElementById('pesoLab').value=pr.pesoLab||15;
   document.getElementById('pesoInf').value=pr.pesoInf||25;
+  if(pr.pctMargen)document.getElementById('pctMargen').value=pr.pctMargen;
   /* Monto a solicitar — dejar que recalcule según los costos actuales */
   /* Si el usuario quiere fijar un monto, lo escribe manualmente en el campo */
   calc();
@@ -1003,9 +1011,20 @@ function calc(){
   var totalCalcUsd=cot>0?totalCalcGs/cot:0;
   var totalSugerido=Math.ceil(totalCalcUsd/100)*100;
 
-  /* Mostrar totales calculados */
+  /* Mostrar totales calculados + Margen SoilTech */
+  var pctMargen=V('pctMargen')/100;
+  var margenSoilGs=(sPrep+sLab)*pctMargen;
+  var margenSoilUsd=cot>0?margenSoilGs/cot:0;
+  var montoTotalGs=totalCalcGs+margenSoilGs;
+  var montoTotalUsd=cot>0?montoTotalGs/cot:0;
+  var totalSugerido=Math.ceil(montoTotalUsd/100)*100;
+
   setV('totalCalcGs','₲ '+fmtGs(totalCalcGs));
   setV('totalCalcUsd','USD '+fmtUsd(totalCalcUsd));
+  setV('margenSoilGs','Gs. '+fmtGs(margenSoilGs));
+  setV('margenSoilUsd','USD '+fmtUsd(margenSoilUsd));
+  setV('montoTotalGs','Gs. '+fmtGs(montoTotalGs));
+  setV('montoTotalUsd','USD '+fmtUsd(montoTotalUsd));
   setV('totalSugerido','USD '+fmtUsd(totalSugerido));
 
   /* Margen = montoSolicitar*cot - costoDirecto */
@@ -1076,6 +1095,7 @@ function calc(){
     /* Consolidación */
     subDirecto:subDirecto,impPrep:impPrep,impLab:impLab,impInf:impInf,impTotal:impTotal,
     subConImp:subConImp,retIva:retIva,
+    pctMargen:V('pctMargen'),margenSoilGs:margenSoilGs,
     /* Monto final */
     montoSolicitar:montoSol,totalProyectoGs:totalProyectoGs,margen:margen,margenPct:margenPct,
     totU:montoSol,totGs:totalProyectoGs,
@@ -1359,7 +1379,7 @@ function resetForm(){if(confirm('¿Limpiar?'))location.reload()}
 /*  EXPORTAR EXCEL — formato TEMPLATE     */
 /* ═══════════════════════════════════════ */
 function exportXlsx(){
-  if(typeof XLSX==='undefined'){toast('❌ Librería XLSX no cargó');return;}
+  if(typeof XlsxPopulate==='undefined'){toast('❌ Librería xlsx-populate no cargó');return;}
   var p=ALL.find(function(x){return x._id===editingId});
   if(!p||!p.presupuesto){toast('❌ Sin datos de presupuesto');return;}
   toast('⏳ Generando Excel...');
@@ -1368,13 +1388,16 @@ function exportXlsx(){
   xhr.responseType='arraybuffer';
   xhr.onload=function(){
     if(xhr.status!==200){toast('❌ Template no encontrado — copiá TEMPLATE_PRESUPUESTO.xlsx a la carpeta presupuesto/');return;}
-    try{
-      var wb=XLSX.read(new Uint8Array(xhr.response),{type:'array',cellStyles:true,cellFormula:true});
+    XlsxPopulate.fromDataAsync(xhr.response).then(function(wb){
       fillTemplate(wb,p);
+      return wb.outputAsync();
+    }).then(function(blob){
       var safeName=(p.nombre||'PRESUPUESTO').replace(/[^\w]/g,'_');
-      XLSX.writeFile(wb,'Presupuesto_'+safeName+'.xlsx',{cellStyles:true});
+      var url=URL.createObjectURL(new Blob([blob],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+      var a=document.createElement('a');a.href=url;a.download='Presupuesto_'+safeName+'.xlsx';a.click();
+      URL.revokeObjectURL(url);
       toast('✅ Excel exportado con formato');
-    }catch(e){console.error('Export error:',e);toast('❌ Error: '+e.message);}
+    }).catch(function(e){console.error('Export error:',e);toast('❌ Error: '+e.message);});
   };
   xhr.onerror=function(){toast('❌ Error de red al cargar template');};
   xhr.send();
@@ -1382,9 +1405,9 @@ function exportXlsx(){
 function fillTemplate(wb,p){
   var pr=p.presupuesto||{};var c=pr.cot||p.cotizacion||6500;
   var u=function(gs){return c>0?gs/c:0};
-  var S=function(ws,ref,val){if(!ws[ref])ws[ref]={};ws[ref].v=val;ws[ref].t=(typeof val==='string')?'s':'n'};
+  var S=function(ws,ref,val){try{ws.cell(ref).value(val);}catch(e){}};
   /* ═══ SUPUESTOS ═══ */
-  var ws=wb.Sheets['SUPUESTOS'];
+  var ws=wb.sheet('SUPUESTOS');
   if(ws){
     S(ws,'C4',c);S(ws,'C5',(pr.pImp||10)/100);S(ws,'C6',(pr.pRet||7)/100);S(ws,'C7',(pr.pAnt||50)/100);S(ws,'C8',(100-(pr.pAnt||50))/100);
     S(ws,'C12',p.nombre||'');S(ws,'C13',pr.cal||0);S(ws,'C14',pr.mpc||3);S(ws,'C15',pr.bar||0);S(ws,'C16',pr.mpb||1);
@@ -1395,7 +1418,7 @@ function fillTemplate(wb,p){
     S(ws,'C37',litros);S(ws,'C38',litros*1.2);S(ws,'C39',pr.comb||0);S(ws,'C40',pr.alq||0);S(ws,'C41',pr.cons||0);S(ws,'C42',pr.hosp||0);
   }
   /* ═══ Preparación_campo ═══ */
-  ws=wb.Sheets['Preparación_campo'];
+  ws=wb.sheet('Preparación_campo');
   if(ws){
     var hon=p.honorarios||[];
     for(var i=0;i<7;i++){var row=5+i;var h=hon[i]||{};
@@ -1413,7 +1436,7 @@ function fillTemplate(wb,p){
     S(ws,'H35',pr.sPrep||0);S(ws,'I35',u(pr.sPrep||0));
   }
   /* ═══ Laboratorio ═══ */
-  ws=wb.Sheets['Laboratorio'];
+  ws=wb.sheet('Laboratorio');
   if(ws){
     S(ws,'A2','Calicatas: '+(pr.cal||0)+' × '+(pr.mpc||3)+' = '+(pr.tmCal||0)+' | Barrenadas: '+(pr.bar||0)+' × '+(pr.mpb||1)+' = '+(pr.tmBar||0)+' | Total: '+(pr.tm||0));
     var lq=[pr.tmCal||0,pr.tmBar||0,pr.tmCal||0,pr.tm||0],lp=[255000,190000,55000,75000];
@@ -1421,10 +1444,10 @@ function fillTemplate(wb,p){
     S(ws,'F10',pr.sLab||0);S(ws,'G10',u(pr.sLab||0));
   }
   /* ═══ Informe_final ═══ */
-  ws=wb.Sheets['Informe_final'];
+  ws=wb.sheet('Informe_final');
   if(ws){S(ws,'F8',pr.sInf||0);S(ws,'G8',u(pr.sInf||0));}
   /* ═══ Resumen ═══ */
-  ws=wb.Sheets['Resumen'];
+  ws=wb.sheet('Resumen');
   if(ws){
     var tp=pr.montoSolicitar||pr.totU||0,tpg=tp*c;
     S(ws,'C3',pr.sPrep||0);S(ws,'D3',u(pr.sPrep||0));S(ws,'C4',pr.sLab||0);S(ws,'D4',u(pr.sLab||0));S(ws,'C5',pr.sInf||0);S(ws,'D5',u(pr.sInf||0));
@@ -1442,7 +1465,7 @@ function fillTemplate(wb,p){
     S(ws,'C30',(pr.prI||0)*c);S(ws,'D30',pr.prI||0);S(ws,'C31',tpg);S(ws,'D31',tp);
   }
   /* ═══ Flujo_hitos ═══ */
-  ws=wb.Sheets['Flujo_hitos'];
+  ws=wb.sheet('Flujo_hitos');
   if(ws){
     var tp3=pr.montoSolicitar||pr.totU||0,tpg3=tp3*c,pa3=(pr.pAnt||50)/100;
     S(ws,'C5',pa3);S(ws,'D5',1-pa3);S(ws,'C6',pr.anticGs||0);S(ws,'D6',pr.saldoGs||0);S(ws,'E6',tpg3);
