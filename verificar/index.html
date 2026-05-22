@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Certificado | SoilTech Capacitaciones</title>
+    <meta name="description" content="Verificá la autenticidad de tu certificado SoilTech ingresando el código de verificación.">
+    <meta name="robots" content="index, follow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="circulo_soiltech_2026.png">
+
+    <style>
+        :root {
+            --brand: #34A678;
+            --brand-light: #4DC491;
+            --brand-dark: #278560;
+            --dark: #0E1E1B;
+            --dark-2: #132723;
+            --mid: #245A50;
+            --light-bg: #F5FAF8;
+            --golden: #C9A000;
+            --text: #1A2E2A;
+            --text-mid: #3D5753;
+            --text-light: #7A9994;
+            --white: #FFFFFF;
+            --line: #C8DDD7;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            color: var(--text);
+            background: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ── */
+        nav {
+            background: var(--dark);
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .nav-brand-dot {
+            width: 10px; height: 10px;
+            background: var(--brand);
+            border-radius: 50%;
+        }
+        .nav-brand-text {
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+        }
+        .nav-brand-sub {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            font-weight: 400;
+            margin-left: 6px;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            font-size: 0.78rem;
+            transition: color 0.3s;
+        }
+        .nav-link:hover { color: var(--brand-light); }
+
+        /* ── HERO ── */
+        .hero {
+            background: var(--dark);
+            padding: 4rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--brand), transparent);
+        }
+
+        /* Topographic SVG background */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+        .hero-bg svg { width: 100%; height: 100%; }
+
+        .hero-label {
+            display: inline-block;
+            color: var(--brand);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            color: var(--white);
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+        .hero p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+            max-width: 440px;
+            margin: 0 auto;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* ── MAIN CARD ── */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 0 1.5rem 3rem;
+        }
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(14,30,27,0.06), 0 8px 30px rgba(14,30,27,0.04);
+            max-width: 540px;
+            width: 100%;
+            margin-top: -2.5rem;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .card-inner {
+            padding: 2.5rem 2rem 2rem;
+        }
+        .card-top-bar {
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand), var(--brand-dark));
+        }
+
+        /* ── SEARCH FORM ── */
+        .search-label {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+        .search-wrap {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1rem;
+        }
+        .search-input {
+            flex: 1;
+            padding: 0.85rem 1rem;
+            border: 1.5px solid var(--line);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--light-bg);
+            outline: none;
+            transition: border-color 0.3s, background 0.3s;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .search-input::placeholder {
+            color: var(--text-light);
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.85rem;
+        }
+        .search-input:focus {
+            border-color: var(--brand);
+            background: var(--white);
+        }
+        .search-btn {
+            padding: 0.85rem 1.5rem;
+            background: var(--dark);
+            color: var(--white);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        .search-btn:hover { background: var(--mid); }
+        .search-hint {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            margin-top: -0.4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ── RESULT ── */
+        .result { display: none; }
+        .result.show { display: block; }
+
+        /* ── SUCCESS ── */
+        .result-success {
+            border: 1.5px solid var(--brand);
+            border-radius: 10px;
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .result-success-header {
+            background: var(--brand);
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-check {
+            width: 22px; height: 22px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .result-check svg { width: 13px; height: 13px; }
+        .result-success-header span {
+            color: var(--white);
+            font-weight: 500;
+            font-size: 0.88rem;
+        }
+        .result-body {
+            padding: 1.4rem 1.2rem;
+            background: var(--light-bg);
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.85rem;
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-row-label {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        .result-row-value {
+            color: var(--text);
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* ── ERROR ── */
+        .result-error {
+            border: 1.5px solid #D94F4F;
+            border-radius: 10px;
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .result-error-header {
+            background: #D94F4F;
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-error-header span {
+            color: var(--white);
+            font-weight: 500;
+            font-size: 0.88rem;
+        }
+        .result-error-body {
+            padding: 1.2rem;
+            background: #FEF5F5;
+            font-size: 0.84rem;
+            color: #7A3333;
+            line-height: 1.6;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.72rem;
+            color: var(--text-light);
+        }
+        footer a {
+            color: var(--brand);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 540px) {
+            .hero { padding: 3rem 1.5rem 4rem; }
+            .card-inner { padding: 2rem 1.5rem 1.5rem; }
+            .search-btn { padding: 0.85rem 1rem; font-size: 0.8rem; }
+            .result-row { flex-direction: column; gap: 2px; }
+            .result-row-value { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <a href="index.html" class="nav-brand">
+            <span class="nav-brand-dot"></span>
+            <span class="nav-brand-text">SOILTECH <span class="nav-brand-sub">Capacitaciones</span></span>
+        </a>
+        <a href="index.html" class="nav-link">← Volver al sitio</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg">
+            <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,150 Q100,80 200,150 T400,150 T600,150 T800,150" fill="none" stroke="#34A678" stroke-width="1.5"/>
+                <path d="M0,170 Q120,100 240,170 T480,170 T720,170 T960,170" fill="none" stroke="#34A678" stroke-width="1"/>
+                <path d="M0,130 Q80,60 160,130 T320,130 T480,130 T640,130 T800,130" fill="none" stroke="#34A678" stroke-width="1"/>
+                <path d="M0,190 Q140,120 280,190 T560,190 T840,190" fill="none" stroke="#34A678" stroke-width="0.8"/>
+                <path d="M0,110 Q90,50 180,110 T360,110 T540,110 T720,110" fill="none" stroke="#34A678" stroke-width="0.6"/>
+            </svg>
+        </div>
+        <span class="hero-label">Verificación de Certificados</span>
+        <h1>Validá tu certificado</h1>
+        <p>Ingresá el código que figura en tu certificado para confirmar su autenticidad.</p>
+    </section>
+
+    <!-- MAIN -->
+    <main>
+        <div class="card">
+            <div class="card-top-bar"></div>
+            <div class="card-inner">
+
+                <label class="search-label" for="code-input">Código de verificación</label>
+                <div class="search-wrap">
+                    <input
+                        type="text"
+                        id="code-input"
+                        class="search-input"
+                        placeholder="Ej: ST-ARC-2026-DCE3"
+                        maxlength="20"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <button class="search-btn" id="verify-btn">Verificar</button>
+                </div>
+                <p class="search-hint">El código se encuentra en la esquina inferior derecha del certificado.</p>
+
+                <!-- SUCCESS -->
+                <div class="result result-success" id="result-ok">
+                    <div class="result-success-header">
+                        <div class="result-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <span>Certificado válido</span>
+                    </div>
+                    <div class="result-body" id="result-ok-body"></div>
+                </div>
+
+                <!-- ERROR -->
+                <div class="result result-error" id="result-err">
+                    <div class="result-error-header">
+                        <span>⚠ Certificado no encontrado</span>
+                    </div>
+                    <div class="result-error-body">
+                        El código ingresado no corresponde a ningún certificado emitido por SoilTech.
+                        Verificá que esté bien escrito e intentá de nuevo. Si el problema persiste,
+                        contactanos a <a href="mailto:admin@soiltechpy.com" style="color:#943333">admin@soiltechpy.com</a>.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        © 2026 <a href="index.html">SoilTech</a> · Soluciones Agronómicas · San Lorenzo, Paraguay
+    </footer>
+
+    <script>
+    /* ═══════════════════════════════════════════════════
+       CERTIFICATE DATABASE
+       Para agregar nuevos certificados, simplemente
+       agregá una entrada más al objeto CERTS.
+       ═══════════════════════════════════════════════════ */
+    const CERTS = {
+        "ST-ARC-2026-DCE3": {
+            nombre: "Sady Ovelar",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-135C": {
+            nombre: "Emilio Rodriguez",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-F438": {
+            nombre: "Fani Fabiola Paredes",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-2470": {
+            nombre: "Wladimir Jhonatan Carreras Fretes",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-4800": {
+            nombre: "Rocío Raquel Kopcow Torres",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-222E": {
+            nombre: "Eliana Frutos Mairhofer",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-69DA": {
+            nombre: "Silvana Gonzalez",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-96DC": {
+            nombre: "Claudia Cristina Trinidad Rojas",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-A6AE": {
+            nombre: "Maria del Carmen Leiva",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-5725": {
+            nombre: "Federico Monte Domecq",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-FE79": {
+            nombre: "David Leckie",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-0BF4": {
+            nombre: "Tobias José Mateo Ortiz Riquelme",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        },
+        "ST-ARC-2026-DC5E": {
+            nombre: "Jazmin Otazú",
+            curso: "Capacitación en SIG: ArcGIS Pro & Online",
+            horas: "25 horas",
+            fechas: "18, 20, 21 y 23 de Mayo 2026",
+            sede: "Asunción",
+            emision: "Mayo 2026"
+        }
+    };
+
+    /* ═══ LOGIC ═══ */
+    const input    = document.getElementById('code-input');
+    const btn      = document.getElementById('verify-btn');
+    const resultOk = document.getElementById('result-ok');
+    const resultErr= document.getElementById('result-err');
+    const okBody   = document.getElementById('result-ok-body');
+
+    function hideResults() {
+        resultOk.classList.remove('show');
+        resultErr.classList.remove('show');
+    }
+
+    function verify() {
+        hideResults();
+        const code = input.value.trim().toUpperCase();
+        if (!code) return;
+
+        const cert = CERTS[code];
+
+        if (cert) {
+            const fields = [
+                ['Participante', cert.nombre],
+                ['Curso', cert.curso],
+                ['Carga horaria', cert.horas],
+                ['Fechas', cert.fechas],
+                ['Sede', cert.sede],
+                ['Emisión', cert.emision],
+                ['Código', code],
+            ];
+            okBody.innerHTML = fields.map(([label, value]) =>
+                `<div class="result-row">
+                    <span class="result-row-label">${label}</span>
+                    <span class="result-row-value">${value}</span>
+                </div>`
+            ).join('');
+            resultOk.classList.add('show');
+        } else {
+            resultErr.classList.add('show');
+        }
+    }
+
+    btn.addEventListener('click', verify);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') verify();
+    });
+
+    /* Auto-format: uppercase as they type */
+    input.addEventListener('input', () => {
+        const pos = input.selectionStart;
+        input.value = input.value.toUpperCase();
+        input.setSelectionRange(pos, pos);
+    });
+
+    /* ═══ URL PARAM: auto-verify if ?code=XX ═══ */
+    const urlCode = new URLSearchParams(window.location.search).get('code');
+    if (urlCode) {
+        input.value = urlCode.toUpperCase();
+        setTimeout(verify, 300);
+    }
+    </script>
+
+</body>
+</html>
