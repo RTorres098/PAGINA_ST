@@ -297,8 +297,11 @@ function toast(m){var t=document.getElementById('toast');t.textContent=m;t.class
 
 function loadAll(){
   console.log('loadAll() ejecutándose...');
-  Promise.all([db.collection('proyectos').orderBy('fechaCreacion','desc').limit(100).get(),db.collection('clientes').get()]).then(function(r){
-    ALL=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())});
+  Promise.all([db.collection('proyectos').get(),db.collection('clientes').get()]).then(function(r){
+    // Sin orderBy en la consulta: Firestore excluye docs sin el campo (ej. proyectos creados en la app).
+    var tsMs=function(v){return v&&v.toMillis?v.toMillis():(v instanceof Date?v.getTime():0)};
+    ALL=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())})
+      .sort(function(a,b){return tsMs(b.fechaCreacion||b.fechaRegistro)-tsMs(a.fechaCreacion||a.fechaRegistro)});
     CLIS=r[1].docs.map(function(d){return Object.assign({id:d.id},d.data())});
     console.log('Datos cargados:',ALL.length,'proyectos,',CLIS.length,'clientes');
     renderDashStats();renderDash();
@@ -1324,7 +1327,7 @@ function guardar(){
     presupuesto:R,honorarios:getHonorarios()
   };
   if(editingId){
-    data.fechaCreacion=firebase.firestore.FieldValue.serverTimestamp();
+    data.fechaModificacion=firebase.firestore.FieldValue.serverTimestamp();
     db.collection('proyectos').doc(editingId).update(data).then(function(){toast('✅ Cotización actualizada');backToDash()}).catch(function(e){toast('❌ '+e.message)});
   }else{
     data.fechaCreacion=firebase.firestore.FieldValue.serverTimestamp();
@@ -1393,7 +1396,7 @@ function confirmApprove(){
     nombre:nombre.toUpperCase(),cliente:(p.cliente||'').toUpperCase(),
     valorUsd:valorUsd,descuentoIva:descIva,valorIva:valorUsd*descIva,valorTotal:valorUsd-(valorUsd*descIva),
     estado:'En Curso',fechaInicio:fechaInicio?new Date(fechaInicio+'T12:00:00'):null,fechaFin:null,
-    fechaRegistro:firebase.firestore.FieldValue.serverTimestamp()
+    fechaAprobacion:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){
     var pres=p.presupuesto||{};
     var asig={
@@ -1416,12 +1419,19 @@ function confirmApprove(){
   }).then(function(s){
     var fNum=s.empty?271:s.docs[0].data().numero+1;
     var svc=SERVICIOS.find(function(sv){return sv.code===p.tipoServicio})||SERVICIOS[0];
+    // Monto de la factura en la moneda elegida (antes se usaba el monto USD aunque se eligiera GUARANIES)
+    var cotF=p.cotizacion||6500;
+    var esUsd=moneda.indexOf('DOLAR')>=0;
+    var montoFact=esUsd?montoAnticipo:Math.round(montoAnticipo*cotF);
+    // Datos fiscales del cliente desde la colección clientes
+    var cliN=(p.cliente||'').toUpperCase();
+    var cli=(CLIS||[]).find(function(c){return (c.nombre||'').toUpperCase()===cliN})||{};
     return db.collection('facturas').add({
       numero:fNum,nroFormateado:'001-001-'+String(fNum).padStart(7,'0'),
       fecha:new Date().toISOString().split('T')[0],condicion:'CONTADO',moneda:moneda,tipoIva:10,
-      cliente:p.cliente,ruc:'',direccion:'',telefono:'',
-      items:[{cant:1,code:p.tipoServicio||'ST-07',desc:'ANTICIPO '+pct+'% - '+svc.name,unit:montoAnticipo}],
-      total:montoAnticipo,ivaAmount:montoAnticipo/11,
+      cliente:p.cliente,ruc:cli.ruc||'',direccion:cli.direccion||'',telefono:cli.telefono||'',
+      items:[{cant:1,code:p.tipoServicio||'ST-07',desc:'ANTICIPO '+pct+'% - '+svc.name,unit:montoFact}],
+      total:montoFact,ivaAmount:montoFact/11,
       estado:'activa',impresa:false,enviada:false,pagada:false,
       proyectoId:p.id,tipo:'anticipo',createdAt:firebase.firestore.FieldValue.serverTimestamp()
     }).then(function(){
