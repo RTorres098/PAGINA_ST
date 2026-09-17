@@ -2243,6 +2243,16 @@ function renderBalanceProyecto(p,d,asig){
   facts.forEach(function(f){if((f.moneda||'').indexOf('DOLAR')>=0)fU+=f.total||0;else fG+=f.total||0;if(f.pagada)fPag++});
   var prMargen=p.presupuesto&&p.presupuesto.margenPct!=null?p.presupuesto.margenPct:null;
 
+  /* Avisos de cobros vs facturas */
+  var avisos=b.avisos.slice();
+  var pagadasSinCobro=facts.filter(function(f){return f.pagada&&!f.pagoRecibidoId});
+  if(pagadasSinCobro.length)avisos.push(pagadasSinCobro.length+' factura(s) marcada(s) como pagada(s) sin cobro registrado ('+pagadasSinCobro.map(function(f){return esc(f.nroFormateado||('Nº '+f.numero))}).join(', ')+'). Abrilas en Facturación y tocá «Registrar cobro» para que sumen acá.');
+  var fantasmas=d.ingresos.filter(function(i){
+    if(i.proyectoId!==id||i.facturaId)return false;
+    if(!/^anticipo/i.test(i.concepto||''))return false;
+    return facts.some(function(f){return f.tipo==='anticipo'&&!f.pagada});
+  });
+
   /* Categorías vs presupuesto */
   var nombres={};
   Object.keys(b.porCategoria).forEach(function(k){nombres[k]=1});
@@ -2273,7 +2283,12 @@ function renderBalanceProyecto(p,d,asig){
       '<div class="bk '+(b.porCobrarUsd<0?'neg':'warn')+'"><div class="l">Por cobrar</div><div class="v">'+usd(b.porCobrarUsd)+'</div><div class="s">'+(b.porCobrarGs!=null?'≈ '+gs(b.porCobrarGs):'Sin cotización')+'</div></div>'+
       '<div class="bk '+signo(b.resultadoEstimado||0)+'"><div class="l">Resultado estimado</div><div class="v">'+(b.resultadoEstimado==null?'—':gs(b.resultadoEstimado))+'</div><div class="s">Margen '+pct(b.margenEstimado)+(prMargen!=null?' · presupuestado '+pct(prMargen):'')+'</div></div>'+
     '</div>'+
-    (b.avisos.length?'<ul class="avisos" style="margin-bottom:14px">'+b.avisos.map(function(a){return '<li>'+esc(a)+'</li>'}).join('')+'</ul>':'')+
+    (avisos.length||fantasmas.length?'<ul class="avisos" style="margin-bottom:14px">'+
+      avisos.map(function(a){return '<li>'+esc(a)+'</li>'}).join('')+
+      fantasmas.map(function(x){
+        return '<li>El cobro «'+esc(x.concepto||'')+'» ('+gs(x.montoFinalGs||0)+') se registró al aprobar el proyecto, pero la factura del anticipo todavía no figura pagada. Si ya lo cobraste, marcá la factura como pagada en Facturación (se vincula a este cobro, no se duplica). Si no, <button class="lk" style="background:none;border:none;color:#92400E;font-weight:700;text-decoration:underline;cursor:pointer;font-family:inherit;font-size:12px;padding:0" onclick="quitarCobroFantasma(\''+esc(x._id).replace(/'/g,'')+'\')">quitalo del balance</button>.</li>';
+      }).join('')+
+    '</ul>':'')+
     '<div class="det-grid">'+
       '<div class="det-card"><h4>Cobros</h4>'+
         (b.avanceCobro!=null?'<div class="prog"><span style="width:'+Math.min(100,b.avanceCobro*100)+'%;background:'+(b.cobradoDeMas?'var(--dg)':'var(--g)')+'"></span></div><div class="prog-l"><span>Cobrado '+pct(b.avanceCobro)+' del contrato</span><span>'+usd(b.ingresoUsd)+' / '+usd(b.valorNetoUsd)+'</span></div>':'')+
@@ -2391,6 +2406,7 @@ function facturaCard(f,suelta){
   var bd=anul?'<span class="fb v">ANULADA</span>':
     (f.pagada?'<span class="fb p">PAGADA</span>':'<span class="fb np">SIN COBRAR</span>')+(f.impresa?'<span class="fb i">IMPRESA</span>':'')+(f.enviada?'<span class="fb e">ENVIADA</span>':'');
   if(f.tipo==='anticipo')bd='<span class="fb t">ANTICIPO</span>'+bd;
+  if(!anul&&f.pagada&&!f.pagoRecibidoId&&f.proyectoId)bd+='<span class="fb np" title="Marcada como pagada pero el cobro no está en el balance">SIN COBRO EN BALANCE</span>';
   var items=(f.items&&f.items.length?f.items:[{cant:1,desc:f.servicio||'',unit:f.total||0}]);
   var fid=esc(f._id).replace(/'/g,'');
   return '<div class="fcard'+(anul?' anul':(f.pagada?' pag':''))+(suelta?' suelta':'')+'">'+
@@ -2437,13 +2453,29 @@ function cambiarVinculo(fid,datos,msg){
 }
 function vincularFactura(fid){
   var p=findProj(factProyId);if(!p)return;
+  var d=BalanceData.actual(),f=d&&d.facturas.find(function(x){return x._id===fid});
   cambiarVinculo(fid,{proyectoId:p._id,proyectoNombre:(p.nombre||'').toUpperCase()},'✓ Factura vinculada a '+(p.nombre||'el proyecto'));
+  if(f&&f.pagada&&!f.pagoRecibidoId)setTimeout(function(){toast('Está pagada: registrá el cobro desde Facturación para que sume al balance')},3600);
 }
 function desvincularFactura(fid){
-  if(!confirm('¿Quitar esta factura del proyecto? La factura no se borra.'))return;
-  cambiarVinculo(fid,{proyectoId:null,proyectoNombre:null},'Factura quitada del proyecto');
+  var d=BalanceData.actual(),f=d&&d.facturas.find(function(x){return x._id===fid});
+  if(!confirm('¿Quitar esta factura del proyecto? La factura no se borra.'+(f&&f.pagoRecibidoId?'\nSu cobro también se quita del balance.':'')))return;
+  var paso=f&&f.pagoRecibidoId?db.collection('pagos_recibidos').doc(f.pagoRecibidoId).delete():Promise.resolve();
+  paso.then(function(){
+    BalanceData.invalidar();
+    cambiarVinculo(fid,{proyectoId:null,proyectoNombre:null,pagoRecibidoId:null},'Factura quitada del proyecto');
+  }).catch(function(e){toast('❌ '+e.message)});
 }
 
+
+function quitarCobroFantasma(id){
+  if(!confirm('¿Quitar ese cobro del balance? La factura no se toca.'))return;
+  db.collection('pagos_recibidos').doc(id).delete().then(function(){
+    toast('Cobro quitado del balance');
+    BalanceData.invalidar();
+    route();
+  }).catch(function(e){toast('❌ '+e.message)});
+}
 /* ═══════════════════════════════════════ */
 /*  CLIENTS                                */
 /* ═══════════════════════════════════════ */
@@ -2532,19 +2564,10 @@ function confirmApprove(){
       total:montoFact,ivaAmount:montoFact/11,
       estado:'activa',impresa:false,enviada:false,pagada:false,
       proyectoId:p.id,tipo:'anticipo',createdAt:firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){
-      var retencion=descIva;
-      var montoFinalUsd=montoAnticipo-(montoAnticipo*retencion);
-      return db.collection('pagos_recibidos').add({
-        proyectoId:p.id,proyectoNombre:nombre.toUpperCase(),concepto:'Anticipo '+pct+'%',
-        montoUsd:montoAnticipo,retencion:retencion,montoFinalUsd:montoFinalUsd,
-        cotizacion:p.cotizacion||6500,montoFinalGs:montoFinalUsd*(p.cotizacion||6500),
-        fecha:new Date()
-      });
     });
   }).then(function(){
     hideModal('approveModal');
-    document.getElementById('postApproveMsg').textContent='Proyecto "'+nombre+'" activado con factura anticipo por USD '+fmtUsd(montoAnticipo);
+    document.getElementById('postApproveMsg').textContent='Proyecto "'+nombre+'" activado con factura anticipo por USD '+fmtUsd(montoAnticipo)+'. El cobro suma al balance recién cuando marques la factura como pagada.';
     showModal('postApproveModal');
   }).catch(function(e){toast('❌ '+e.message)});
 }

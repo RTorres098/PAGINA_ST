@@ -47,6 +47,40 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .cm h3{font-size:16px;color:var(--gd);margin-bottom:4px}.cm .sub{font-size:12px;color:var(--tx2);margin-bottom:14px}
 .cm .x{position:absolute;top:10px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3)}
 .cm-dup{padding:8px 10px;border-radius:8px;background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;font-size:11px;margin-bottom:8px}
+/* ═══ Calibrador de impresión ═══ */
+.cal{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;flex-direction:column}
+.cal-top{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--gd);color:#fff;flex-wrap:wrap}
+.cal-top strong{font-size:14px}
+.cal-hint{font-size:11px;color:rgba(255,255,255,0.6);flex:1;min-width:200px}
+.cal-acts{display:flex;gap:6px;flex-wrap:wrap}
+.cal-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:#fff;border-radius:7px;padding:7px 11px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.cal-btn:hover{background:rgba(255,255,255,0.2)}
+.cal-btn.ok{background:var(--g);border-color:var(--g)}
+.cal-body{flex:1;display:grid;grid-template-columns:1fr 330px;overflow:hidden}
+.cal-canvas{overflow:auto;padding:20px;background:#DAD5CA}
+.cal-sheet{position:relative;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.2);margin:0 auto}
+.cal-bg{position:absolute;pointer-events:none}
+.cal-gl{position:absolute;background:rgba(24,64,62,0.10)}
+.cal-gl.v{top:0;bottom:0;width:1px}.cal-gl.h{left:0;right:0;height:1px}
+.cal-fila{position:absolute;left:0;height:1px;background:rgba(59,130,246,0.25)}
+.cal-f{position:absolute;color:#000;background:rgba(52,166,120,0.12);border:1px dashed rgba(52,166,120,0.6);border-radius:2px;cursor:move;white-space:nowrap;overflow:hidden;line-height:1.15;touch-action:none}
+.cal-f.item{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.6)}
+.cal-f.sel{background:rgba(245,158,11,0.25);border:1px solid var(--warn);box-shadow:0 0 0 2px rgba(245,158,11,0.3);z-index:5}
+.cal-side{overflow-y:auto;background:var(--sf);border-left:1px solid var(--bd);padding:14px}
+.cal-box{border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:10px}
+.cal-box h4{font-size:11px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.cal-row{display:flex;gap:8px;margin-bottom:6px}
+.cal-in{flex:1;display:block}
+.cal-in span{display:block;font-size:10px;color:var(--tx2);margin-bottom:2px}
+.cal-in input,.cal-in select{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;font-family:inherit;font-size:12px;background:var(--bg)}
+.cal-in input[type=checkbox]{width:auto}
+.cal-lista{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.cal-g{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 2px}
+.cal-item{text-align:left;border:none;background:none;font-family:inherit;font-size:12px;color:var(--tx);padding:5px 7px;border-radius:6px;cursor:pointer}
+.cal-item:hover{background:var(--gl)}
+.cal-item.on{background:var(--gd);color:#fff;font-weight:700}
+.cal-nota{font-size:10px;color:var(--tx3);margin-top:6px}
+@media (max-width:900px){.cal-body{grid-template-columns:1fr}.cal-side{border-left:none;border-top:1px solid var(--bd)}}
 .guardar-cli{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--gd);background:var(--gl);border:1px solid rgba(52,166,120,0.25);border-radius:6px;padding:6px 8px;margin:2px 0 6px;cursor:pointer}
 .guardar-cli input{accent-color:var(--g)}
 .side .x{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3)}
@@ -66,7 +100,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .ic{position:absolute;left:0;width:216mm;height:160mm;overflow:hidden}.ic1{top:0}.ic2{top:165mm}
 .pf{position:absolute;color:#000;line-height:1.2}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--gd);color:#fff;padding:10px 20px;border-radius:6px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;z-index:200}.toast.show{opacity:1}
-@media print{body,.app{display:block;height:auto;overflow:visible;background:#fff}.tb,.st-top,.main,.side-bg,.side{display:none!important}.pp{display:block!important;box-shadow:none}@page{size:216mm 330mm;margin:0}}
+@media print{body,.app{display:block;height:auto;overflow:visible;background:#fff}.tb,.st-top,.main,.side-bg,.side,.cal,.cm-bg{display:none!important}.pp{display:block!important;box-shadow:none}@page{size:216mm 330mm;margin:0}}
 </style>
 </head>
 <body>
@@ -76,6 +110,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
     <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../presupuesto/#/balance">Balance</a><a href="../clientes/">Clientes</a><a class="on" href="./">Facturación</a></nav>
     <div class="st-right">
       <button class="st-btn st-btn-ghost" id="seedBtn" onclick="seedHistorical()" style="display:none">📥 Cargar historial Excel</button>
+      <button class="st-btn st-btn-ghost" onclick="abrirCalibracion(db)" title="Ajustar dónde se imprime cada dato sobre la hoja preimpresa">🖨 Calibrar impresión</button>
       <button class="st-btn st-btn-g" onclick="openNew()">+ Nueva factura</button>
     </div>
   </header>
@@ -108,6 +143,16 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
   <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-g" id="ncGuardar" style="flex:1;padding:10px" onclick="guardarNuevoCli()">Guardar y usar en la factura</button><button class="btn" style="background:var(--sf2);color:var(--tx)" onclick="cerrarNuevoCli()">Cancelar</button></div>
 </div></div>
 
+<!-- Registrar cobro -->
+<div class="cm-bg" id="cobroModal"><div class="cm" style="max-width:480px"><button class="x" onclick="cerrarCobro()">×</button>
+  <h3>Registrar cobro</h3><div class="sub" id="cbSub"></div>
+  <div id="cbNota"></div>
+  <div class="g2"><div class="f"><label>Fecha de cobro</label><input id="cbFecha" type="date"></div><div class="f"><label id="cbMontoL">Monto cobrado</label><input id="cbMonto" type="number" step="0.01" oninput="calcCobro()"></div></div>
+  <div class="g2"><div class="f"><label>Retención (%)</label><input id="cbRet" type="number" step="0.1" oninput="calcCobro()"><div style="font-size:9px;color:var(--tx3)">0 si el cliente no retuvo nada</div></div><div class="f"><label>Cotización Gs/USD</label><input id="cbCot" type="number" oninput="calcCobro()"><div style="font-size:9px;color:var(--tx3)">Del día del cobro</div></div></div>
+  <div id="cbPrev" style="background:var(--sf2);border-radius:8px;padding:10px 12px;font-size:12px;margin:6px 0 12px"></div>
+  <div style="display:flex;gap:8px"><button class="btn btn-g" id="cbGuardar" style="flex:1;padding:10px" onclick="guardarCobro()">💰 Marcar pagada y sumar al balance</button><button class="btn" style="background:var(--sf2);color:var(--tx)" onclick="cerrarCobro()">Cancelar</button></div>
+</div></div>
+
 <!-- Print page -->
 <div class="pp" id="pp"></div>
 
@@ -118,6 +163,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
+<script src="impresion.js"></script>
 <script src="../facturas_seed.js"></script>
 <script>
 firebase.initializeApp(FIREBASE_CONFIG);
@@ -137,7 +183,7 @@ function buscarCli(nombre,ruc){
 function proyNombre(id){var p=PROYS.find(function(x){return x.id===id});return p?p.nombre:''}
 var SVCS=SERVICIOS.map(function(s){return{c:s.code,n:s.name}});
 
-initAuthGuard(function(){loadAll(true)});
+initAuthGuard(function(){loadAll(true);cargarConfigImpresion(db)});
 
 /* ═══ Load ═══ */
 function loadAll(primera){
@@ -266,9 +312,15 @@ function renderSide(){
     h+='</div>';
   }
 
+  if(!isNew&&!vo&&f.pagada&&f.proyectoId&&!f.pagoRecibidoId){
+    h+='<div style="margin:0 0 10px;padding:8px 10px;border-radius:8px;background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;font-size:11px">Esta factura está pagada pero su cobro no figura en el balance del proyecto. <a href="#" onclick="abrirCobro();return false" style="color:inherit;font-weight:700">Registrar cobro</a></div>';
+  }
+  if(!isNew&&f.pagada&&f.pagoRecibidoId){
+    h+='<div style="margin:0 0 10px;padding:8px 10px;border-radius:8px;background:rgba(52,166,120,0.08);border:1px solid rgba(52,166,120,0.25);color:#1F7A56;font-size:11px">Cobro registrado en el balance del proyecto'+(f.fechaPago?' · '+escH(f.fechaPago):'')+'.</div>';
+  }
   h+='<div class="sec">Factura</div>';
   h+='<div class="g2"><div class="f"><label>Nro. Factura</label><input id="sfNro" value="'+(f.nroFormateado||'')+'" readonly></div><div class="f"><label>Fecha</label><input id="sfFecha" type="'+(isNew?'date':'text')+'" value="'+(f.fecha||'')+'"></div></div>';
-  h+='<div class="g3"><div class="f"><label>Condición</label><select id="sfCond"><option'+(f.condicion==='CONTADO'?' selected':'')+'>CONTADO</option><option'+(f.condicion==='CREDITO'?' selected':'')+'>CREDITO</option></select></div><div class="f"><label>Moneda</label><select id="sfMoneda" onchange="recalcSide()"><option'+(isU?' selected':'')+'>DOLARES AMERICANOS</option><option'+(!isU?' selected':'')+'>GUARANIES</option></select></div><div class="f"><label>IVA</label><select id="sfIva" onchange="recalcSide()"><option value="10"'+(f.tipoIva!==5?' selected':'')+'>10%</option><option value="5"'+(f.tipoIva===5?' selected':'')+'>5%</option></select></div></div>';
+  h+='<div class="g3"><div class="f"><label>Condición</label><select id="sfCond"><option'+(f.condicion==='CONTADO'?' selected':'')+'>CONTADO</option><option'+(f.condicion==='CREDITO'?' selected':'')+'>CREDITO</option></select></div><div class="f"><label>Moneda</label><select id="sfMoneda" onchange="recalcSide()"><option'+(isU?' selected':'')+'>DOLARES AMERICANOS</option><option'+(!isU?' selected':'')+'>GUARANIES</option></select></div><div class="f"><label>IVA</label><select id="sfIva" onchange="recalcSide()"><option value="10"'+(f.tipoIva!=5&&f.tipoIva!=0?' selected':'')+'>10%</option><option value="5"'+(f.tipoIva==5?' selected':'')+'>5%</option><option value="0"'+(f.tipoIva==0?' selected':'')+'>Exenta</option></select></div></div>';
 
   h+='<div class="sec">Proyecto</div>';
   h+='<div class="f" style="display:flex;gap:6px;align-items:center"><select id="sfProy" onchange="onSfProy()" style="flex:1"><option value="">— Sin proyecto —</option>';
@@ -448,8 +500,8 @@ function getSfItems(){
 function recalcSide(){
   var items=getSfItems();
   var total=items.reduce(function(s,i){return s+i.cant*i.unit},0);
-  var iva=parseInt(document.getElementById('sfIva').value)||10;
-  var ivaAmt=iva===10?total/11:total/21;
+  var iva=parseInt(document.getElementById('sfIva').value);if(isNaN(iva))iva=10;
+  var ivaAmt=iva===10?total/11:(iva===5?total/21:0);
   var isU=(document.getElementById('sfMoneda').value||'').includes('DOLAR');
   var mon=isU?'USD':'Gs';
   var el=document.getElementById('sfTotals');
@@ -460,7 +512,7 @@ function recalcSide(){
 function saveFactura(){
   var items=getSfItems();
   var total=items.reduce(function(s,i){return s+i.cant*i.unit},0);
-  var iva=parseInt(document.getElementById('sfIva').value)||10;
+  var iva=parseInt(document.getElementById('sfIva').value);if(isNaN(iva))iva=10;
   var data={
     fecha:document.getElementById('sfFecha').value,
     condicion:document.getElementById('sfCond').value,
@@ -472,7 +524,7 @@ function saveFactura(){
     telefono:document.getElementById('sfTel').value,
     items:items,
     total:total,
-    ivaAmount:iva===10?total/11:total/21,
+    ivaAmount:iva===10?total/11:(iva===5?total/21:0),
     servicio:items[0]?items[0].desc:'',
     codigoServicio:items[0]?items[0].code:'',
   };
@@ -498,65 +550,141 @@ function saveFactura(){
     data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
     db.collection('facturas').add(data).then(function(){toast('✅ Factura #'+num+' creada');closePanel();loadAll()}).catch(function(e){toast('❌ '+e.message)});
   }else{
-    db.collection('facturas').doc(curId).update(data).then(function(){toast('✅ Factura actualizada');closePanel();loadAll()}).catch(function(e){toast('❌ '+e.message)});
+    var antes=curF,pasos=Promise.resolve();
+    if(antes.pagoRecibidoId&&antes.proyectoId!==data.proyectoId){
+      if(!data.proyectoId){
+        if(!confirm('La factura está pagada y la estás quitando del proyecto.\nSu cobro se va a quitar del balance de ese proyecto. ¿Continuar?'))return;
+        pasos=quitarCobroDe(antes).then(function(){data.pagoRecibidoId=null});
+      }else{
+        pasos=db.collection('pagos_recibidos').doc(antes.pagoRecibidoId).update({proyectoId:data.proyectoId,proyectoNombre:data.proyectoNombre});
+      }
+    }
+    pasos.then(function(){return db.collection('facturas').doc(curId).update(data)}).then(function(){
+      toast('✅ Factura actualizada');closePanel();loadAll();
+      if(!antes.pagoRecibidoId&&antes.pagada&&data.proyectoId)setTimeout(function(){toast('Esta factura está pagada: abrila y tocá «Registrar cobro» para sumarla al balance')},3600);
+    }).catch(function(e){toast('❌ '+e.message)});
   }
 }
 
 function anularFactura(){
-  if(!confirm('¿Anular factura '+(curF.nroFormateado||'')+'?'))return;
-  db.collection('facturas').doc(curId).update({estado:'anulada'}).then(function(){toast('✅ Factura anulada');closePanel();loadAll()}).catch(function(e){toast('❌ '+e.message)});
+  if(!confirm('¿Anular factura '+(curF.nroFormateado||'')+'?'+(curF.pagoRecibidoId?'\nSu cobro también se quita del balance del proyecto.':'')))return;
+  var fa=curF;
+  quitarCobroDe(fa).then(function(){return db.collection('facturas').doc(curId).update({estado:'anulada',pagoRecibidoId:null})}).then(function(){toast('✅ Factura anulada');closePanel();loadAll()}).catch(function(e){toast('❌ '+e.message)});
 }
 
 /* ═══ Status toggles ═══ */
 function mkBadge(field,label,cls){
-  if(curF[field])return'<span class="badge '+cls+'" style="font-size:10px;padding:3px 8px">'+label+'</span> ';
-  return'<span class="badge bw" style="font-size:10px;padding:3px 8px;cursor:pointer" onclick="markAs(\''+field+'\')">'+label+'</span> ';
+  if(curF[field])return'<span class="badge '+cls+'" style="font-size:10px;padding:3px 8px;cursor:pointer" title="Tocar para desmarcar" onclick="desmarcar(\''+field+'\')">'+label+' ✓</span> ';
+  return'<span class="badge bw" style="font-size:10px;padding:3px 8px;cursor:pointer" title="Tocar para marcar" onclick="markAs(\''+field+'\')">'+label+'</span> ';
+}
+/* Destildar: impresa y enviada se quitan directo; pagada además quita el cobro del balance */
+function desmarcar(field){
+  if(!curId||!curF)return;
+  if(field==='pagada'){desmarcarPagada();return;}
+  var u={};u[field]=false;
+  var id=curId;
+  db.collection('facturas').doc(id).update(u).then(function(){
+    toast('Marca quitada');loadAll();setTimeout(function(){openDetail(id)},400);
+  }).catch(function(e){toast('❌ '+e.message)});
 }
 function markAs(field){
-  if(!curId)return;var u={};u[field]=true;
+  if(!curId)return;
+  if(field==='pagada'&&curF.proyectoId){abrirCobro();return;}
+  var u={};u[field]=true;
+  if(field==='pagada')u.fechaPago=new Date().toISOString().split('T')[0];
   db.collection('facturas').doc(curId).update(u).then(function(){toast('✅ Marcada');loadAll();setTimeout(function(){openDetail(curId)},400)}).catch(function(e){toast('❌ '+e.message)});
+}
+
+/* ═══ Cobros: una factura de proyecto suma al balance recién cuando se marca pagada ═══ */
+var cobroCtx=null;
+function numv(id){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v}
+function abrirCobro(){
+  var f=curF;if(!f||!curId)return;
+  var p=PROYS.find(function(x){return x.id===f.proyectoId})||{};
+  var isU=(f.moneda||'').indexOf('DOLAR')>=0;
+  cobroCtx={f:f,id:curId,p:p,isU:isU,previo:null};
+  document.getElementById('cbSub').textContent='Factura '+(f.nroFormateado||'')+' · '+(p.nombre||f.proyectoNombre||'')+' · '+(isU?'USD ':'Gs ')+(isU?fmtUsd(f.total||0):fmtGs(f.total||0));
+  document.getElementById('cbFecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('cbMonto').value=f.total||0;
+  document.getElementById('cbMontoL').textContent='Monto cobrado ('+(isU?'USD':'Gs')+', antes de retención)';
+  var ret=p.descuentoIva!=null?p.descuentoIva:0.07;
+  document.getElementById('cbRet').value=Math.round(ret*1000)/10;
+  document.getElementById('cbCot').value=p.cotizacion||'';
+  document.getElementById('cbNota').innerHTML='';
+  document.getElementById('cobroModal').classList.add('show');
+  calcCobro();
+  // ¿Hay un cobro de anticipo viejo (creado al aprobar) sin factura vinculada? Se reutiliza para no duplicar.
+  if(f.tipo==='anticipo'){
+    db.collection('pagos_recibidos').where('proyectoId','==',f.proyectoId).get().then(function(s){
+      var viejo=s.docs.map(function(d){return Object.assign({_id:d.id},d.data())}).find(function(x){
+        return x.proyectoId===f.proyectoId&&!x.facturaId&&/^anticipo/i.test(x.concepto||'');
+      });
+      if(!viejo||!cobroCtx||cobroCtx.f!==f)return;
+      cobroCtx.previo=viejo;
+      if(viejo.cotizacion)document.getElementById('cbCot').value=viejo.cotizacion;
+      document.getElementById('cbNota').innerHTML='<div class="cm-dup">Ya hay un cobro «'+escH(viejo.concepto)+'» registrado al aprobar el proyecto. Se va a actualizar con estos datos (no se duplica).</div>';
+      calcCobro();
+    }).catch(function(){});
+  }
+}
+function cerrarCobro(){document.getElementById('cobroModal').classList.remove('show');cobroCtx=null}
+function datosCobro(){
+  var c=cobroCtx;if(!c)return null;
+  var monto=numv('cbMonto'),ret=(numv('cbRet')||0)/100,cot=numv('cbCot');
+  if(!(monto>0))return {error:'Ingresá el monto cobrado'};
+  if(!(cot>0))return {error:'Ingresá la cotización del día del cobro'};
+  if(ret<0||ret>=1)return {error:'La retención tiene que estar entre 0 y 100%'};
+  var usd=c.isU?monto:monto/cot;
+  var finalUsd=usd-usd*ret;
+  var finalGs=c.isU?finalUsd*cot:monto-monto*ret;
+  return {usd:usd,ret:ret,cot:cot,finalUsd:finalUsd,finalGs:finalGs};
+}
+function calcCobro(){
+  var d=datosCobro(),el=document.getElementById('cbPrev');
+  if(!d||d.error){el.innerHTML='<span style="color:var(--tx2)">'+escH(d?d.error:'')+'</span>';return}
+  el.innerHTML='<div class="sr"><span>Neto cobrado USD</span><strong>USD '+fmtUsd(d.finalUsd)+'</strong></div><div class="sr"><span>Neto cobrado Gs</span><strong>₲ '+fmtGs(Math.round(d.finalGs))+'</strong></div><div style="font-size:10px;color:var(--tx3);margin-top:4px">Esto es lo que suma como «Cobrado» en el balance del proyecto.</div>';
+}
+function guardarCobro(){
+  var c=cobroCtx,d=datosCobro();
+  if(!c||!d)return;
+  if(d.error){toast('❌ '+d.error);return}
+  var f=c.f,fecha=document.getElementById('cbFecha').value||new Date().toISOString().split('T')[0];
+  var desc=f.items&&f.items[0]?f.items[0].desc:(f.servicio||'');
+  var pago={
+    proyectoId:f.proyectoId,proyectoNombre:(c.p.nombre||f.proyectoNombre||'').toUpperCase(),
+    concepto:(f.tipo==='anticipo'?'Anticipo':'Factura')+' '+(f.nroFormateado||'')+(desc&&f.tipo!=='anticipo'?' — '+desc.slice(0,60):''),
+    montoUsd:d.usd,retencion:d.ret,montoFinalUsd:d.finalUsd,cotizacion:d.cot,montoFinalGs:d.finalGs,
+    fecha:new Date(fecha+'T12:00:00'),facturaId:c.id
+  };
+  var b=document.getElementById('cbGuardar');b.disabled=true;
+  var existente=f.pagoRecibidoId||(c.previo&&c.previo._id);
+  var op=existente?db.collection('pagos_recibidos').doc(existente).set(pago).then(function(){return existente})
+                  :db.collection('pagos_recibidos').add(pago).then(function(r){return r.id});
+  op.then(function(pid){
+    return db.collection('facturas').doc(c.id).update({pagada:true,fechaPago:fecha,pagoRecibidoId:pid});
+  }).then(function(){
+    b.disabled=false;cerrarCobro();toast('💰 Cobro registrado en el balance');
+    var id=curId;loadAll();setTimeout(function(){openDetail(id)},400);
+  }).catch(function(e){b.disabled=false;toast('❌ '+e.message)});
+}
+function quitarCobroDe(f){
+  return f.pagoRecibidoId?db.collection('pagos_recibidos').doc(f.pagoRecibidoId).delete():Promise.resolve();
+}
+function desmarcarPagada(){
+  var f=curF;if(!f||!curId)return;
+  if(!confirm('¿Desmarcar la factura '+(f.nroFormateado||'')+' como pagada?'+(f.pagoRecibidoId?'\nEl cobro se quita del balance del proyecto.':'')))return;
+  var id=curId;
+  quitarCobroDe(f).then(function(){
+    return db.collection('facturas').doc(id).update({pagada:false,fechaPago:null,pagoRecibidoId:null});
+  }).then(function(){toast('Factura marcada como no pagada');loadAll();setTimeout(function(){openDetail(id)},400)}).catch(function(e){toast('❌ '+e.message)});
 }
 
 /* ═══ Print ═══ */
 function printFactura(){
   if(!curF)return;
-  var f=curF;var it=f.items&&f.items[0]?f.items[0]:{cant:1,desc:'',unit:0,code:''};
-  var isU=(f.moneda||'').includes('DOLAR');var total=isU?fmtUsd(f.total||0):fmtGs(f.total||0);
-  var iva=f.tipoIva||10;var ivaAmt=iva===10?(f.total||0)/11:(f.total||0)/21;
-  var ivaStr=isU?fmtUsd(ivaAmt):fmtGs(ivaAmt);
-  var monLabel=isU?'DOLARES AMERICANOS':'GUARANIES';
-  var letras=monLabel+' '+numToWords(Math.floor(f.total||0))+' con 00/100';
-  // Print positions (mm) - calibrate later
-  var P={fT:27,fL:17,xT:27,coL:130,crL:158,cT:33.5,cL:17,rT:33.5,rL:130,dT:40,dL:17,tT:40,tL:130,iT:52,iH:10.2,cC:8,cK:18,cD:36,cU:118,c10:178,sT:124,lT:129.5,lL:8,tpT:126,tpL:175,i5T:134,i5L:50,i10T:134,i10L:95,itT:134,itL:140,off:165};
-  function copy(){
-    var h='';
-    h+='<div class="pf" style="top:'+P.fT+'mm;left:'+P.fL+'mm;font-size:11px">'+(f.fecha||'')+'</div>';
-    h+='<div class="pf" style="top:'+P.xT+'mm;left:'+(f.condicion==='CONTADO'?P.coL:P.crL)+'mm;font-size:14px;font-weight:700">X</div>';
-    h+='<div class="pf" style="top:'+P.cT+'mm;left:'+P.cL+'mm;font-size:11px">'+(f.cliente||'')+'</div>';
-    h+='<div class="pf" style="top:'+P.rT+'mm;left:'+P.rL+'mm;font-size:11px">'+(f.ruc||'')+'</div>';
-    h+='<div class="pf" style="top:'+P.dT+'mm;left:'+P.dL+'mm;font-size:9px;max-width:108mm;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(f.direccion||'')+'</div>';
-    h+='<div class="pf" style="top:'+P.tT+'mm;left:'+P.tL+'mm;font-size:11px">'+(f.telefono||'')+'</div>';
-    // Items
-    (f.items||[]).slice(0,7).forEach(function(item,i){
-      var y=P.iT+i*P.iH;var lt=item.cant*item.unit;
-      h+='<div class="pf" style="top:'+y+'mm;left:'+P.cC+'mm;font-size:10px">'+item.cant+'</div>';
-      h+='<div class="pf" style="top:'+y+'mm;left:'+P.cK+'mm;font-size:9px">'+(item.code||'')+'</div>';
-      h+='<div class="pf" style="top:'+y+'mm;left:'+P.cD+'mm;font-size:8px;max-width:80mm;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(item.desc||'')+'</div>';
-      h+='<div class="pf" style="top:'+y+'mm;left:'+P.cU+'mm;font-size:10px;text-align:right;width:22mm">'+(isU?fmtUsd(item.unit):fmtGs(item.unit))+'</div>';
-      h+='<div class="pf" style="top:'+y+'mm;left:'+P.c10+'mm;font-size:10px;text-align:right;width:25mm">'+(isU?fmtUsd(lt):fmtGs(lt))+'</div>';
-    });
-    h+='<div class="pf" style="top:'+P.sT+'mm;left:'+P.c10+'mm;font-size:10px;text-align:right;width:25mm;font-weight:600">'+total+'</div>';
-    h+='<div class="pf" style="top:'+P.lT+'mm;left:'+P.lL+'mm;font-size:7px;max-width:135mm;overflow:hidden;white-space:nowrap">'+letras+'</div>';
-    h+='<div class="pf" style="top:'+P.tpT+'mm;left:'+P.tpL+'mm;font-size:12px;font-weight:700">'+total+'</div>';
-    if(iva===5)h+='<div class="pf" style="top:'+P.i5T+'mm;left:'+P.i5L+'mm;font-size:9px">'+ivaStr+'</div>';
-    else h+='<div class="pf" style="top:'+P.i10T+'mm;left:'+P.i10L+'mm;font-size:9px">'+ivaStr+'</div>';
-    h+='<div class="pf" style="top:'+P.itT+'mm;left:'+P.itL+'mm;font-size:9px">'+ivaStr+'</div>';
-    return h;
-  }
-  var ch=copy();
-  document.getElementById('pp').innerHTML='<div class="ic ic1">'+ch+'</div><div class="ic ic2">'+ch+'</div>';
-  document.getElementById('pp').style.display='block';
-  setTimeout(function(){window.print();document.getElementById('pp').style.display='none'},200);
+  var pp=armarHoja(curF);
+  pp.style.display='block';
+  setTimeout(function(){window.print();pp.style.display='none'},250);
 }
 
 /* ═══ Panel ═══ */
