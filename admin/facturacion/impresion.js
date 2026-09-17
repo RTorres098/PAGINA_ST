@@ -208,6 +208,7 @@ function calHtml() {
       '<span class="cal-hint">Arrastrá cada dato hasta donde va en tu factura preimpresa. Las flechas del teclado mueven 0,5 mm (con Shift, 2 mm).</span>' +
       '<span class="cal-acts">' +
         '<label class="cal-btn" title="Cargar una foto o escaneo de la factura en blanco">🖼 Fondo<input type="file" accept="image/*" style="display:none" onchange="calFondo(this)"></label>' +
+        '<button class="cal-btn" id="calQuitarBtn" style="display:none" onclick="calQuitarFondo()" title="Sacar la imagen de fondo">✕ Quitar fondo</button>' +
         '<button class="cal-btn" onclick="calImprimirRegla()">📏 Imprimir regla</button>' +
         '<button class="cal-btn" onclick="calImprimirPrueba()">🖨 Imprimir prueba</button>' +
         '<button class="cal-btn" onclick="calRestablecer()">Restablecer</button>' +
@@ -255,6 +256,8 @@ function calRender() {
       String(ejemplo[k] == null ? c[1] : ejemplo[k]) + '</div>';
   });
   sheet.innerHTML = h;
+  var qb = document.getElementById('calQuitarBtn');
+  if (qb) qb.style.display = (IMPRESION_FONDO && IMPRESION_FONDO.dataUrl) ? '' : 'none';
   Array.prototype.forEach.call(sheet.querySelectorAll('.cal-f'), function (el) {
     el.addEventListener('pointerdown', calDrag);
   });
@@ -405,9 +408,12 @@ function calFondo(input) {
 }
 function calFondoSet(k, v) { if (!IMPRESION_FONDO) return; IMPRESION_FONDO[k] = +v; calRender(); }
 function calQuitarFondo() {
+  if (!IMPRESION_FONDO) return;
+  if (!confirm('¿Sacar la imagen de fondo? Las posiciones de los campos no se tocan.')) return;
   IMPRESION_FONDO = null;
   if (CAL.db) CAL.db.collection('config').doc('impresion_fondo').delete().catch(function () {});
   calRender();
+  calMsg('Fondo quitado');
 }
 function calGuardarFondo() {
   if (!IMPRESION_FONDO || !CAL.db) return;
