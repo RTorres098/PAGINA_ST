@@ -245,17 +245,133 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
   .app,.app.no-rp{grid-template-columns:1fr;height:auto;grid-template-rows:56px auto}
   .fp{height:auto;overflow:visible}
   .rp{border-left:none}
-  .det-grid,.g5,.g4{grid-template-columns:1fr 1fr}
+  .g5,.g4{grid-template-columns:1fr 1fr}
+  .det-grid{grid-template-columns:1fr}
   .crumbs{top:0}
 }
 @media (max-width:560px){.ds{padding:12px}.ds .ic,.ds .x{display:none}.fp{padding:16px 14px 60px}.crumbs{margin:-16px -14px 14px;padding:10px 14px}.crumbs .path{display:none}}
+/* ═══ Pestañas del proyecto ═══ */
+.vtabs{display:inline-flex;background:var(--sf2);border-radius:9px;padding:3px;gap:2px;flex-shrink:0}
+.vtabs a{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;color:var(--tx2);text-decoration:none;white-space:nowrap}
+.vtabs a:hover{color:var(--gd)}
+.vtabs a.on{background:var(--sf);color:var(--gd);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.fact-btn .nb{display:inline-block;min-width:18px;padding:1px 6px;border-radius:10px;background:var(--gd);color:#fff;font-size:10px;margin-left:4px;text-align:center}
+.fact-btn .nb.zero{background:var(--tx3)}
+/* ═══ Balance ═══ */
+.bal-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.bal-kpis.k4{grid-template-columns:repeat(4,1fr)}
+.bk{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;min-width:0}
+.bk .l{font-size:11px;color:var(--tx2);font-weight:600;margin-bottom:4px}
+.bk .v{font-size:20px;font-weight:700;color:var(--gd);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk .s{font-size:11px;color:var(--tx3);margin-top:3px}
+.bk.pos .v{color:#1F7A56}.bk.neg .v{color:var(--dg)}.bk.warn .v{color:#B45309}
+.bk.hero{background:var(--gd);border-color:var(--gd)}
+.bk.hero .l{color:rgba(255,255,255,0.65)}.bk.hero .v{color:#fff}.bk.hero .s{color:rgba(255,255,255,0.55)}
+.bk.hero.neg .v{color:#FCA5A5}
+.brow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--sf2);font-size:12px;color:var(--tx2)}
+.brow:last-child{border-bottom:none}
+.brow strong{color:var(--gd);text-align:right;white-space:nowrap}
+.brow strong.pos{color:#1F7A56}.brow strong.neg{color:var(--dg)}.brow strong.warn{color:#B45309}
+.brow small{display:block;font-weight:500;color:var(--tx3);font-size:10px}
+.prog{height:10px;background:var(--sf2);border-radius:6px;overflow:hidden;margin:8px 0 4px}
+.prog>span{display:block;height:100%;border-radius:6px;background:var(--g);transition:width .5s ease}
+.prog-l{display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)}
+.cat-t{width:100%;border-collapse:collapse;font-size:12px}
+.cat-t th{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;text-align:right;padding:6px 8px;border-bottom:1px solid var(--bd)}
+.cat-t th:first-child,.cat-t td:first-child{text-align:left}
+.cat-t td{padding:7px 8px;border-bottom:1px solid var(--sf2);text-align:right;white-space:nowrap;color:var(--tx)}
+.cat-t td.nm{font-weight:600;color:var(--gd)}
+.cat-t .dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.cat-t td.bar{width:28%;min-width:120px}
+.cat-t tr.tot td{font-weight:700;color:var(--gd);border-top:2px solid var(--bd);border-bottom:none}
+.cat-t .over{color:var(--dg);font-weight:700}
+.cat-t .under{color:#1F7A56}
+.cat-t .na{color:var(--tx3);font-weight:500}
+.ebar{position:relative;height:8px;background:var(--sf2);border-radius:4px;overflow:hidden}
+.ebar>span{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+.ebar.over{box-shadow:inset 0 0 0 1px var(--dg)}
+.hbars .hb{display:grid;grid-template-columns:150px 1fr 110px;gap:10px;align-items:center;padding:5px 0;font-size:12px}
+.hbars .hb .n{color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbars .hb .n .dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.hbars .hb .t{height:10px;background:var(--sf2);border-radius:5px;overflow:hidden}
+.hbars .hb .t span{display:block;height:100%;border-radius:0 5px 5px 0}
+.hbars .hb .v{text-align:right;font-weight:700;color:var(--gd);white-space:nowrap}
+.hbars .hb .v small{font-weight:500;color:var(--tx3);margin-left:4px}
+.avisos{list-style:none;margin:0}
+.avisos li{padding:8px 12px;border-radius:8px;background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;font-size:12px;margin-bottom:6px}
+.mov-tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.mov-tabs .search{min-width:180px}
+.mov-tabs .search input{padding:8px 10px 8px 32px;font-size:12px}
+.mov-t{width:100%;border-collapse:collapse;font-size:12px}
+.mov-t th{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:7px 8px;border-bottom:1px solid var(--bd);background:var(--sf);position:sticky;top:0}
+.mov-t td{padding:7px 8px;border-bottom:1px solid var(--sf2);vertical-align:top}
+.mov-t tr:hover td{background:var(--bg)}
+.mov-t .r{text-align:right;white-space:nowrap}
+.mov-t .m{font-weight:700;color:var(--gd)}
+.mov-t .sub{display:block;font-size:10px;color:var(--tx3)}
+.mov-t .cat{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.mov-t .cat i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.mov-t tfoot td{font-weight:700;color:var(--gd);border-top:2px solid var(--bd);border-bottom:none}
+.mov-wrap{max-height:520px;overflow:auto;border:1px solid var(--sf2);border-radius:8px}
+.mov-empty{padding:26px;text-align:center;color:var(--tx3);font-size:12px}
+.tag-fac{font-size:10px;font-weight:700;color:#1F7A56;background:rgba(52,166,120,0.1);padding:1px 6px;border-radius:5px}
+.bal-t tbody tr{cursor:pointer}
+.bal-t td.nm small{display:block;font-weight:500;color:var(--tx3);font-size:10px}
+.bal-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.bal-head h2{font-size:24px;color:var(--gd);line-height:1.1}
+.bal-head .sub{font-size:12px;color:var(--tx2);margin-top:3px}
+.loading-box{padding:50px;text-align:center;color:var(--tx3);font-size:13px}
+/* ═══ Panel lateral de facturas ═══ */
+.drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer-bg.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;width:520px;max-width:100vw;height:100vh;background:var(--bg);z-index:61;transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,0.2)}
+.drawer.show{transform:none}
+.drawer-h{padding:16px 20px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:10px}
+.drawer-h h3{font-size:16px;color:var(--gd)}
+.drawer-h .sub{font-size:12px;color:var(--tx2);margin-top:2px}
+.drawer-h .x{margin-left:auto;border:none;background:none;font-size:24px;line-height:1;color:var(--tx3);cursor:pointer}
+.drawer-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 20px;background:var(--sf);border-bottom:1px solid var(--bd)}
+.drawer-sum div{font-size:10px;color:var(--tx2)}
+.drawer-sum strong{display:block;font-size:14px;color:var(--gd)}
+.drawer-b{flex:1;overflow-y:auto;padding:16px 20px}
+.drawer-f{padding:12px 20px;background:var(--sf);border-top:1px solid var(--bd);display:flex;gap:8px}
+.drawer-f a{flex:1;text-align:center;text-decoration:none}
+.fcard{background:var(--sf);border:1px solid var(--bd);border-left:4px solid var(--info);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.fcard.anul{opacity:.55;border-left-color:var(--dg)}
+.fcard.pag{border-left-color:var(--g)}
+.fcard .fh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.fcard .nro{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--gd);font-size:13px}
+.fcard .fd{font-size:11px;color:var(--tx2)}
+.fcard .bd{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.fb{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.fb.a{background:rgba(52,166,120,0.1);color:#1F7A56}.fb.v{background:rgba(239,68,68,0.1);color:var(--dg)}
+.fb.p{background:var(--g);color:#fff}.fb.np{background:#FFF7ED;color:#B45309}.fb.i{background:#6B7280;color:#fff}.fb.e{background:var(--info);color:#fff}.fb.t{background:var(--sf2);color:var(--tx2)}
+.fcard .cli{font-size:12px;color:var(--tx);margin:8px 0 6px}
+.fcard .cli span{color:var(--tx3)}
+.fcard table{width:100%;border-collapse:collapse;font-size:11px;margin:6px 0}
+.fcard th{font-size:9px;color:var(--tx3);text-transform:uppercase;text-align:left;padding:3px 4px;border-bottom:1px solid var(--bd)}
+.fcard td{padding:4px;border-bottom:1px solid var(--sf2);vertical-align:top}
+.fcard .r{text-align:right;white-space:nowrap}
+.fcard .ft{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px}
+.fcard .tot{font-size:16px;font-weight:700;color:var(--gd)}
+.fcard .tot small{font-size:10px;color:var(--tx3);font-weight:600;margin-right:3px}
+.fcard .iva{font-size:10px;color:var(--tx3)}
+.fcard .lk{font-size:11px;font-weight:700;color:var(--g);text-decoration:none;white-space:nowrap;background:none;border:none;cursor:pointer;font-family:inherit;padding:0}
+.fcard .lk.q{color:var(--tx3);font-weight:600}
+.drawer-sec{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.drawer-sec::after{content:'';flex:1;height:1px;background:var(--bd)}
+.fcard.suelta{border-left-color:var(--tx3);border-style:dashed;border-left-style:solid}
+.drawer-empty{padding:30px 10px;text-align:center;color:var(--tx3);font-size:13px}
+@media (max-width:1180px){.bal-kpis{grid-template-columns:repeat(3,1fr)}.bal-kpis.k4{grid-template-columns:repeat(2,1fr)}.hbars .hb{grid-template-columns:110px 1fr 100px}}
+@media (max-width:860px){.bal-kpis,.bal-kpis.k4{grid-template-columns:1fr 1fr}.cat-t td.bar{display:none}.cat-t th.bar{display:none}}
+@media (max-width:560px){.bal-kpis,.bal-kpis.k4{grid-template-columns:1fr}.hbars .hb{grid-template-columns:96px 1fr 96px;gap:6px}.drawer-sum{grid-template-columns:1fr 1fr}.mov-tabs .search{min-width:100%}}
 </style>
 </head>
 <body>
 <div class="app no-rp" id="app">
   <header class="st-top" style="grid-column:1/-1">
     <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
-    <nav class="st-nav"><a href="../">Inicio</a><a class="on" href="#/" onclick="nav('#/');return false">Presupuestos</a><a href="../facturacion/">Facturación</a></nav>
+    <nav class="st-nav"><a href="../">Inicio</a><a class="on" id="navPres" href="#/">Presupuestos</a><a id="navBal" href="#/balance">Balance</a><a href="../facturacion/">Facturación</a></nav>
     <div class="st-right">
       <button class="st-btn st-btn-g" onclick="nav('#/nuevo')">+ Nuevo presupuesto</button>
     </div>
@@ -279,6 +395,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
     <div class="fp" id="panelDetail">
       <div class="crumbs" id="detCrumbs"></div>
       <div id="detailContent"></div>
+    </div>
+    <div class="fp" id="panelBalG">
+      <div class="dash-wrap" id="balGContent"></div>
+    </div>
+    <div class="fp" id="panelBalP">
+      <div class="crumbs" id="balCrumbs"></div>
+      <div id="balPContent"></div>
     </div>
     <div class="fp" id="panelForm">
       <div class="crumbs" id="formCrumbs"></div>
@@ -330,6 +453,15 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <!-- Proposal modal -->
 <div class="modal-bg" id="propModal"><div class="modal prop-modal"><button class="close" onclick="hideModal('propModal')">×</button><div id="propContent"></div><div style="margin-top:20px;text-align:center"><button class="btn btn-g" onclick="window.print()">🖨️ Imprimir</button></div></div></div>
 
+<!-- Panel lateral: facturas del proyecto -->
+<div class="drawer-bg" id="factBg" onclick="cerrarFacturas()"></div>
+<aside class="drawer" id="factDrawer" aria-label="Facturas del proyecto">
+  <div class="drawer-h"><div><h3 id="factTitle">Facturas</h3><div class="sub" id="factSub"></div></div><button class="x" onclick="cerrarFacturas()" title="Cerrar (Esc)">×</button></div>
+  <div class="drawer-sum" id="factSum"></div>
+  <div class="drawer-b" id="factBody"></div>
+  <div class="drawer-f"><a class="btn btn-g" id="factNueva" href="../facturacion/#nueva" style="padding:10px">+ Nueva factura para este proyecto</a><a class="btn btn-w" href="../facturacion/" style="padding:10px;color:var(--tx);background:var(--bg);border:1px solid var(--bd)">Ir a Facturación</a></div>
+</aside>
+
 <!-- Historial: últimos 3 presupuestos -->
 <div class="modal-bg" id="histModal" onclick="if(event.target===this)hideModal('histModal')"><div class="modal hist-modal"><button class="close" onclick="hideModal('histModal')">×</button>
   <h3 id="histTitle">Últimos 3</h3>
@@ -353,6 +485,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="https://cdn.jsdelivr.net/npm/xlsx-populate@1.21.0/browser/xlsx-populate.min.js"></script>
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
+<script src="../balance-calc.js"></script>
 <script>
 /* Error handler global — muestra errores visualmente */
 window.onerror=function(msg,url,line,col,err){
@@ -445,24 +578,29 @@ document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
   var abierto=document.querySelector('.modal-bg.show');
   if(abierto){abierto.classList.remove('show');return;}
+  if(document.getElementById('factDrawer').classList.contains('show')){cerrarFacturas();return;}
   var tag=(e.target.tagName||'').toLowerCase();
   if(tag==='input'||tag==='select'||tag==='textarea')return;
-  if(document.getElementById('panelDetail').classList.contains('active'))nav('#/');
+  if(document.getElementById('panelDetail').classList.contains('active')||document.getElementById('panelBalP').classList.contains('active'))nav('#/');
   else if(document.getElementById('panelForm').classList.contains('active'))backFromForm();
 });
 function route(){
   if(!dataLoaded)return;
   var h=location.hash||'#/',m;
   curRoute=h;
+  cerrarFacturas();
+  setNavActivo(h==='#/balance'?'bal':'pres');
+  if(h==='#/balance'){showBalanceGeneral();return;}
+  if((m=h.match(/^#\/p\/([^\/]+)\/balance$/))){openBalance(decodeURIComponent(m[1]));return;}
   if(h==='#/nuevo'){renderNewForm();return;}
   if((m=h.match(/^#\/p\/([^\/]+)\/editar$/))){openEdit(decodeURIComponent(m[1]));return;}
   if((m=h.match(/^#\/p\/([^\/]+)$/))){openCot(decodeURIComponent(m[1]));return;}
   showDashView();
 }
 function showPanel(id){
-  ['panelDash','panelDetail','panelForm'].forEach(function(p){document.getElementById(p).classList.remove('active')});
+  ['panelDash','panelDetail','panelForm','panelBalG','panelBalP'].forEach(function(p){document.getElementById(p).classList.remove('active')});
   var el=document.getElementById(id);el.classList.add('active');el.scrollTop=0;
-  document.getElementById('app').classList.toggle('no-rp',id==='panelDash');
+  document.getElementById('app').classList.toggle('no-rp',id==='panelDash'||id==='panelBalG'||id==='panelBalP');
 }
 function backToDash(){nav('#/')}
 function backToDetail(){nav(editingId?'#/p/'+encodeURIComponent(editingId):'#/')}
@@ -554,7 +692,8 @@ function renderDash(){
     if(p.superficie)meta.push('<span>'+fmtGs(p.superficie)+' ha</span>');
     var acts='';
     if(p.estado==='Cotización')acts='<button class="ibtn ok" onclick="event.stopPropagation();showApprove(\''+id+'\')">Aprobar</button><button class="ibtn del" title="Eliminar cotización" onclick="event.stopPropagation();deleteCot(\''+id+'\')">Eliminar</button>';
-    else if(p.estado==='En Curso')acts='<button class="ibtn" onclick="event.stopPropagation();finishProject(\''+id+'\')">Finalizar</button>';
+    else if(p.estado==='En Curso')acts='<button class="ibtn" onclick="event.stopPropagation();nav(\'#/p/'+encodeURIComponent(p._id)+'/balance\')">Balance</button><button class="ibtn" onclick="event.stopPropagation();finishProject(\''+id+'\')">Finalizar</button>';
+    else if(p.estado==='Finalizado')acts='<button class="ibtn" onclick="event.stopPropagation();nav(\'#/p/'+encodeURIComponent(p._id)+'/balance\')">Balance</button>';
     return '<div class="pcard s-'+st.cls+'" tabindex="0" onclick="nav(\'#/p/'+encodeURIComponent(p._id)+'\')" onkeydown="if(event.key===\'Enter\')this.click()">'+
       '<div class="pc-top"><span class="chip chip-'+st.cls+'">'+esc(st.label)+'</span>'+
         (p.presupuesto?'':'<span class="chip chip-warn" title="Creado desde la app o dato de prueba">Sin presupuesto</span>')+
@@ -580,7 +719,8 @@ function openCot(id){
   document.getElementById('detCrumbs').innerHTML=
     '<button class="back-btn" onclick="nav(\'#/\')" title="Volver a la lista (Esc)">← Proyectos</button>'+
     '<span class="path"><a href="#/">Proyectos</a> / <strong>'+esc(p.nombre||'Sin nombre')+'</strong></span>'+
-    '<span class="acts">'+
+    projTabs(id,'pres')+
+    '<span class="acts">'+factBtn(id)+
       '<button class="btn btn-g" onclick="goToEdit()">✏️ '+(p.presupuesto?'Editar presupuesto':'Cargar presupuesto')+'</button>'+
       (p.presupuesto?'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="showPropFromDetail()">📄 Propuesta</button>'+
       '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="exportXlsx()">📥 Excel</button>':'')+
@@ -589,6 +729,7 @@ function openCot(id){
     '</span>';
   showPanel('panelDetail');
   renderDetail(p);
+  actualizarContadorFacturas(id);
 }
 
 /* ═══════════════════════════════════════ */
@@ -1922,9 +2063,383 @@ function sincronizarAsignaciones(id,pres){
 }
 
 function refrescarVista(){
+  BalanceData.invalidar();
   return loadAll().then(function(){
     if(document.getElementById('panelDetail').classList.contains('active')&&editingId)openCot(editingId);
   });
+}
+
+/* ═══════════════════════════════════════ */
+/*  BALANCE (general y por proyecto)       */
+/* ═══════════════════════════════════════ */
+function fechaDe(v){
+  if(!v)return 0;
+  if(v.toMillis)return v.toMillis();
+  if(v instanceof Date)return v.getTime();
+  if(typeof v==='string'){var m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return new Date(+m[1],+m[2]-1,+m[3]).getTime();var t=Date.parse(v);return isNaN(t)?0:t}
+  if(typeof v==='number')return v;
+  if(v.seconds)return v.seconds*1000;
+  return 0;
+}
+function fFecha(v){var ms=fechaDe(v);return ms?new Date(ms).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'}
+function gs(n){return '₲ '+fmtGs(Math.round(n||0))}
+function usd(n){return 'USD '+fmtUsd(n||0)}
+function pct(x){return x==null||!isFinite(x)?'—':Math.round(x*100)+'%'}
+function signo(n){return n>0.5?'pos':(n<-0.5?'neg':'')}
+function setNavActivo(cual){
+  var p=document.getElementById('navPres'),b=document.getElementById('navBal');
+  if(p)p.classList.toggle('on',cual==='pres');
+  if(b)b.classList.toggle('on',cual==='bal');
+}
+function projTabs(id,activa){
+  var e=encodeURIComponent(id);
+  return '<span class="vtabs"><a href="#/p/'+e+'"'+(activa==='pres'?' class="on"':'')+'>Presupuesto</a><a href="#/p/'+e+'/balance"'+(activa==='bal'?' class="on"':'')+'>Balance</a></span>';
+}
+function factBtn(id){
+  return '<button class="btn btn-w fact-btn" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="abrirFacturas(\''+esc(id).replace(/'/g,'')+'\')">🧾 Facturas<span class="nb zero" data-fact-count>…</span></button>';
+}
+function facturasDe(id,d){return (d?d.facturas:[]).filter(function(f){return f.proyectoId===id}).sort(function(a,b){return (a.numero||0)-(b.numero||0)})}
+function actualizarContadorFacturas(id){
+  BalanceData.cargar(db).then(function(d){
+    var n=facturasDe(id,d).filter(function(f){return f.estado!=='anulada'}).length;
+    document.querySelectorAll('[data-fact-count]').forEach(function(el){el.textContent=n;el.classList.toggle('zero',n===0)});
+  }).catch(function(){document.querySelectorAll('[data-fact-count]').forEach(function(el){el.textContent='!'})});
+}
+function actualizarBalance(){BalanceData.invalidar();route()}
+
+/* ── Balance general ── */
+var balFiltro='aprobados',balOrden='disponible';
+function showBalanceGeneral(){
+  editingId=null;
+  showPanel('panelBalG');
+  setNavActivo('bal');
+  document.title='Balance — SoilTech';
+  var el=document.getElementById('balGContent');
+  if(!BalanceData.actual())el.innerHTML='<div class="loading-box">Cargando movimientos…</div>';
+  BalanceData.cargar(db).then(renderBalanceGeneral).catch(function(e){
+    el.innerHTML='<div class="loading-box" style="color:var(--dg)">No se pudo leer el balance: '+esc(e.message)+'</div>';
+  });
+}
+function setBalFiltro(f){balFiltro=f;renderBalanceGeneral(BalanceData.actual())}
+function setBalOrden(o){balOrden=o;renderBalanceGeneral(BalanceData.actual())}
+function renderBalanceGeneral(d){
+  if(!d)return;
+  var g=BalanceCalc.general(ALL,d.gastos,d.ingresos,d.colabs);
+  var aprob=g.proyectos.filter(function(b){return b.estado!=='Cotización'});
+  var netoAprob=aprob.reduce(function(s,b){return s+b.valorNetoUsd},0);
+  var cobAprob=aprob.reduce(function(s,b){return s+b.ingresoUsd},0);
+  var cats=Object.keys(g.porCategoria).map(function(k){return{k:k,v:g.porCategoria[k]}}).filter(function(c){return c.v>0}).sort(function(a,b){return b.v-a.v});
+  var maxC=cats.length?cats[0].v:1;
+  var totC=cats.reduce(function(s,c){return s+c.v},0);
+  var filtros=[['aprobados','Aprobados'],['En Curso','En curso'],['Finalizado','Finalizados'],['Cotización','Cotizaciones'],['todos','Todos']];
+  var lista=g.proyectos.filter(function(b){
+    if(balFiltro==='todos')return true;
+    if(balFiltro==='aprobados')return b.estado!=='Cotización';
+    return b.estado===balFiltro;
+  });
+  var ord={
+    disponible:function(a,b){return b.disponible-a.disponible},
+    egresos:function(a,b){return b.egresos-a.egresos},
+    cobrado:function(a,b){return b.ingresoGs-a.ingresoGs},
+    porcobrar:function(a,b){return b.porCobrarUsd-a.porCobrarUsd},
+    nombre:function(a,b){return a.nombre.localeCompare(b.nombre)}
+  }[balOrden];
+  lista.sort(ord);
+  var sumL=function(f){return lista.reduce(function(s,b){return s+f(b)},0)};
+  var html=
+    '<div class="bal-head"><div><h2>Balance</h2><div class="sub">Todos los proyectos · mismos cálculos que la app</div></div>'+
+      '<button class="ibtn" onclick="actualizarBalance()">↻ Actualizar</button></div>'+
+    '<div class="bal-kpis k4">'+
+      '<div class="bk hero'+(g.disponible<0?' neg':'')+'"><div class="l">Disponible</div><div class="v">'+gs(g.disponible)+'</div><div class="s">Cobrado − egresos · usado '+pct(g.usoDeIngresos)+'</div></div>'+
+      '<div class="bk"><div class="l">Cobrado</div><div class="v">'+gs(g.ingresoGs)+'</div><div class="s">'+usd(g.ingresoUsd)+' netos de retención</div></div>'+
+      '<div class="bk"><div class="l">Egresos</div><div class="v">'+gs(g.egresos)+'</div><div class="s">Gastos '+gs(g.gastos)+' · Colab. '+gs(g.pagosColaboradores)+'</div></div>'+
+      '<div class="bk warn"><div class="l">Por cobrar</div><div class="v">'+usd(g.porCobrarUsd)+'</div><div class="s">Solo proyectos aprobados</div></div>'+
+    '</div>'+
+    (g.hayHuerfanos?'<ul class="avisos" style="margin-bottom:14px"><li>Hay registros de proyectos que ya no existen y no se cuentan en ningún proyecto: '+[g.gastosHuerfanos?'gastos '+gs(g.gastosHuerfanos):'',g.ingresosHuerfanosGs?'cobros '+gs(g.ingresosHuerfanosGs):'',g.pagosColabHuerfanos?'pagos a colaboradores '+gs(g.pagosColabHuerfanos):''].filter(Boolean).join(', ')+'.</li></ul>':'')+
+    '<div class="det-grid">'+
+      '<div class="det-card"><h4>Egresos por categoría</h4>'+
+        (cats.length?'<div class="hbars">'+cats.map(function(c){
+          return '<div class="hb" title="'+esc(c.k)+': '+gs(c.v)+' ('+pct(c.v/totC)+')"><span class="n"><i class="dot" style="background:'+BalanceCalc.color(c.k)+'"></i>'+esc(c.k)+'</span><span class="t"><span style="width:'+Math.max(2,c.v/maxC*100)+'%;background:'+BalanceCalc.color(c.k)+'"></span></span><span class="v">'+gs(c.v)+'<small>'+pct(c.v/totC)+'</small></span></div>';
+        }).join('')+'</div>':'<div class="mov-empty">Todavía no hay egresos cargados.</div>')+
+      '</div>'+
+      '<div class="det-card"><h4>Cobro de proyectos aprobados</h4>'+
+        '<div class="prog"><span style="width:'+Math.min(100,netoAprob>0?cobAprob/netoAprob*100:0)+'%"></span></div>'+
+        '<div class="prog-l"><span>Cobrado '+pct(netoAprob>0?cobAprob/netoAprob:null)+'</span><span>'+usd(cobAprob)+' de '+usd(netoAprob)+'</span></div>'+
+        '<div style="margin-top:12px">'+
+          '<div class="brow"><span>Proyectos en curso</span><strong>'+g.proyectos.filter(function(b){return b.estado==='En Curso'}).length+'</strong></div>'+
+          '<div class="brow"><span>Finalizados</span><strong>'+g.proyectos.filter(function(b){return b.estado==='Finalizado'}).length+'</strong></div>'+
+          '<div class="brow"><span>Contratos netos (sin IVA)</span><strong>'+usd(netoAprob)+'</strong></div>'+
+          '<div class="brow"><span>Por cobrar</span><strong class="warn">'+usd(g.porCobrarUsd)+'</strong></div>'+
+          '<div class="brow"><span>Cotizaciones abiertas<small>No cuentan como por cobrar</small></span><strong>'+usd(g.proyectos.filter(function(b){return b.estado==='Cotización'}).reduce(function(s,b){return s+b.valorUsd},0))+'</strong></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="det-card full">'+
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px"><h4 style="margin:0">Balance por proyecto</h4>'+
+        '<div class="seg" style="margin-left:auto">'+filtros.map(function(f){
+          var n=g.proyectos.filter(function(b){return f[0]==='todos'||(f[0]==='aprobados'?b.estado!=='Cotización':b.estado===f[0])}).length;
+          return '<button class="pill'+(balFiltro===f[0]?' active':'')+'" onclick="setBalFiltro(\''+f[0]+'\')">'+f[1]+'<span class="n">'+n+'</span></button>';
+        }).join('')+'</div>'+
+        '<select class="sort" onchange="setBalOrden(this.value)">'+[['disponible','Mayor disponible'],['egresos','Mayores egresos'],['cobrado','Más cobrado'],['porcobrar','Más por cobrar'],['nombre','Nombre (A-Z)']].map(function(o){return '<option value="'+o[0]+'"'+(balOrden===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select>'+
+      '</div>'+
+      (lista.length?'<div style="overflow-x:auto"><table class="cat-t bal-t"><thead><tr><th>Proyecto</th><th style="text-align:left">Estado</th><th>Cobrado</th><th>Egresos</th><th>Disponible</th><th class="bar">Uso de lo cobrado</th><th>Por cobrar</th><th>Resultado est.</th></tr></thead><tbody>'+
+        lista.map(function(b){
+          var p=findProj(b.proyectoId)||{};
+          var st=EST[b.estado]||{cls:'fin',label:b.estado};
+          var uso=b.usoDeIngresos;
+          var col=uso>1?'var(--dg)':(uso>0.8?'var(--warn)':'var(--g)');
+          return '<tr onclick="nav(\'#/p/'+encodeURIComponent(b.proyectoId)+'/balance\')" title="Ver balance de '+esc(b.nombre)+'">'+
+            '<td class="nm">'+esc(b.nombre||'Sin nombre')+'<small>'+esc(p.cliente||'')+'</small></td>'+
+            '<td style="text-align:left"><span class="chip chip-'+st.cls+'">'+esc(st.label)+'</span></td>'+
+            '<td>'+gs(b.ingresoGs)+'</td><td>'+gs(b.egresos)+'</td>'+
+            '<td class="'+(b.disponible<0?'over':'')+'">'+gs(b.disponible)+'</td>'+
+            '<td class="bar"><div class="ebar'+(uso>1?' over':'')+'" title="'+pct(uso)+' de lo cobrado"><span style="width:'+Math.min(100,uso*100)+'%;background:'+col+'"></span></div><span style="font-size:10px;color:var(--tx3)">'+(b.ingresoGs>0?pct(uso):(b.egresos>0?'sin cobros':'—'))+'</span></td>'+
+            '<td>'+(b.estado==='Cotización'?'<span class="na">cotización</span>':usd(b.porCobrarUsd))+'</td>'+
+            '<td class="'+(b.resultadoEstimado<0?'over':'')+'">'+(b.resultadoEstimado==null?'<span class="na">sin cotización</span>':gs(b.resultadoEstimado))+'</td>'+
+          '</tr>';
+        }).join('')+
+        '</tbody><tfoot><tr class="tot"><td>Total ('+lista.length+')</td><td></td><td>'+gs(sumL(function(b){return b.ingresoGs}))+'</td><td>'+gs(sumL(function(b){return b.egresos}))+'</td><td>'+gs(sumL(function(b){return b.disponible}))+'</td><td class="bar"></td><td>'+usd(sumL(function(b){return b.estado==='Cotización'||b.porCobrarUsd<0?0:b.porCobrarUsd}))+'</td><td></td></tr></tfoot></table></div>'
+      :'<div class="mov-empty">No hay proyectos con ese filtro.</div>')+
+    '</div>';
+  document.getElementById('balGContent').innerHTML=html;
+}
+
+/* ── Balance de un proyecto ── */
+var movTab='gastos',movCat='',movQ='';
+function openBalance(id){
+  var p=findProj(id);
+  if(!p){noEncontrado();return;}
+  if(editingId!==id){movTab='gastos';movCat='';movQ=''}
+  editingId=id;
+  document.title='Balance '+(p.nombre||'')+' — SoilTech';
+  setNavActivo('pres');
+  var sid=esc(id).replace(/'/g,'');
+  document.getElementById('balCrumbs').innerHTML=
+    '<button class="back-btn" onclick="nav(\'#/\')" title="Volver a la lista (Esc)">← Proyectos</button>'+
+    '<span class="path"><a href="#/">Proyectos</a> / <strong>'+esc(p.nombre||'Sin nombre')+'</strong></span>'+
+    projTabs(id,'bal')+
+    '<span class="acts">'+factBtn(id)+'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="actualizarBalance()" title="Volver a leer los datos">↻ Actualizar</button></span>';
+  showPanel('panelBalP');
+  var el=document.getElementById('balPContent');
+  el.innerHTML='<div class="loading-box">Cargando movimientos…</div>';
+  Promise.all([BalanceData.cargar(db),BalanceData.asignaciones(db,id).catch(function(){return null})]).then(function(r){
+    if(editingId!==id||!document.getElementById('panelBalP').classList.contains('active'))return;
+    renderBalanceProyecto(p,r[0],r[1]);
+    actualizarContadorFacturas(id);
+  }).catch(function(e){
+    el.innerHTML='<div class="loading-box" style="color:var(--dg)">No se pudo leer el balance: '+esc(e.message)+'</div>';
+  });
+}
+var balPActual=null;
+function renderBalanceProyecto(p,d,asig){
+  balPActual={p:p,d:d,asig:asig};
+  var id=p._id;
+  var b=BalanceCalc.proyecto(p,d.gastos,d.ingresos,d.colabs,asig||{});
+  var st=EST[p.estado]||{cls:'fin',label:p.estado||''};
+  var facts=facturasDe(id,d).filter(function(f){return f.estado!=='anulada'});
+  var fU=0,fG=0,fPag=0;
+  facts.forEach(function(f){if((f.moneda||'').indexOf('DOLAR')>=0)fU+=f.total||0;else fG+=f.total||0;if(f.pagada)fPag++});
+  var prMargen=p.presupuesto&&p.presupuesto.margenPct!=null?p.presupuesto.margenPct:null;
+
+  /* Categorías vs presupuesto */
+  var nombres={};
+  Object.keys(b.porCategoria).forEach(function(k){nombres[k]=1});
+  Object.keys(b.asignaciones).forEach(function(k){if(b.asignaciones[k]>0)nombres[k]=1});
+  var filas=Object.keys(nombres).map(function(k){return{k:k,pres:b.asignaciones[k]||0,real:b.porCategoria[k]||0}})
+    .sort(function(a,c){return (c.pres||c.real)-(a.pres||a.real)});
+  var catHtml=filas.length?'<div style="overflow-x:auto"><table class="cat-t"><thead><tr><th>Categoría</th><th>Presupuesto</th><th>Gastado</th><th>Diferencia</th><th class="bar">Ejecución</th></tr></thead><tbody>'+
+    filas.map(function(f){
+      var ej=f.pres>0?f.real/f.pres:null;
+      var dif=f.pres-f.real;
+      var c=BalanceCalc.color(f.k);
+      return '<tr><td class="nm"><i class="dot" style="background:'+c+'"></i>'+esc(f.k)+'</td>'+
+        '<td>'+(f.pres>0?gs(f.pres):'<span class="na">sin presupuesto</span>')+'</td>'+
+        '<td>'+gs(f.real)+'</td>'+
+        '<td class="'+(f.pres>0?(dif<0?'over':'under'):'na')+'">'+(f.pres>0?(dif<0?'−'+gs(-dif).slice(0):gs(dif)):'—')+'</td>'+
+        '<td class="bar"><div class="ebar'+(ej>1?' over':'')+'" title="'+(ej==null?'Sin presupuesto':pct(ej)+' del presupuesto')+'"><span style="width:'+(ej==null?(f.real>0?100:0):Math.min(100,ej*100))+'%;background:'+(ej==null?'var(--tx3)':c)+'"></span></div><span style="font-size:10px;color:'+(ej>1?'var(--dg)':'var(--tx3)')+'">'+(ej==null?'—':pct(ej))+'</span></td></tr>';
+    }).join('')+
+    '</tbody><tfoot><tr class="tot"><td>Total</td><td>'+(b.presupuesto>0?gs(b.presupuesto):'—')+'</td><td>'+gs(b.egresos)+'</td><td class="'+(b.presupuesto>0?(b.presupuesto-b.egresos<0?'over':'under'):'')+'">'+(b.presupuesto>0?gs(b.presupuesto-b.egresos):'—')+'</td><td class="bar">'+(b.ejecucionPresupuesto==null?'':'<span style="font-size:11px">'+pct(b.ejecucionPresupuesto)+' ejecutado</span>')+'</td></tr></tfoot></table></div>'+
+    (asig===null?'<div class="form-note warn" style="margin:10px 0 0">No se pudieron leer las asignaciones de presupuesto.</div>':(b.presupuesto>0?'':'<div class="form-note info" style="margin:10px 0 0">Este proyecto no tiene presupuesto asignado por categoría (se asigna al aprobar la cotización o desde la app).</div>'))
+    :'<div class="mov-empty">Todavía no hay egresos ni presupuesto por categoría.</div>';
+
+  var html=
+    '<div class="det-header"><div><h2>'+esc(p.nombre||'Sin nombre')+'</h2><div class="det-sub">'+esc([p.cliente,p.ubicacion,p.tipoServicio].filter(Boolean).join(' · '))+'</div></div><div style="text-align:right"><span class="chip chip-'+st.cls+'" style="background:rgba(255,255,255,0.92)">'+esc(st.label)+'</span><div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:6px">'+(b.cotizacionRef?'Cotización ref.: ₲ '+fmtGs(Math.round(b.cotizacionRef))+'/USD':'Sin cotización de referencia')+'</div></div></div>'+
+    '<div class="bal-kpis">'+
+      '<div class="bk hero'+(b.disponible<0?' neg':'')+'"><div class="l">Disponible</div><div class="v">'+gs(b.disponible)+'</div><div class="s">Cobrado − egresos</div></div>'+
+      '<div class="bk"><div class="l">Cobrado</div><div class="v">'+gs(b.ingresoGs)+'</div><div class="s">'+usd(b.ingresoUsd)+' · '+b.cantIngresos+' cobro'+(b.cantIngresos===1?'':'s')+'</div></div>'+
+      '<div class="bk"><div class="l">Egresos</div><div class="v">'+gs(b.egresos)+'</div><div class="s">'+b.cantGastos+' gasto'+(b.cantGastos===1?'':'s')+' · '+b.cantPagosColaboradores+' pago'+(b.cantPagosColaboradores===1?'':'s')+' colab.</div></div>'+
+      '<div class="bk '+(b.porCobrarUsd<0?'neg':'warn')+'"><div class="l">Por cobrar</div><div class="v">'+usd(b.porCobrarUsd)+'</div><div class="s">'+(b.porCobrarGs!=null?'≈ '+gs(b.porCobrarGs):'Sin cotización')+'</div></div>'+
+      '<div class="bk '+signo(b.resultadoEstimado||0)+'"><div class="l">Resultado estimado</div><div class="v">'+(b.resultadoEstimado==null?'—':gs(b.resultadoEstimado))+'</div><div class="s">Margen '+pct(b.margenEstimado)+(prMargen!=null?' · presupuestado '+pct(prMargen):'')+'</div></div>'+
+    '</div>'+
+    (b.avisos.length?'<ul class="avisos" style="margin-bottom:14px">'+b.avisos.map(function(a){return '<li>'+esc(a)+'</li>'}).join('')+'</ul>':'')+
+    '<div class="det-grid">'+
+      '<div class="det-card"><h4>Cobros</h4>'+
+        (b.avanceCobro!=null?'<div class="prog"><span style="width:'+Math.min(100,b.avanceCobro*100)+'%;background:'+(b.cobradoDeMas?'var(--dg)':'var(--g)')+'"></span></div><div class="prog-l"><span>Cobrado '+pct(b.avanceCobro)+' del contrato</span><span>'+usd(b.ingresoUsd)+' / '+usd(b.valorNetoUsd)+'</span></div>':'')+
+        '<div style="margin-top:10px">'+
+          '<div class="brow"><span>Valor del contrato</span><strong>'+usd(b.valorUsd)+'</strong></div>'+
+          '<div class="brow"><span>Neto (sin retención de IVA)</span><strong>'+usd(b.valorNetoUsd)+'</strong></div>'+
+          '<div class="brow"><span>Cobrado</span><strong class="pos">'+usd(b.ingresoUsd)+'<small>'+gs(b.ingresoGs)+'</small></strong></div>'+
+          '<div class="brow"><span>Por cobrar</span><strong class="'+(b.porCobrarUsd<0?'neg':'warn')+'">'+usd(b.porCobrarUsd)+'</strong></div>'+
+          '<div class="brow"><span>Facturado<small>'+facts.length+' factura'+(facts.length===1?'':'s')+' · '+fPag+' pagada'+(fPag===1?'':'s')+'</small></span><strong>'+(fU?usd(fU):'')+(fU&&fG?'<small>':'')+(fG?gs(fG):'')+(fU&&fG?'</small>':'')+(!fU&&!fG?'—':'')+'</strong></div>'+
+        '</div>'+
+        '<button class="ibtn" style="margin-top:10px" onclick="abrirFacturas(\''+esc(id).replace(/'/g,'')+'\')">🧾 Ver facturas</button>'+
+      '</div>'+
+      '<div class="det-card"><h4>Resultado</h4>'+
+        '<div class="prog"><span style="width:'+Math.min(100,b.usoDeIngresos*100)+'%;background:'+(b.usoDeIngresos>1?'var(--dg)':(b.usoDeIngresos>0.8?'var(--warn)':'var(--g)'))+'"></span></div>'+
+        '<div class="prog-l"><span>Usado '+(b.ingresoGs>0?pct(b.usoDeIngresos):(b.egresos>0?'(sin cobros)':'0%'))+' de lo cobrado</span><span>'+gs(b.egresos)+' / '+gs(b.ingresoGs)+'</span></div>'+
+        '<div style="margin-top:10px">'+
+          '<div class="brow"><span>Cobrado</span><strong>'+gs(b.ingresoGs)+'</strong></div>'+
+          '<div class="brow"><span>(−) Gastos</span><strong>'+gs(b.gastos)+'</strong></div>'+
+          '<div class="brow"><span>(−) Pagos a colaboradores</span><strong>'+gs(b.pagosColaboradores)+'</strong></div>'+
+          '<div class="brow"><span><b>Disponible</b></span><strong class="'+signo(b.disponible)+'">'+gs(b.disponible)+'</strong></div>'+
+          '<div class="brow"><span>Resultado estimado<small>Cobrado + por cobrar − egresos</small></span><strong class="'+signo(b.resultadoEstimado||0)+'">'+(b.resultadoEstimado==null?'Sin cotización':gs(b.resultadoEstimado))+'</strong></div>'+
+          '<div class="brow"><span>Margen estimado'+(prMargen!=null?'<small>Presupuestado: '+pct(prMargen)+'</small>':'')+'</span><strong class="'+(b.margenEstimado!=null&&prMargen!=null&&b.margenEstimado<prMargen?'warn':'')+'">'+pct(b.margenEstimado)+'</strong></div>'+
+        '</div>'+
+        '<button class="ibtn" style="margin-top:10px" onclick="nav(\'#/p/'+encodeURIComponent(id)+'\')">📊 Ver presupuesto</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="det-card full" style="margin-bottom:12px"><h4>Egresos por categoría vs presupuesto</h4>'+catHtml+'</div>'+
+    '<div class="det-card full" id="movCard"></div>'+
+    '<div class="det-foot"><button class="ibtn" style="padding:9px 16px;font-size:12px" onclick="nav(\'#/\')">← Volver a la lista de proyectos</button></div>';
+  document.getElementById('balPContent').innerHTML=html;
+  renderMovimientos();
+}
+function setMovTab(t){movTab=t;movCat='';renderMovimientos()}
+function renderMovimientos(){
+  var st=balPActual;if(!st)return;
+  var id=st.p._id,d=st.d;
+  var G=d.gastos.filter(function(g){return g.proyectoId===id});
+  var C=d.colabs.filter(function(c){return c.proyectoId===id});
+  var I=d.ingresos.filter(function(i){return i.proyectoId===id});
+  var q=movQ.toLowerCase().trim();
+  var has=function(){var t=Array.prototype.join.call(arguments,' ').toLowerCase();return !q||t.indexOf(q)>=0};
+  var porFecha=function(a,b){return fechaDe(b.fecha)-fechaDe(a.fecha)};
+  var tabs=[['gastos','Gastos',G.length],['colab','Colaboradores',C.length],['cobros','Cobros',I.length]];
+  var cats={};G.forEach(function(g){cats[g.tipo||'Sin categoría']=1});
+  var head='<div class="mov-tabs"><h4 style="margin:0 6px 0 0">Movimientos</h4><div class="seg">'+tabs.map(function(t){return '<button class="pill'+(movTab===t[0]?' active':'')+'" onclick="setMovTab(\''+t[0]+'\')">'+t[1]+'<span class="n">'+t[2]+'</span></button>'}).join('')+'</div>'+
+    (movTab==='gastos'&&Object.keys(cats).length>1?'<select class="sort" onchange="movCat=this.value;renderMovimientos()"><option value="">Todas las categorías</option>'+Object.keys(cats).sort().map(function(c){return '<option'+(movCat===c?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select>':'')+
+    '<div class="search" style="flex:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="movSearch" placeholder="Buscar concepto, proveedor, persona…" value="'+esc(movQ)+'" oninput="movQ=this.value;renderMovimientos();var s=document.getElementById(\'movSearch\');s.focus();s.setSelectionRange(s.value.length,s.value.length)"></div></div>';
+  var body='';
+  if(movTab==='gastos'){
+    var L=G.filter(function(g){return (!movCat||(g.tipo||'Sin categoría')===movCat)&&has(g.concepto,g.descripcion,g.proveedor,g.tipo,g.numeroFactura,g.cargadoPorNombre,g.medioPago)}).sort(porFecha);
+    var tot=L.reduce(function(s,g){return s+BalanceCalc.num(g.monto)},0);
+    body=L.length?'<div class="mov-wrap"><table class="mov-t"><thead><tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th>Factura</th><th>Pago</th><th>Cargado por</th><th class="r">Monto</th></tr></thead><tbody>'+
+      L.map(function(g){
+        var det=[g.proveedor,g.rucProveedor?'RUC '+g.rucProveedor:'',g.descripcion].filter(Boolean).join(' · ');
+        return '<tr><td style="white-space:nowrap">'+fFecha(g.fecha)+(g.hora?'<span class="sub">'+esc(g.hora)+'</span>':'')+'</td>'+
+          '<td><span class="cat"><i style="background:'+BalanceCalc.color(g.tipo)+'"></i>'+esc(g.tipo||'Sin categoría')+'</span></td>'+
+          '<td>'+esc(g.concepto||'—')+(det?'<span class="sub">'+esc(det)+'</span>':'')+'</td>'+
+          '<td>'+(g.factura?'<span class="tag-fac">'+esc(g.numeroFactura||'Con factura')+'</span>'+(g.tipoIva?'<span class="sub">IVA '+esc(g.tipoIva)+'</span>':''):'<span class="sub" style="display:inline">—</span>')+'</td>'+
+          '<td>'+esc(g.medioPago||'—')+(g.tarjetaCredito?'<span class="sub">'+esc(g.tarjetaCredito)+'</span>':'')+'</td>'+
+          '<td>'+esc(g.cargadoPorNombre||'—')+'</td>'+
+          '<td class="r m">'+gs(g.monto)+'</td></tr>';
+      }).join('')+'</tbody><tfoot><tr><td colspan="6">'+L.length+' gasto'+(L.length===1?'':'s')+(movCat||q?' (filtrado)':'')+'</td><td class="r">'+gs(tot)+'</td></tr></tfoot></table></div>'
+      :'<div class="mov-empty">'+(G.length?'Ningún gasto coincide con el filtro.':'Todavía no hay gastos cargados desde la app para este proyecto.')+'</div>';
+  }else if(movTab==='colab'){
+    var LC=C.filter(function(c){return has(c.colaboradorNombre,c.concepto,c.medioPago)}).sort(porFecha);
+    var tc=LC.reduce(function(s,c){return s+BalanceCalc.num(c.monto)},0);
+    body=LC.length?'<div class="mov-wrap"><table class="mov-t"><thead><tr><th>Fecha</th><th>Colaborador</th><th>Concepto</th><th>Pago</th><th>Factura</th><th class="r">Monto</th></tr></thead><tbody>'+
+      LC.map(function(c){return '<tr><td style="white-space:nowrap">'+fFecha(c.fecha)+'</td><td><strong style="color:var(--gd)">'+esc(c.colaboradorNombre||'—')+'</strong></td><td>'+esc(c.concepto||'—')+'</td><td>'+esc(c.medioPago||'—')+'</td><td>'+(c.factura?'<span class="tag-fac">Sí</span>':'—')+'</td><td class="r m">'+gs(c.monto)+'</td></tr>'}).join('')+
+      '</tbody><tfoot><tr><td colspan="5">'+LC.length+' pago'+(LC.length===1?'':'s')+'</td><td class="r">'+gs(tc)+'</td></tr></tfoot></table></div>'
+      :'<div class="mov-empty">'+(C.length?'Ningún pago coincide con el filtro.':'No hay pagos a colaboradores en este proyecto.')+'</div>';
+  }else{
+    var cotP=BalanceCalc.num(st.p.cotizacion)>0?BalanceCalc.num(st.p.cotizacion):null;
+    var LI=I.filter(function(i){return has(i.concepto)}).sort(porFecha);
+    var tu=0,tg=0;
+    body=LI.length?'<div class="mov-wrap"><table class="mov-t"><thead><tr><th>Fecha</th><th>Concepto</th><th class="r">Monto USD</th><th class="r">Retención</th><th class="r">Neto USD</th><th class="r">Cotización</th><th class="r">Neto Gs</th></tr></thead><tbody>'+
+      LI.map(function(i){
+        var n=BalanceCalc.netoUsd(i);tu+=n;
+        var g=i.montoFinalGs!=null?BalanceCalc.num(i.montoFinalGs):null,nota='';
+        if(g==null){var c=BalanceCalc.num(i.cotizacion)>0?BalanceCalc.num(i.cotizacion):null;if(c)g=n*c;else if(cotP){g=n*cotP;nota='cotización del proyecto'}else nota='sin cotización'}
+        if(g!=null)tg+=g;
+        var ret=i.retencion!=null?BalanceCalc.num(i.retencion):null;
+        return '<tr><td style="white-space:nowrap">'+fFecha(i.fecha)+'</td><td>'+esc(i.concepto||'—')+'</td><td class="r">'+usd(i.montoUsd)+'</td><td class="r">'+(ret!=null?Math.round(ret*1000)/10+'%':'—')+'</td><td class="r m">'+usd(n)+'</td><td class="r">'+(BalanceCalc.num(i.cotizacion)>0?fmtGs(BalanceCalc.num(i.cotizacion)):'—')+'</td><td class="r m">'+(g!=null?gs(g):'—')+(nota?'<span class="sub">'+nota+'</span>':'')+'</td></tr>';
+      }).join('')+'</tbody><tfoot><tr><td colspan="4">'+LI.length+' cobro'+(LI.length===1?'':'s')+'</td><td class="r">'+usd(tu)+'</td><td></td><td class="r">'+gs(tg)+'</td></tr></tfoot></table></div>'
+      :'<div class="mov-empty">'+(I.length?'Ningún cobro coincide con el filtro.':'Todavía no hay cobros registrados para este proyecto.')+'</div>';
+  }
+  document.getElementById('movCard').innerHTML=head+body;
+}
+
+/* ═══ Panel lateral: facturas del proyecto ═══ */
+var factProyId=null;
+function normNombre(s){return String(s||'').toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Z0-9]/g,'')}
+function abrirFacturas(id){
+  factProyId=id;
+  var p=findProj(id)||{};
+  document.getElementById('factTitle').textContent='Facturas';
+  document.getElementById('factSub').textContent=(p.nombre||'')+(p.cliente?' · '+p.cliente:'');
+  document.getElementById('factNueva').href='../facturacion/#nueva/p/'+encodeURIComponent(id);
+  document.getElementById('factBody').innerHTML='<div class="drawer-empty">Cargando facturas…</div>';
+  document.getElementById('factSum').innerHTML='';
+  document.getElementById('factBg').classList.add('show');
+  document.getElementById('factDrawer').classList.add('show');
+  BalanceData.cargar(db).then(renderFacturasDrawer).catch(function(e){
+    document.getElementById('factBody').innerHTML='<div class="drawer-empty" style="color:var(--dg)">No se pudieron leer las facturas: '+esc(e.message)+'</div>';
+  });
+}
+function cerrarFacturas(){
+  document.getElementById('factBg').classList.remove('show');
+  document.getElementById('factDrawer').classList.remove('show');
+  factProyId=null;
+}
+function facturaCard(f,suelta){
+  var isU=(f.moneda||'').indexOf('DOLAR')>=0;
+  var m=function(n){return isU?fmtUsd(n||0):fmtGs(Math.round(n||0))};
+  var anul=f.estado==='anulada';
+  var bd=anul?'<span class="fb v">ANULADA</span>':
+    (f.pagada?'<span class="fb p">PAGADA</span>':'<span class="fb np">SIN COBRAR</span>')+(f.impresa?'<span class="fb i">IMPRESA</span>':'')+(f.enviada?'<span class="fb e">ENVIADA</span>':'');
+  if(f.tipo==='anticipo')bd='<span class="fb t">ANTICIPO</span>'+bd;
+  var items=(f.items&&f.items.length?f.items:[{cant:1,desc:f.servicio||'',unit:f.total||0}]);
+  var fid=esc(f._id).replace(/'/g,'');
+  return '<div class="fcard'+(anul?' anul':(f.pagada?' pag':''))+(suelta?' suelta':'')+'">'+
+    '<div class="fh"><div><div class="nro">'+esc(f.nroFormateado||('Nº '+(f.numero||'—')))+'</div><div class="fd">'+fFecha(f.fecha)+' · '+esc(f.condicion||'')+'</div></div><div class="bd">'+bd+'</div></div>'+
+    '<div class="cli">'+esc(f.cliente||'Sin cliente')+(f.ruc?' <span>· RUC '+esc(f.ruc)+'</span>':'')+'</div>'+
+    '<table><thead><tr><th style="width:34px">Cant</th><th>Descripción</th><th class="r">Precio</th><th class="r">Subtotal</th></tr></thead><tbody>'+
+      items.map(function(it){var c=BalanceCalc.num(it.cant)||1,u=BalanceCalc.num(it.unit);return '<tr><td>'+c+'</td><td>'+(it.code?'<b>'+esc(it.code)+'</b> ':'')+esc(it.desc||'')+'</td><td class="r">'+m(u)+'</td><td class="r">'+m(c*u)+'</td></tr>'}).join('')+
+    '</tbody></table>'+
+    '<div class="ft"><div><div class="tot"><small>'+(isU?'USD':'Gs')+'</small>'+m(f.total)+'</div><div class="iva">IVA '+(f.tipoIva||10)+'% incluido: '+m(f.ivaAmount)+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
+        '<a class="lk" href="../facturacion/#f/'+encodeURIComponent(f._id)+'">Abrir en Facturación →</a>'+
+        (suelta?'<button class="lk" onclick="vincularFactura(\''+fid+'\')">＋ Vincular a este proyecto</button>':'<button class="lk q" onclick="desvincularFactura(\''+fid+'\')">Quitar de este proyecto</button>')+
+      '</div></div>'+
+  '</div>';
+}
+function renderFacturasDrawer(d){
+  var id=factProyId;if(!id)return;
+  var p=findProj(id)||{};
+  var L=facturasDe(id,d);
+  var act=L.filter(function(f){return f.estado!=='anulada'});
+  L=act.concat(L.filter(function(f){return f.estado==='anulada'}));
+  var tU=0,tG=0,pU=0,pG=0,nPag=0;
+  act.forEach(function(f){var u=(f.moneda||'').indexOf('DOLAR')>=0;if(u)tU+=f.total||0;else tG+=f.total||0;if(f.pagada){nPag++;if(u)pU+=f.total||0;else pG+=f.total||0}});
+  var mix=function(u,g){return [u?usd(u):'',g?gs(g):''].filter(Boolean).join(' + ')||'—'};
+  document.getElementById('factSum').innerHTML=
+    '<div>Facturado<strong>'+mix(tU,tG)+'</strong></div>'+
+    '<div>Pagado<strong>'+mix(pU,pG)+'</strong></div>'+
+    '<div>Facturas<strong>'+act.length+(L.length>act.length?' <small style="font-size:10px;color:var(--tx3)">+'+(L.length-act.length)+' anul.</small>':'')+' · '+nPag+' pag.</strong></div>';
+  var cli=normNombre(p.cliente);
+  var sueltas=cli?d.facturas.filter(function(f){return !f.proyectoId&&f.estado!=='anulada'&&normNombre(f.cliente)===cli}).sort(function(a,b){return (b.numero||0)-(a.numero||0)}):[];
+  var h=L.length?L.map(function(f){return facturaCard(f,false)}).join(''):'<div class="drawer-empty">Este proyecto todavía no tiene facturas vinculadas.</div>';
+  if(sueltas.length)h+='<div class="drawer-sec">Del mismo cliente, sin proyecto ('+sueltas.length+')</div>'+sueltas.map(function(f){return facturaCard(f,true)}).join('');
+  document.getElementById('factBody').innerHTML=h;
+}
+function cambiarVinculo(fid,datos,msg){
+  db.collection('facturas').doc(fid).update(datos).then(function(){
+    var d=BalanceData.actual();
+    if(d)d.facturas.forEach(function(f){if(f._id===fid)Object.assign(f,datos)});
+    toast(msg);
+    if(d)renderFacturasDrawer(d);
+    if(factProyId)actualizarContadorFacturas(factProyId);
+    if(balPActual&&document.getElementById('panelBalP').classList.contains('active'))renderBalanceProyecto(balPActual.p,d,balPActual.asig);
+  }).catch(function(e){toast('❌ '+e.message)});
+}
+function vincularFactura(fid){
+  var p=findProj(factProyId);if(!p)return;
+  cambiarVinculo(fid,{proyectoId:p._id,proyectoNombre:(p.nombre||'').toUpperCase()},'✓ Factura vinculada a '+(p.nombre||'el proyecto'));
+}
+function desvincularFactura(fid){
+  if(!confirm('¿Quitar esta factura del proyecto? La factura no se borra.'))return;
+  cambiarVinculo(fid,{proyectoId:null,proyectoNombre:null},'Factura quitada del proyecto');
 }
 
 /* ═══════════════════════════════════════ */

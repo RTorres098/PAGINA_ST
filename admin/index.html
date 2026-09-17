@@ -47,7 +47,10 @@
   .greet .date{font-size:13px;color:var(--tx2);margin-top:4px}
   .role{font-size:11px;font-weight:700;color:var(--g);background:rgba(52,166,120,0.1);padding:5px 10px;border-radius:20px}
 
-  .modules{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:28px}
+  .modules{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px}
+  .module .ms .v.sm{font-size:16px;white-space:nowrap}
+  .module .ms.neg .v{color:#DC2626}
+  @media (max-width:1060px){.modules{grid-template-columns:1fr 1fr}}
   .module{display:flex;flex-direction:column;background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:24px;text-decoration:none;color:var(--tx);transition:transform .15s,box-shadow .15s,border-color .15s;position:relative;overflow:hidden}
   .module:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(24,64,62,0.12);border-color:var(--g)}
   .module .ico{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px}
@@ -136,7 +139,7 @@
 <div class="hub hidden" id="hubPanel">
   <header class="st-top">
     <a class="st-brand" href="./"><span class="st-logo" id="logoB"></span><span>SoilTech <b>Admin</b></span></a>
-    <nav class="st-nav"><a class="on" href="./">Inicio</a><a href="presupuesto/">Presupuestos</a><a href="facturacion/">Facturación</a></nav>
+    <nav class="st-nav"><a class="on" href="./">Inicio</a><a href="presupuesto/">Presupuestos</a><a href="presupuesto/#/balance">Balance</a><a href="facturacion/">Facturación</a></nav>
     <div class="st-right">
       <a class="st-btn st-btn-ghost" href="/">Ver sitio</a>
       <button class="st-btn st-btn-ghost" onclick="logout()">Cerrar sesión</button>
@@ -159,6 +162,16 @@
           <div class="ms warn"><div class="v" id="sCot">–</div><div class="l">Cotizaciones abiertas</div></div>
           <div class="ms"><div class="v" id="sAct">–</div><div class="l">En curso</div></div>
           <div class="ms"><div class="v" id="sFin">–</div><div class="l">Finalizados</div></div>
+        </div>
+      </a>
+      <a class="module" href="presupuesto/#/balance">
+        <span class="go">→</span>
+        <div class="ico" style="background:rgba(139,92,246,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+        <h2>Balance</h2>
+        <p>Cobros, gastos de la app y resultado de cada proyecto en un solo lugar.</p>
+        <div class="mstats">
+          <div class="ms" id="sDispBox"><div class="v sm" id="sDisp">–</div><div class="l">Disponible</div></div>
+          <div class="ms warn"><div class="v sm" id="sPorCobrar">–</div><div class="l">Por cobrar</div></div>
         </div>
       </a>
       <a class="module" href="facturacion/">
@@ -193,6 +206,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="config.js"></script>
+<script src="balance-calc.js"></script>
 <script>
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth=firebase.auth(), db=firebase.firestore();
@@ -233,9 +247,13 @@ const COLOR={'Cotización':'#F59E0B','En Curso':'#34A678','Finalizado':'#9CA3AF'
 
 async function loadResumen(){
   try{
-    const [ps,fs]=await Promise.all([db.collection('proyectos').get(),db.collection('facturas').get()]);
+    const [ps,bd]=await Promise.all([db.collection('proyectos').get(),BalanceData.cargar(db)]);
     const P=ps.docs.map(d=>Object.assign({_id:d.id},d.data()));
-    const F=fs.docs.map(d=>d.data());
+    const F=bd.facturas;
+    const g=BalanceCalc.general(P,bd.gastos,bd.ingresos,bd.colabs);
+    document.getElementById('sDisp').textContent='₲ '+fmtGs(Math.round(g.disponible));
+    document.getElementById('sDispBox').classList.toggle('neg',g.disponible<0);
+    document.getElementById('sPorCobrar').textContent='USD '+fmtUsd(g.porCobrarUsd);
     const n=e=>P.filter(p=>p.estado===e).length;
     document.getElementById('sCot').textContent=n('Cotización');
     document.getElementById('sAct').textContent=n('En Curso');
