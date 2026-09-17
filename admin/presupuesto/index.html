@@ -517,6 +517,13 @@ function renderDetail(p){
       (p.estado==='Cotización'?'<button class="btn btn-info" onclick="showApprove(\''+p._id+'\')">✅ Aprobar</button>':'')+
     '</div>';
 
+  // Proyecto sin presupuesto (creado desde la app o datos de prueba): avisar en vez de mostrar solo ceros
+  if(!p.presupuesto){
+    var aviso='<div style="margin:0 0 14px;padding:12px 14px;border-radius:10px;background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;font-size:13px">'+
+      '<strong>Este proyecto todavía no tiene presupuesto cargado</strong> (se creó desde la app o es un dato de prueba). '+
+      'Los valores en 0 no son reales: usá <a href="#" onclick="goToEdit();return false" style="color:#B45309;font-weight:700">Editar</a> para armar el presupuesto.</div>';
+    html=html.replace('<div class="det-kpis">',aviso+'<div class="det-kpis">');
+  }
   document.getElementById('detailContent').innerHTML=html;
 }
 
