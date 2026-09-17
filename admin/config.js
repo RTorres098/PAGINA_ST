@@ -1,6 +1,6 @@
 // SoilTech Firebase Configuration
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBPOafEUJTh43Rl97EgWZ42gXu6zTDSFN4",
+  apiKey: "AIzaSyDyQcc9GotIVSdXDNKe4_PiSnqEfYlbmEM", // clave "Web admin soiltechpy" (restringida a soiltechpy.com)
   authDomain: "control-gastos-st26-97032.firebaseapp.com",
   projectId: "control-gastos-st26-97032",
   storageBucket: "control-gastos-st26-97032.firebasestorage.app",
