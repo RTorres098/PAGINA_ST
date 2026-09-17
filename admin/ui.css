@@ -1,0 +1,20 @@
+/* SoilTech Admin — estilos compartidos (barra superior y navegación) */
+.st-top{display:flex;align-items:center;gap:22px;height:56px;padding:0 20px;background:#18403E;border-bottom:1px solid rgba(255,255,255,0.08);position:relative;z-index:20}
+.st-brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-size:15px;font-weight:700;white-space:nowrap}
+.st-brand b{font-weight:500;color:rgba(255,255,255,0.55)}
+.st-logo{width:30px;height:30px;border-radius:8px;background:#34A678;display:grid;place-items:center;flex-shrink:0}
+.st-logo svg{width:18px;height:18px}
+.st-nav{display:flex;gap:2px;height:100%}
+.st-nav a{display:flex;align-items:center;padding:0 14px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.st-nav a:hover{color:#fff}
+.st-nav a.on{color:#fff;border-bottom-color:#34A678}
+.st-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.st-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;text-decoration:none;transition:background .15s,transform .1s;white-space:nowrap}
+.st-btn:active{transform:translateY(1px)}
+.st-btn-g{background:#34A678;color:#fff}.st-btn-g:hover{background:#2D9068}
+.st-btn-ghost{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.14)}.st-btn-ghost:hover{background:rgba(255,255,255,0.16)}
+@media (max-width:760px){
+  .st-top{gap:10px;padding:0 12px;overflow-x:auto}
+  .st-brand b{display:none}
+  .st-nav a{padding:0 9px;font-size:12px}
+}

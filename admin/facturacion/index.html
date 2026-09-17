@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SoilTech — Facturación</title>
+<link rel="stylesheet" href="../ui.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{--bg:#F4F0E8;--sf:#fff;--sf2:#EDE9E0;--g:#34A678;--gd:#18403E;--gl:rgba(52,166,120,0.08);--tx:#1A1A1A;--tx2:#6B6B6B;--tx3:#9CA3AF;--bd:#E0DDD5;--dg:#EF4444;--warn:#F59E0B;--info:#3B82F6}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(--tx);height:100vh;overflow:hidden}
-.app{display:grid;grid-template-rows:48px 1fr;height:100vh}
+.app{display:grid;grid-template-rows:56px 1fr;height:100vh}
 .tb{display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--gd);border-bottom:1px solid rgba(255,255,255,0.08)}
 .tb h1{font-size:15px;color:#fff}.tb a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:11px;margin-left:12px}.tb a:hover{color:#fff}
 .tb-r{display:flex;gap:6px}
@@ -58,18 +59,19 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .ic{position:absolute;left:0;width:216mm;height:160mm;overflow:hidden}.ic1{top:0}.ic2{top:165mm}
 .pf{position:absolute;color:#000;line-height:1.2}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--gd);color:#fff;padding:10px 20px;border-radius:6px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;z-index:200}.toast.show{opacity:1}
-@media print{body,.app{display:block;height:auto;overflow:visible;background:#fff}.tb,.main,.side-bg,.side{display:none!important}.pp{display:block!important;box-shadow:none}@page{size:216mm 330mm;margin:0}}
+@media print{body,.app{display:block;height:auto;overflow:visible;background:#fff}.tb,.st-top,.main,.side-bg,.side{display:none!important}.pp{display:block!important;box-shadow:none}@page{size:216mm 330mm;margin:0}}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="tb">
-    <div style="display:flex;align-items:center"><h1>SoilTech — Facturación</h1><a href="../">← Admin</a><a href="../presupuesto/">Presupuesto →</a></div>
-    <div class="tb-r">
-      <button class="btn btn-g" onclick="openNew()">+ Nueva Factura</button>
-      <button class="btn btn-w" id="seedBtn" onclick="seedHistorical()" style="display:none">📥 Cargar historial Excel</button>
+  <header class="st-top">
+    <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
+    <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a class="on" href="./">Facturación</a></nav>
+    <div class="st-right">
+      <button class="st-btn st-btn-ghost" id="seedBtn" onclick="seedHistorical()" style="display:none">📥 Cargar historial Excel</button>
+      <button class="st-btn st-btn-g" onclick="openNew()">+ Nueva factura</button>
     </div>
-  </div>
+  </header>
   <div class="main">
     <div class="stats" id="stats"></div>
     <div class="toolbar">
@@ -104,15 +106,17 @@ var db=firebase.firestore();
 var ALL=[],CLIS=[],curId=null,curF=null,isNew=false;
 var SVCS=SERVICIOS.map(function(s){return{c:s.code,n:s.name}});
 
-initAuthGuard(function(){loadAll()});
+initAuthGuard(function(){loadAll(true)});
 
 /* ═══ Load ═══ */
-function loadAll(){
+function loadAll(primera){
   Promise.all([db.collection('facturas').orderBy('numero','desc').get(),db.collection('clientes').get()]).then(function(r){
     ALL=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())});
     CLIS=r[1].docs.map(function(d){return Object.assign({id:d.id},d.data())});
     if(ALL.length===0&&typeof HISTORICAL_FACTURAS!=='undefined')document.getElementById('seedBtn').style.display='block';
     renderStats();renderList();
+    // Acceso rápido desde el inicio: ../facturacion/#nueva
+    if(primera&&location.hash==='#nueva'){history.replaceState(null,'',location.pathname);openNew();}
   });
 }
 

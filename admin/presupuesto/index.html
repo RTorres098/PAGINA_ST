@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SoilTech — Presupuesto</title>
+<title>SoilTech — Presupuestos</title>
+<link rel="stylesheet" href="../ui.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{--bg:#F4F0E8;--sf:#fff;--sf2:#EDE9E0;--g:#34A678;--gd:#18403E;--gl:rgba(52,166,120,0.08);--tx:#1A1A1A;--tx2:#6B6B6B;--tx3:#9CA3AF;--bd:#E0DDD5;--dg:#EF4444;--warn:#F59E0B;--info:#3B82F6;--r:10px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(--tx);height:100vh;overflow:hidden}
-.app{display:grid;grid-template-columns:1fr 400px;grid-template-rows:48px 1fr;height:100vh}
+.app{display:grid;grid-template-columns:1fr 400px;grid-template-rows:56px 1fr;height:100vh}
 .tb{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--gd);border-bottom:1px solid rgba(255,255,255,0.08)}
 .tb h1{font-size:15px;color:#fff}.tb a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:11px;margin-left:12px}.tb a:hover{color:#fff}
 .tb-r{display:flex;gap:6px}
@@ -19,24 +20,57 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .btn-warn{background:var(--warn);color:#fff}.btn-info{background:var(--info);color:#fff}.btn-dg{background:var(--dg);color:#fff}
 .fp{overflow-y:auto;background:var(--bg);padding:20px 24px 80px;scrollbar-width:thin;display:none;height:100%}.fp.active{display:block}
 .rp{overflow-y:auto;background:var(--gd);padding:16px;border-left:1px solid rgba(255,255,255,0.08);scrollbar-width:thin}
-/* Cards dashboard */
-.dash-stats{display:flex;gap:10px;margin-bottom:14px}
-.ds{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;flex:1;text-align:center}
-.ds .v{font-size:18px;font-weight:700;color:var(--gd)}.ds .l{font-size:9px;color:var(--tx2);text-transform:uppercase}
-.dash-filters{display:flex;gap:6px;margin-bottom:12px;align-items:center}
-.dash-filters input{flex:1;padding:7px 10px;border:1px solid var(--bd);border-radius:6px;font-family:inherit;font-size:12px;background:var(--sf)}
-.pill{padding:5px 12px;border-radius:16px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx2)}.pill.active{background:var(--gd);color:#fff;border-color:var(--gd)}
-.cot-card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative}
-.cot-card:hover{border-color:var(--g);box-shadow:0 2px 12px rgba(52,166,120,0.1)}
-.cot-card.selected{border-color:var(--g);box-shadow:0 0 0 2px var(--gl)}
-.cot-card h3{font-size:14px;font-weight:700;color:var(--gd);margin-bottom:2px}
-.cot-card .meta{font-size:11px;color:var(--tx2)}
-.cot-card .amount{position:absolute;top:14px;right:14px;font-size:16px;font-weight:700;color:var(--gd)}
-.cot-card .badges{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
-.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px}
-.badge-cot{background:rgba(245,158,11,0.12);color:#B45309}.badge-act{background:rgba(52,166,120,0.1);color:var(--g)}.badge-fin{background:rgba(107,107,107,0.1);color:var(--tx2)}
-.cot-actions{display:flex;gap:4px;margin-top:6px}
-.cot-actions .btn{padding:3px 8px;font-size:10px}
+/* ═══ Dashboard de proyectos ═══ */
+.app.no-rp{grid-template-columns:1fr}.app.no-rp .rp{display:none}
+.dash-wrap{max-width:1320px;margin:0 auto}
+.dash-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.dash-head h2{font-size:24px;color:var(--gd);line-height:1.1}
+.dash-head .sub{font-size:12px;color:var(--tx2);margin-top:3px}
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.ds{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:border-color .15s,box-shadow .15s;text-align:left}
+.ds:hover{border-color:var(--g);box-shadow:0 4px 14px rgba(24,64,62,0.07)}
+.ds.on{border-color:var(--gd);box-shadow:0 0 0 2px rgba(24,64,62,0.12)}
+.ds .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;font-size:15px;font-weight:700}
+.ds .v{font-size:22px;font-weight:700;color:var(--gd);line-height:1.1}
+.ds .l{font-size:11px;color:var(--tx2)}
+.ds .x{font-size:11px;color:var(--tx3);margin-top:1px}
+.dash-filters{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.search{flex:1;min-width:220px;position:relative}
+.search input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--bd);border-radius:10px;font-family:inherit;font-size:13px;background:var(--sf)}
+.search input:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 3px var(--gl)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--tx3)}
+.seg{display:flex;background:var(--sf2);border-radius:10px;padding:3px;gap:2px}
+.pill{padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--tx2);font-family:inherit;white-space:nowrap}
+.pill .n{font-size:10px;font-weight:700;color:var(--tx3);margin-left:4px}
+.pill.active{background:var(--sf);color:var(--gd);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.pill.active .n{color:var(--g)}
+.sort{padding:9px 10px;border:1px solid var(--bd);border-radius:10px;font-family:inherit;font-size:12px;background:var(--sf);color:var(--tx)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.pcard{background:var(--sf);border:1px solid var(--bd);border-top:4px solid var(--tx3);border-radius:14px;padding:16px 18px 14px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(24,64,62,0.10)}
+.pcard:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.pcard.s-cot{border-top-color:var(--warn)}.pcard.s-act{border-top-color:var(--g)}.pcard.s-fin{border-top-color:#9CA3AF}
+.pc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.chip::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip-cot{background:rgba(245,158,11,0.12);color:#B45309}.chip-act{background:rgba(52,166,120,0.12);color:#1F7A56}.chip-fin{background:rgba(107,107,107,0.1);color:var(--tx2)}
+.chip-warn{background:#FFF7ED;color:#B45309}.chip-warn::before{display:none}
+.pc-date{font-size:11px;color:var(--tx3);white-space:nowrap}
+.pcard h3{font-size:16px;font-weight:700;color:var(--gd);line-height:1.25;word-break:break-word}
+.pc-cli{font-size:12px;color:var(--tx2);margin-top:2px}
+.pc-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+.pc-meta span{font-size:11px;color:var(--tx2);background:var(--bg);padding:3px 8px;border-radius:6px}
+.pc-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--sf2)}
+.pc-amt{font-size:19px;font-weight:700;color:var(--gd);white-space:nowrap}
+.pc-amt small{font-size:11px;font-weight:600;color:var(--tx3);margin-right:2px}
+.pc-amt.none{font-size:13px;font-weight:500;color:var(--tx3)}
+.pc-act{display:flex;gap:6px}
+.ibtn{border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s}
+.ibtn:hover{border-color:var(--g);background:var(--gl)}
+.ibtn.ok{background:var(--g);border-color:var(--g);color:#fff}.ibtn.ok:hover{background:#2D9068}
+.ibtn.del{color:var(--dg)}.ibtn.del:hover{border-color:var(--dg);background:rgba(239,68,68,0.06)}
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--tx3);font-size:13px;background:var(--sf);border:1px dashed var(--bd);border-radius:14px}
+.empty-state strong{display:block;color:var(--tx2);font-size:15px;margin-bottom:4px}
 /* Form */
 .sc{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1.2px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}.sc::after{content:'';flex:1;height:1px;background:var(--bd)}.sc:first-child{margin-top:0}
 .cd{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
@@ -146,43 +180,109 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .det-cta{display:flex;gap:8px;margin-top:16px}
 .det-cta .btn{padding:12px 24px;font-size:13px;flex:1;text-align:center;border-radius:8px}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--gd);color:#fff;padding:10px 20px;border-radius:6px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.3)}.toast.show{opacity:1}
+/* ═══ Barra de navegación interna (detalle / formulario) ═══ */
+.crumbs{position:sticky;top:-20px;z-index:15;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-20px -24px 16px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--bd)}
+.crumbs .back-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bd);background:var(--sf);color:var(--gd);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.crumbs .back-btn:hover{border-color:var(--g);background:var(--gl)}
+.crumbs .path{font-size:13px;color:var(--tx2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crumbs .path a{color:var(--tx2);text-decoration:none}.crumbs .path a:hover{color:var(--g)}
+.crumbs .path strong{color:var(--gd)}
+.crumbs .acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.crumbs .kbd{font-size:10px;color:var(--tx3);border:1px solid var(--bd);border-radius:4px;padding:1px 5px;margin-left:2px}
+.pend-count{display:inline-flex;align-items:center;line-height:1;font-size:11px;font-weight:700;color:#B45309;background:#FFF7ED;border:1px solid #FED7AA;border-radius:20px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+.pend-count.ok{color:#1F7A56;background:rgba(52,166,120,0.1);border-color:rgba(52,166,120,0.25);cursor:default}
+/* Campos pendientes */
+.cd input.pend,.cd select.pend{background:#FFFBEB;border-color:#FCD34D}
+.cd input.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{box-shadow:0 0 0 3px rgba(52,166,120,0.5);background:#E7F6EF}100%{box-shadow:none}}
+.f-hint.money{color:var(--g);font-weight:600}
+.form-note{margin:0 0 14px;padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.5}
+.form-note.info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF}
+.form-note.warn{background:#FFF7ED;border:1px solid #FED7AA;color:#92400E}
+/* Botón últimos 3 */
+.sc::after{order:1}
+.hist-btn{order:2;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bd);background:var(--sf);color:var(--gd);border-radius:20px;padding:3px 10px 3px 8px;font-family:inherit;font-size:10px;font-weight:700;letter-spacing:0;text-transform:none;cursor:pointer;transition:border-color .15s,background .15s}
+.hist-btn:hover{border-color:var(--g);background:var(--gl)}
+.hist-btn svg{width:13px;height:13px}
+/* Modal historial */
+.hist-modal{max-width:880px}
+.hist-sub{font-size:12px;color:var(--tx2);margin:-10px 0 14px}
+.htab{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.htab th{text-align:left;font-size:11px;color:var(--tx2);font-weight:600;padding:8px;border-bottom:1px solid var(--bd);vertical-align:bottom}
+.htab th .pn{display:block;color:var(--gd);font-weight:700;font-size:12px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.htab th .pd{display:block;font-weight:500;color:var(--tx3);font-size:10px}
+.htab td{padding:5px 8px;border-bottom:1px solid var(--sf2);vertical-align:top}
+.htab td.lbl{color:var(--tx2);white-space:nowrap}
+.htab td.cur{font-weight:700;color:var(--gd);background:var(--bg)}
+.hv{border:1px solid transparent;background:none;border-radius:6px;padding:3px 7px;font-family:inherit;font-size:12px;font-weight:600;color:var(--tx);cursor:pointer;text-align:left}
+.hv:hover{border-color:var(--g);background:var(--gl);color:var(--gd)}
+.hv.same{color:var(--tx3);font-weight:500}
+.hv-na{color:var(--tx3)}
+.use-all{margin-top:4px;border:1px solid var(--g);background:none;color:var(--g);border-radius:6px;padding:2px 8px;font-family:inherit;font-size:10px;font-weight:700;cursor:pointer}
+.use-all:hover{background:var(--g);color:#fff}
+.hcols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hcol{border:1px solid var(--bd);border-radius:10px;padding:12px;display:flex;flex-direction:column}
+.hcol .pn{font-weight:700;color:var(--gd);font-size:13px}
+.hcol .pd{font-size:10px;color:var(--tx3);margin-bottom:8px}
+.hcol ul{list-style:none;font-size:11px;color:var(--tx2);margin-bottom:10px}
+.hcol li{padding:3px 0;border-bottom:1px dashed var(--sf2)}
+.hcol .ht{margin-top:auto;font-size:12px;font-weight:700;color:var(--gd);margin-bottom:8px}
+.hcol .use-all{align-self:flex-start;padding:5px 10px;font-size:11px}
+.hcol .use-all:disabled{opacity:.4;cursor:not-allowed;background:none;color:var(--g)}
+.hist-cur{font-size:12px;color:var(--tx2);margin-bottom:10px}
+.hist-empty{padding:30px;text-align:center;color:var(--tx3);font-size:13px}
+/* Modal revisión */
+.rev-list{list-style:none;margin:6px 0 14px;max-height:50vh;overflow-y:auto}
+.rev-list li{display:flex;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:8px;font-size:12px;color:var(--tx)}
+.rev-list li:nth-child(odd){background:var(--bg)}
+.rev-list li.hard{color:var(--dg);font-weight:600}
+.rev-list li button{border:none;background:none;color:var(--g);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.det-foot{display:flex;justify-content:center;margin-top:18px}
+.det-grid>*,.det-card{min-width:0}
+@media (max-width:1180px){.det-grid{grid-template-columns:1fr}.app{grid-template-columns:1fr 330px}.dash-stats{grid-template-columns:repeat(2,1fr)}.det-kpis{grid-template-columns:repeat(3,1fr)}.hcols{grid-template-columns:1fr}}
+@media (max-width:860px){
+  body{height:auto;overflow:auto}
+  .app,.app.no-rp{grid-template-columns:1fr;height:auto;grid-template-rows:56px auto}
+  .fp{height:auto;overflow:visible}
+  .rp{border-left:none}
+  .det-grid,.g5,.g4{grid-template-columns:1fr 1fr}
+  .crumbs{top:0}
+}
+@media (max-width:560px){.ds{padding:12px}.ds .ic,.ds .x{display:none}.fp{padding:16px 14px 60px}.crumbs{margin:-16px -14px 14px;padding:10px 14px}.crumbs .path{display:none}}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="tb">
-    <div style="display:flex;align-items:center">
-      <h1>SoilTech — Presupuestos</h1><a href="../">← Admin</a><a href="../facturacion/">Facturación →</a>
+<div class="app no-rp" id="app">
+  <header class="st-top" style="grid-column:1/-1">
+    <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
+    <nav class="st-nav"><a href="../">Inicio</a><a class="on" href="#/" onclick="nav('#/');return false">Presupuestos</a><a href="../facturacion/">Facturación</a></nav>
+    <div class="st-right">
+      <button class="st-btn st-btn-g" onclick="nav('#/nuevo')">+ Nuevo presupuesto</button>
     </div>
-    <div class="tb-r" id="tbActions">
-      <button class="btn btn-g" onclick="newPresupuesto()">+ Nuevo Presupuesto</button>
-    </div>
-  </div>
-  <!-- LEFT: Dashboard (default) or Form -->
-  <div style="overflow:hidden">
+  </header>
+  <!-- LEFT: Dashboard (default), Detalle o Formulario -->
+  <div style="overflow:hidden;min-width:0">
     <div class="fp active" id="panelDash">
-      <div class="dash-stats" id="dashStats"></div>
-      <div class="dash-filters">
-        <input id="searchCot" placeholder="Buscar cliente, proyecto..." oninput="renderDash()">
-        <span class="pill active" onclick="setFilter('all',this)">Todos</span>
-        <span class="pill" onclick="setFilter('Cotización',this)">Cotizaciones</span>
-        <span class="pill" onclick="setFilter('En Curso',this)">En Curso</span>
-        <span class="pill" onclick="setFilter('Finalizado',this)">Finalizados</span>
+      <div class="dash-wrap">
+        <div class="dash-head"><div><h2>Proyectos</h2><div class="sub" id="dashSub">Cargando…</div></div></div>
+        <div class="dash-stats" id="dashStats"></div>
+        <div class="dash-filters">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="searchCot" placeholder="Buscar proyecto, cliente o ubicación…" oninput="renderDash()"></div>
+          <div class="seg" id="filterSeg"></div>
+          <select class="sort" id="sortSel" onchange="renderDash()" title="Ordenar">
+            <option value="fecha">Más recientes</option><option value="monto">Mayor monto</option><option value="nombre">Nombre (A-Z)</option><option value="cliente">Cliente (A-Z)</option>
+          </select>
+        </div>
+        <div class="pgrid" id="cotCards"></div>
       </div>
-      <div id="cotCards"></div>
     </div>
     <div class="fp" id="panelDetail">
+      <div class="crumbs" id="detCrumbs"></div>
       <div id="detailContent"></div>
     </div>
     <div class="fp" id="panelForm">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="editingId?backToDetail():backToDash()">← Volver</button>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="showProp()">📄 Propuesta</button>
-          <button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="exportXlsx()">📥 Excel</button>
-          <button class="btn btn-g" onclick="guardar()">💾 Guardar</button>
-        </div>
-      </div>
+      <div class="crumbs" id="formCrumbs"></div>
+      <div id="formNote"></div>
       <div id="formContent"></div>
     </div>
   </div>
@@ -212,7 +312,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <div class="modal-bg" id="postApproveModal"><div class="modal" style="max-width:380px;text-align:center">
   <h3>✅ Proyecto activado</h3>
   <p style="font-size:12px;color:var(--tx2);margin-bottom:16px" id="postApproveMsg"></p>
-  <div style="display:flex;gap:8px"><button class="btn btn-info" style="flex:1;padding:10px" onclick="goToFacturacion()">🧾 Ir a Facturación</button><button class="btn btn-w" style="flex:1;color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="hideModal('postApproveModal');loadAll()">Quedarme aquí</button></div>
+  <div style="display:flex;gap:8px"><button class="btn btn-info" style="flex:1;padding:10px" onclick="goToFacturacion()">🧾 Ir a Facturación</button><button class="btn btn-w" style="flex:1;color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="hideModal('postApproveModal');refrescarVista()">Quedarme aquí</button></div>
 </div></div>
 
 <!-- New client modal -->
@@ -230,6 +330,21 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <!-- Proposal modal -->
 <div class="modal-bg" id="propModal"><div class="modal prop-modal"><button class="close" onclick="hideModal('propModal')">×</button><div id="propContent"></div><div style="margin-top:20px;text-align:center"><button class="btn btn-g" onclick="window.print()">🖨️ Imprimir</button></div></div></div>
 
+<!-- Historial: últimos 3 presupuestos -->
+<div class="modal-bg" id="histModal" onclick="if(event.target===this)hideModal('histModal')"><div class="modal hist-modal"><button class="close" onclick="hideModal('histModal')">×</button>
+  <h3 id="histTitle">Últimos 3</h3>
+  <div class="hist-sub" id="histSub"></div>
+  <div id="histBody"></div>
+</div></div>
+
+<!-- Revisión antes de guardar -->
+<div class="modal-bg" id="reviewModal"><div class="modal" style="max-width:520px"><button class="close" onclick="hideModal('reviewModal')">×</button>
+  <h3 id="revTitle">Revisá antes de guardar</h3>
+  <p style="font-size:12px;color:var(--tx2)" id="revIntro"></p>
+  <ul class="rev-list" id="revList"></ul>
+  <div style="display:flex;gap:8px"><button class="btn btn-g" style="flex:1;padding:10px" onclick="hideModal('reviewModal')">Volver a revisar</button><button class="btn btn-w" id="revForce" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd);padding:10px" onclick="hideModal('reviewModal');guardar(true)">Guardar igual</button></div>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -245,7 +360,7 @@ window.onerror=function(msg,url,line,col,err){
   var t=document.getElementById('toast');
   if(t){t.textContent='❌ JS: '+msg+' (L'+line+')';t.classList.add('show');}
   var d=document.getElementById('dashStats');
-  if(d)d.innerHTML='<div class="ds" style="flex:3;text-align:left;color:var(--dg)"><div class="v" style="font-size:11px;color:var(--dg)">Error JS: '+msg+'</div><div class="l">Línea '+line+'</div></div>';
+  if(d)d.innerHTML='<div class="ds" style="grid-column:1/-1;color:var(--dg)"><div class="v" style="font-size:11px;color:var(--dg)">Error JS: '+msg+'</div><div class="l">Línea '+line+'</div></div>';
   return false;
 };
 
@@ -253,7 +368,7 @@ try{
 firebase.initializeApp(FIREBASE_CONFIG);
 }catch(e){
   console.error('Firebase init error:',e);
-  document.getElementById('dashStats').innerHTML='<div class="ds" style="flex:3;text-align:left;color:var(--dg)"><div class="v" style="font-size:12px;color:var(--dg)">Error Firebase: '+e.message+'</div><div class="l">Verificar config.js</div></div>';
+  document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;color:var(--dg)"><div class="v" style="font-size:12px;color:var(--dg)">Error Firebase: '+e.message+'</div><div class="l">Verificar config.js</div></div>';
 }
 var db=firebase.firestore();
 var ALL=[],CLIS=[],R={},editingId=null,approvingProject=null,currentFilter='all';
@@ -277,83 +392,201 @@ var LAB_PRES=[
 ];
 
 /* Loading indicator */
-document.getElementById('dashStats').innerHTML='<div class="ds" style="flex:3"><div class="v" style="font-size:12px">⏳ Cargando...</div><div class="l">Conectando a Firebase</div></div>';
+document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;cursor:default"><div><div class="v" style="font-size:13px">⏳ Cargando…</div><div class="l">Conectando a Firebase</div></div></div>';
 
 if(typeof initAuthGuard==='function'){
   initAuthGuard(function(){
-    console.log('Auth OK, cargando datos...');
-    loadAll();
+    loadAll().then(function(){route()});
   });
 }else{
   console.error('initAuthGuard no definido — auth-guard.js no cargó');
-  document.getElementById('dashStats').innerHTML='<div class="ds" style="flex:3;color:var(--dg)"><div class="v" style="font-size:12px;color:var(--dg)">auth-guard.js no cargó</div><div class="l">Verificar ruta ../auth-guard.js</div></div>';
-  /* Fallback: intentar cargar sin auth */
-  loadAll();
+  document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;color:var(--dg)"><div><div class="v" style="font-size:13px;color:var(--dg)">auth-guard.js no cargó</div><div class="l">Verificar ruta ../auth-guard.js</div></div></div>';
 }
 
 function showModal(id){document.getElementById(id).classList.add('show')}
 function hideModal(id){document.getElementById(id).classList.remove('show')}
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3500)}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},3500)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function tsMs(v){return v&&v.toMillis?v.toMillis():(v instanceof Date?v.getTime():(typeof v==='number'?v:0))}
+function fechaProy(p){return Math.max(tsMs(p.fechaModificacion),tsMs(p.fechaCreacion||p.fechaRegistro))}
+function fechaTxt(ms){
+  if(!ms)return '';
+  var d=new Date(ms),hoy=new Date();hoy.setHours(0,0,0,0);
+  var d0=new Date(ms);d0.setHours(0,0,0,0);
+  var dias=Math.round((hoy-d0)/86400000);
+  if(dias===0)return 'hoy';
+  if(dias===1)return 'ayer';
+  if(dias>1&&dias<30)return 'hace '+dias+' días';
+  return d.toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+/* ═══════════════════════════════════════ */
+/*  NAVEGACIÓN (#/ , #/nuevo , #/p/ID , #/p/ID/editar)  */
+/* ═══════════════════════════════════════ */
+var curRoute='',skipHash=false,formDirty=false,dataLoaded=false;
+function nav(h){
+  if(location.hash===h||(h==='#/'&&!location.hash)){route();return;}
+  location.hash=h;
+}
+function isFormRoute(h){return h==='#/nuevo'||/\/editar$/.test(h)}
+window.addEventListener('hashchange',function(){
+  if(skipHash){skipHash=false;return;}
+  var nh=location.hash||'#/';
+  if(formDirty&&isFormRoute(curRoute)&&nh!==curRoute){
+    if(!confirm('Tenés cambios sin guardar en este presupuesto.\n¿Salir y descartarlos?')){
+      skipHash=true;location.hash=curRoute;return;
+    }
+    formDirty=false;
+  }
+  route();
+});
+window.addEventListener('beforeunload',function(e){if(formDirty){e.preventDefault();e.returnValue='';}});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  var abierto=document.querySelector('.modal-bg.show');
+  if(abierto){abierto.classList.remove('show');return;}
+  var tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea')return;
+  if(document.getElementById('panelDetail').classList.contains('active'))nav('#/');
+  else if(document.getElementById('panelForm').classList.contains('active'))backFromForm();
+});
+function route(){
+  if(!dataLoaded)return;
+  var h=location.hash||'#/',m;
+  curRoute=h;
+  if(h==='#/nuevo'){renderNewForm();return;}
+  if((m=h.match(/^#\/p\/([^\/]+)\/editar$/))){openEdit(decodeURIComponent(m[1]));return;}
+  if((m=h.match(/^#\/p\/([^\/]+)$/))){openCot(decodeURIComponent(m[1]));return;}
+  showDashView();
+}
+function showPanel(id){
+  ['panelDash','panelDetail','panelForm'].forEach(function(p){document.getElementById(p).classList.remove('active')});
+  var el=document.getElementById(id);el.classList.add('active');el.scrollTop=0;
+  document.getElementById('app').classList.toggle('no-rp',id==='panelDash');
+}
+function backToDash(){nav('#/')}
+function backToDetail(){nav(editingId?'#/p/'+encodeURIComponent(editingId):'#/')}
+function backFromForm(){backToDetail()}
+function goToEdit(){if(editingId)nav('#/p/'+encodeURIComponent(editingId)+'/editar')}
+function newPresupuesto(){nav('#/nuevo')}
+function findProj(id){return ALL.find(function(x){return x._id===id})}
+function noEncontrado(){toast('❌ No se encontró ese proyecto');curRoute='#/';history.replaceState(null,'','#/');showDashView();}
 
 function loadAll(){
-  console.log('loadAll() ejecutándose...');
-  Promise.all([db.collection('proyectos').get(),db.collection('clientes').get()]).then(function(r){
+  return Promise.all([db.collection('proyectos').get(),db.collection('clientes').get()]).then(function(r){
     // Sin orderBy en la consulta: Firestore excluye docs sin el campo (ej. proyectos creados en la app).
-    var tsMs=function(v){return v&&v.toMillis?v.toMillis():(v instanceof Date?v.getTime():0)};
     ALL=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())})
       .sort(function(a,b){return tsMs(b.fechaCreacion||b.fechaRegistro)-tsMs(a.fechaCreacion||a.fechaRegistro)});
-    CLIS=r[1].docs.map(function(d){return Object.assign({id:d.id},d.data())});
-    console.log('Datos cargados:',ALL.length,'proyectos,',CLIS.length,'clientes');
-    renderDashStats();renderDash();
+    CLIS=r[1].docs.map(function(d){return Object.assign({id:d.id},d.data())})
+      .sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'')});
+    dataLoaded=true;
+    if(document.getElementById('panelDash').classList.contains('active')){renderDashStats();renderDash();}
   }).catch(function(e){
     console.error('Error loadAll:',e);
-    document.getElementById('dashStats').innerHTML='<div class="ds" style="flex:3;color:var(--dg)"><div class="v" style="font-size:12px;color:var(--dg)">Error Firestore: '+e.message+'</div><div class="l">Verificar permisos y conexión</div></div>';
+    document.getElementById('dashSub').textContent='';
+    document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;cursor:default"><div><div class="v" style="font-size:13px;color:var(--dg)">Error Firestore: '+esc(e.message)+'</div><div class="l">Verificar permisos y conexión</div></div></div>';
   });
 }
 
 /* ═══════════════════════════════════════ */
 /*  DASHBOARD                              */
 /* ═══════════════════════════════════════ */
-function renderDashStats(){
-  var cot=ALL.filter(function(p){return p.estado==='Cotización'}).length;
-  var act=ALL.filter(function(p){return p.estado==='En Curso'}).length;
-  var fin=ALL.filter(function(p){return p.estado==='Finalizado'}).length;
-  var totalUsd=ALL.reduce(function(s,p){return s+(p.estado==='En Curso'?p.valorUsd||0:0)},0);
-  document.getElementById('dashStats').innerHTML='<div class="ds"><div class="v">'+cot+'</div><div class="l">Cotizaciones</div></div><div class="ds"><div class="v">'+act+'</div><div class="l">En curso</div></div><div class="ds"><div class="v">'+fin+'</div><div class="l">Finalizados</div></div><div class="ds"><div class="v">USD '+fmtUsd(totalUsd)+'</div><div class="l">En ejecución</div></div>';
+var EST={
+  'Cotización':{cls:'cot',label:'Cotización',color:'#F59E0B'},
+  'En Curso':{cls:'act',label:'En curso',color:'#34A678'},
+  'Finalizado':{cls:'fin',label:'Finalizado',color:'#9CA3AF'}
+};
+function showDashView(){
+  editingId=null;
+  showPanel('panelDash');
+  document.title='SoilTech — Presupuestos';
+  renderDashStats();renderDash();
+  loadAll();
 }
-
-function setFilter(f,el){currentFilter=f;document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active')});if(el)el.classList.add('active');renderDash()}
-
+function renderDashStats(){
+  var grp=function(e){var l=ALL.filter(function(p){return p.estado===e});return{n:l.length,usd:l.reduce(function(s,p){return s+(p.valorUsd||0)},0)}};
+  var c=grp('Cotización'),a=grp('En Curso'),f=grp('Finalizado');
+  var sp=ALL.filter(function(p){return !p.presupuesto}).length;
+  document.getElementById('dashSub').textContent=ALL.length+' proyecto'+(ALL.length===1?'':'s')+' · '+CLIS.length+' cliente'+(CLIS.length===1?'':'s');
+  var card=function(key,ic,bg,fg,v,l,x){
+    return '<div class="ds'+(currentFilter===key?' on':'')+'" role="button" tabindex="0" onclick="setFilter(\''+key+'\')"><div class="ic" style="background:'+bg+';color:'+fg+'">'+ic+'</div><div><div class="v">'+v+'</div><div class="l">'+l+'</div>'+(x?'<div class="x">'+x+'</div>':'')+'</div></div>';
+  };
+  document.getElementById('dashStats').innerHTML=
+    card('Cotización','◔','rgba(245,158,11,0.14)','#B45309',c.n,'Cotizaciones abiertas','USD '+fmtUsd(c.usd))+
+    card('En Curso','▶','rgba(52,166,120,0.14)','#1F7A56',a.n,'En curso','USD '+fmtUsd(a.usd))+
+    card('Finalizado','✓','rgba(107,107,107,0.12)','#6B6B6B',f.n,'Finalizados','USD '+fmtUsd(f.usd))+
+    card('sinpres','!','#FFF7ED','#B45309',sp,'Sin presupuesto',sp?'Creados en la app o de prueba':'Todo en orden');
+}
+function setFilter(f){currentFilter=(currentFilter===f&&f!=='all')?'all':f;renderDashStats();renderDash()}
+function coincideFiltro(p,f){return f==='all'||(f==='sinpres'?!p.presupuesto:p.estado===f)}
 function renderDash(){
-  var q=(document.getElementById('searchCot').value||'').toLowerCase();
-  var list=ALL.filter(function(p){
-    var mf=currentFilter==='all'||p.estado===currentFilter;
-    var mq=!q||(p.nombre||'').toLowerCase().includes(q)||(p.cliente||'').toLowerCase().includes(q);
-    return mf&&mq;
+  var q=(document.getElementById('searchCot').value||'').toLowerCase().trim();
+  var porBusqueda=ALL.filter(function(p){
+    return !q||[p.nombre,p.cliente,p.ubicacion,p.tipoServicio].some(function(v){return (v||'').toLowerCase().indexOf(q)>=0});
   });
-  document.getElementById('cotCards').innerHTML=list.length===0?'<div style="text-align:center;color:var(--tx3);padding:40px">No hay proyectos</div>':list.map(function(p){
-    var bc=p.estado==='Cotización'?'badge-cot':p.estado==='En Curso'?'badge-act':'badge-fin';
-    var amt=p.valorUsd?'USD '+fmtUsd(p.valorUsd):'—';
-    var actions='';
-    if(p.estado==='Cotización')actions='<button class="btn btn-g" onclick="event.stopPropagation();showApprove(\''+p._id+'\')">✅ Aprobar</button><button class="btn btn-dg" onclick="event.stopPropagation();deleteCot(\''+p._id+'\')">🗑</button>';
-    if(p.estado==='En Curso')actions='<button class="btn btn-info" onclick="event.stopPropagation();finishProject(\''+p._id+'\')">✔ Finalizar</button>';
-    var sinPres=p.presupuesto?'':' <span title="Creado desde la app o dato de prueba" style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;background:#FFF7ED;color:#B45309;vertical-align:middle">sin presupuesto</span>';
-    return'<div class="cot-card" onclick="openCot(\''+p._id+'\')"><h3>'+(p.nombre||'Sin nombre')+sinPres+'</h3><div class="meta">'+(p.cliente||'')+'  ·  '+(p.ubicacion||'')+'  ·  '+(p.totalMuestras||0)+' muestras</div><div class="amount">'+amt+'</div><div class="badges"><span class="badge '+bc+'">'+p.estado+'</span></div>'+(actions?'<div class="cot-actions">'+actions+'</div>':'')+'</div>';
+  var pills=[['all','Todos'],['Cotización','Cotizaciones'],['En Curso','En curso'],['Finalizado','Finalizados']];
+  if(currentFilter==='sinpres')pills.push(['sinpres','Sin presupuesto']);
+  document.getElementById('filterSeg').innerHTML=pills.map(function(x){
+    var n=porBusqueda.filter(function(p){return coincideFiltro(p,x[0])}).length;
+    return '<button class="pill'+(currentFilter===x[0]?' active':'')+'" onclick="setFilter(\''+x[0]+'\')">'+x[1]+'<span class="n">'+n+'</span></button>';
+  }).join('');
+  var list=porBusqueda.filter(function(p){return coincideFiltro(p,currentFilter)});
+  var orden=document.getElementById('sortSel').value;
+  var cmp={
+    fecha:function(a,b){return fechaProy(b)-fechaProy(a)},
+    monto:function(a,b){return (b.valorUsd||0)-(a.valorUsd||0)},
+    nombre:function(a,b){return (a.nombre||'').localeCompare(b.nombre||'')},
+    cliente:function(a,b){return (a.cliente||'').localeCompare(b.cliente||'')||(a.nombre||'').localeCompare(b.nombre||'')}
+  }[orden];
+  list.sort(cmp);
+  var el=document.getElementById('cotCards');
+  if(list.length===0){
+    el.innerHTML='<div class="empty-state"><strong>'+(ALL.length?'No hay proyectos con ese filtro':'Todavía no hay proyectos')+'</strong>'+(ALL.length?'Probá con otra búsqueda o estado.':'Creá el primero con «+ Nuevo presupuesto».')+'</div>';
+    return;
+  }
+  el.innerHTML=list.map(function(p){
+    var st=EST[p.estado]||{cls:'fin',label:p.estado||'Sin estado'};
+    var id=esc(p._id).replace(/'/g,'');
+    var meta=[];
+    if(p.tipoServicio)meta.push('<span title="'+esc((SERVICIOS.find(function(s){return s.code===p.tipoServicio})||{}).name||'')+'">'+esc(p.tipoServicio)+'</span>');
+    if(p.ubicacion)meta.push('<span>'+esc(p.ubicacion)+'</span>');
+    if(p.totalMuestras)meta.push('<span>'+p.totalMuestras+' muestras</span>');
+    if(p.superficie)meta.push('<span>'+fmtGs(p.superficie)+' ha</span>');
+    var acts='';
+    if(p.estado==='Cotización')acts='<button class="ibtn ok" onclick="event.stopPropagation();showApprove(\''+id+'\')">Aprobar</button><button class="ibtn del" title="Eliminar cotización" onclick="event.stopPropagation();deleteCot(\''+id+'\')">Eliminar</button>';
+    else if(p.estado==='En Curso')acts='<button class="ibtn" onclick="event.stopPropagation();finishProject(\''+id+'\')">Finalizar</button>';
+    return '<div class="pcard s-'+st.cls+'" tabindex="0" onclick="nav(\'#/p/'+encodeURIComponent(p._id)+'\')" onkeydown="if(event.key===\'Enter\')this.click()">'+
+      '<div class="pc-top"><span class="chip chip-'+st.cls+'">'+esc(st.label)+'</span>'+
+        (p.presupuesto?'':'<span class="chip chip-warn" title="Creado desde la app o dato de prueba">Sin presupuesto</span>')+
+        '<span class="pc-date" style="margin-left:auto">'+fechaTxt(fechaProy(p))+'</span></div>'+
+      '<h3>'+esc(p.nombre||'Sin nombre')+'</h3>'+
+      '<div class="pc-cli">'+esc(p.cliente||'Sin cliente')+'</div>'+
+      '<div class="pc-meta">'+meta.join('')+'</div>'+
+      '<div class="pc-foot">'+(p.valorUsd?'<div class="pc-amt"><small>USD</small>'+fmtUsd(p.valorUsd)+'</div>':'<div class="pc-amt none">Sin monto</div>')+
+        '<div class="pc-act">'+acts+'</div></div>'+
+    '</div>';
   }).join('');
 }
 
 function openCot(id){
+  var p=findProj(id);
+  if(!p){noEncontrado();return;}
   editingId=id;
-  var p=ALL.find(function(x){return x._id===id});
-  if(!p)return;
-  if(p.presupuesto){
-    R=p.presupuesto;
-    renderSummary();
-    document.getElementById('rpTitle').textContent='Resumen: '+p.nombre;
-  }else{
-    document.getElementById('rc').innerHTML='<div class="rp-empty">Sin datos de presupuesto</div>';
-    document.getElementById('rpTitle').textContent='Resumen: '+p.nombre;
-  }
+  document.title=(p.nombre||'Proyecto')+' — SoilTech';
+  document.getElementById('rpTitle').textContent='Resumen: '+(p.nombre||'');
+  if(p.presupuesto){R=p.presupuesto;renderSummary();}
+  else document.getElementById('rc').innerHTML='<div class="rp-empty">Sin datos de presupuesto</div>';
+  var sid=esc(id).replace(/'/g,'');
+  document.getElementById('detCrumbs').innerHTML=
+    '<button class="back-btn" onclick="nav(\'#/\')" title="Volver a la lista (Esc)">← Proyectos</button>'+
+    '<span class="path"><a href="#/">Proyectos</a> / <strong>'+esc(p.nombre||'Sin nombre')+'</strong></span>'+
+    '<span class="acts">'+
+      '<button class="btn btn-g" onclick="goToEdit()">✏️ '+(p.presupuesto?'Editar presupuesto':'Cargar presupuesto')+'</button>'+
+      (p.presupuesto?'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="showPropFromDetail()">📄 Propuesta</button>'+
+      '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="exportXlsx()">📥 Excel</button>':'')+
+      (p.estado==='Cotización'?'<button class="btn btn-info" onclick="showApprove(\''+sid+'\')">✅ Aprobar</button>':'')+
+      (p.estado==='En Curso'?'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="finishProject(\''+sid+'\')">✔ Finalizar</button>':'')+
+    '</span>';
   showPanel('panelDetail');
   renderDetail(p);
 }
@@ -408,7 +641,7 @@ function renderDetail(p){
 
   var html=
     /* Header */
-    '<div class="det-header"><div><h2>'+(p.nombre||'Sin nombre')+'</h2><div class="det-sub">'+(p.cliente||'')+' · '+(p.ubicacion||'')+' · '+(p.tipoServicio||'')+'</div></div><div style="text-align:right"><span class="det-badge" style="'+bc+'">'+p.estado+'</span><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px">Cotización: ₲ '+fmtGs(cot)+'/USD</div></div></div>'+
+    '<div class="det-header"><div><h2>'+esc(p.nombre||'Sin nombre')+'</h2><div class="det-sub">'+esc([p.cliente,p.ubicacion,p.tipoServicio].filter(Boolean).join(' · '))+'</div></div><div style="text-align:right"><span class="det-badge" style="'+bc+'">'+p.estado+'</span><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px">Cotización: ₲ '+fmtGs(cot)+'/USD</div></div></div>'+
 
     /* KPIs */
     '<div class="det-kpis">'+
@@ -509,14 +742,8 @@ function renderDetail(p){
       '</div>'+
     '</div>'+
 
-    /* CTA buttons */
-    '<div class="det-cta">'+
-      '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="backToDash()">← Volver</button>'+
-      '<button class="btn btn-g" onclick="goToEdit()">✏️ Editar Presupuesto</button>'+
-      '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="showPropFromDetail()">📄 Propuesta</button>'+
-      '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="exportXlsx()">📥 Exportar Excel</button>'+
-      (p.estado==='Cotización'?'<button class="btn btn-info" onclick="showApprove(\''+p._id+'\')">✅ Aprobar</button>':'')+
-    '</div>';
+    /* Volver */
+    '<div class="det-foot"><button class="back-btn crumbs-like" style="border:1px solid var(--bd);background:var(--sf);color:var(--gd);border-radius:8px;padding:9px 16px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer" onclick="nav(\'#/\')">← Volver a la lista de proyectos</button></div>';
 
   // Proyecto sin presupuesto (creado desde la app o datos de prueba): avisar en vez de mostrar solo ceros
   if(!p.presupuesto){
@@ -545,13 +772,6 @@ function buildDonut(data,total){
   svg+='<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" font-size="8" fill="#9CA3AF">rubros</text>';
   svg+='</svg>';
   return svg;
-}
-
-function goToEdit(){
-  var p=ALL.find(function(x){return x._id===editingId});
-  if(!p)return;
-  showPanel('panelForm');
-  populateForm(p);
 }
 
 function showPropFromDetail(){
@@ -584,288 +804,574 @@ function showPropDirect(p){
 /* ═══════════════════════════════════════ */
 /*  FORM — espejo fiel del TEMPLATE XLSX  */
 /* ═══════════════════════════════════════ */
-function newPresupuesto(){
+var CAMPOS=['proyNombre','cliSel','cliContacto','tipoServicio','proyUbi','superficie',
+  'cotizacion','pImp','pRet','pAnt',
+  'calicatas','mpc','barrenadas','mpb',
+  'nVehiculos','diasCampo','diasTotal','distKm','nViajes','consumo','pComb','cAlq','personas','cCons','cHosp',
+  'pesoPrep','pesoLab','pesoInf','pctMargen','montoSolicitar'];
+/* Políticas que sí vienen cargadas en un presupuesto nuevo */
+var POLITICAS={pImp:10,pRet:7,pAnt:50,pctMargen:15};
+/* Campos que conviene no dejar vacíos (se marcan en amarillo) */
+var REQ={
+  proyNombre:'Nombre del proyecto',cliSel:'Cliente',tipoServicio:'Tipo de servicio',proyUbi:'Ubicación',superficie:'Superficie (ha)',
+  cotizacion:'Cotización Gs/USD',pImp:'Imprevisto (%)',pRet:'Retención IVA (%)',pAnt:'Anticipo (%)',
+  calicatas:'Nº calicatas',mpc:'Muestras/calicata',barrenadas:'Nº barrenadas',mpb:'Muestras/barrenada',
+  nVehiculos:'Nº vehículos',diasCampo:'Días de campo',diasTotal:'Días totales',distKm:'Km ida+vuelta',nViajes:'Nº viajes',
+  consumo:'Consumo L/100km',pComb:'Precio combustible',cAlq:'Alquiler/día',personas:'Personas en campo',cCons:'Viático/pers/día',cHosp:'Hospedaje/pers/día',
+  pctMargen:'Margen SoilTech (%)'
+};
+var OBLIG=['proyNombre','cliSel','cotizacion'];
+var TABLAS_DEF={
+  maq:[{n:'Retropala'}],
+  hon:[{cat:'Honorarios Profesional Senior',u:'Por calicata'},{cat:'Honorarios Coordinador Campo',u:'Honorario fijo'},{cat:'Honorarios',u:'Honorario fijo'}],
+  otros:[{n:'Gabinete (impresiones)',u:'Global'},{n:'Materiales varios',u:'Global'},{n:'Encomienda/documentos',u:'Envío'},{n:'Encomienda/laboratorio',u:'Envío'}],
+  peaje:[{n:'Ida y vuelta'}],
+  inf:[{n:'Trabajos SIG y Geoportal',u:'Consultor'},{n:'Informe técnico',u:'Consultor'},{n:'Traducción',u:'Traductor'}]
+};
+var CAT_HON=['Honorarios Profesional Senior','Honorarios Coordinador Campo','Honorarios'];
+var UNI_HON=['Honorario fijo','Por calicata','Por día'];
+
+function vOf(x){return x==null||(typeof x==='number'&&isNaN(x))?'':esc(x)}
+function numOrNull(v){if(v===''||v==null)return null;var n=parseFloat(v);return isNaN(n)?null:n}
+function numIn(v,ph){return '<input type="number" value="'+vOf(v)+'" style="width:100%"'+(ph?' placeholder="'+ph+'"':'')+'>'}
+function txtIn(v,ph){return '<input value="'+vOf(v)+'" style="width:100%"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'}
+var RO='<td><input readonly tabindex="-1" style="width:100%;background:var(--sf2);font-weight:600"></td>';
+function rmBtn(extra){return '<td><button class="rm" title="Quitar fila" onclick="quitarFila(this'+(extra?','+extra:'')+')">×</button></td>'}
+function quitarFila(btn,renum){var tb=btn.closest('tbody');btn.closest('tr').remove();renumerar(tb.id);marcarCambio();calc()}
+function renumerar(tbId){
+  var pref={maqBody:'',honBody:'1.',otrosBody:'5.',infBody:''}[tbId];
+  if(pref==null)return;
+  document.querySelectorAll('#'+tbId+' tr').forEach(function(r,i){if(!r.dataset.fixed)r.querySelector('td').textContent=pref+(i+1)});
+}
+function addRow(tbId,html){var tr=document.createElement('tr');tr.innerHTML=html;document.getElementById(tbId).appendChild(tr);return tr}
+function addMaq(d){d=d||{};var n=document.getElementById('maqBody').rows.length+1;
+  return addRow('maqBody','<td>'+n+'</td><td>'+txtIn(d.n,'Máquina')+'</td><td>'+numIn(d.c)+'</td><td>'+numIn(d.h)+'</td><td>'+numIn(d.p)+'</td>'+RO+rmBtn())}
+function addHon(d){d=d||{};var n=document.getElementById('honBody').rows.length+1;
+  var cats=CAT_HON.slice();if(d.cat&&cats.indexOf(d.cat)<0)cats.unshift(d.cat);
+  var sel=function(ops,v){return '<select style="width:100%">'+ops.map(function(o){return '<option'+(o===v?' selected':'')+'>'+esc(o)+'</option>'}).join('')+'</select>'};
+  return addRow('honBody','<td>1.'+n+'</td><td>'+sel(cats,d.cat||'Honorarios')+'</td><td>'+txtIn(d.n,'Nombre')+'</td><td>'+numIn(d.c)+'</td><td>'+sel(UNI_HON,d.u||'Honorario fijo')+'</td><td>'+numIn(d.d)+'</td><td>'+numIn(d.p)+'</td>'+RO+rmBtn())}
+function addOtro(d){d=d||{};var n=document.getElementById('otrosBody').rows.length+1;
+  var tr=addRow('otrosBody','<td>5.'+n+'</td><td>'+txtIn(d.n,'Concepto')+'</td><td>'+numIn(d.c)+'</td><td>'+esc(d.u||'Global')+'</td><td>'+numIn(d.d)+'</td><td>'+numIn(d.p)+'</td>'+RO+rmBtn());
+  tr.dataset.u=d.u||'Global';return tr}
+function addPeaje(d){d=d||{};return addRow('peajeBody','<td>'+txtIn(d.n,'Tramo')+'</td><td>'+numIn(d.p)+'</td><td>'+numIn(d.c)+'</td>'+rmBtn())}
+function addInf(d){d=d||{};var n=document.getElementById('infBody').rows.length+1;
+  var tr=addRow('infBody','<td>'+n+'</td><td>'+txtIn(d.n,'Concepto')+'</td><td>'+numIn(d.c)+'</td><td>'+esc(d.u||'Consultor')+'</td><td>'+numIn(d.p)+'</td>'+RO+'<td><input readonly tabindex="-1" style="width:100%;background:var(--sf2)"></td>'+rmBtn());
+  tr.dataset.u=d.u||'Consultor';return tr}
+var ADDERS={maq:addMaq,hon:addHon,otros:addOtro,peaje:addPeaje,inf:addInf};
+var TBODY={maq:'maqBody',hon:'honBody',otros:'otrosBody',peaje:'peajeBody',inf:'infBody'};
+function setTabla(key,rows){
+  document.getElementById(TBODY[key]).innerHTML='';
+  (rows||[]).forEach(function(r){ADDERS[key](r)});
+}
+function leerTabla(key){
+  return Array.from(document.querySelectorAll('#'+TBODY[key]+' tr')).map(function(r){
+    var i=r.querySelectorAll('input:not([readonly])'),s=r.querySelectorAll('select');
+    if(key==='maq')return{n:i[0].value,c:numOrNull(i[1].value),h:numOrNull(i[2].value),p:numOrNull(i[3].value)};
+    if(key==='hon')return{cat:s[0].value,n:i[0].value,c:numOrNull(i[1].value),u:s[1].value,d:numOrNull(i[2].value),p:numOrNull(i[3].value)};
+    if(key==='otros')return{n:i[0].value,c:numOrNull(i[1].value),u:r.dataset.u||'Global',d:numOrNull(i[2].value),p:numOrNull(i[3].value)};
+    if(key==='peaje')return{n:i[0].value,p:numOrNull(i[1].value),c:numOrNull(i[2].value)};
+    if(key==='inf')return{n:i[0].value,c:numOrNull(i[1].value),u:r.dataset.u||'Consultor',p:numOrNull(i[2].value)};
+  });
+}
+function leerEquipos(){
+  var o={};
+  document.querySelectorAll('#equipBody tr[data-equip]').forEach(function(r){var i=r.querySelectorAll('input:not([readonly])');o[r.dataset.equip]={c:numOrNull(i[0].value),d:numOrNull(i[1].value)}});
+  return o;
+}
+function leerLab(){
+  var o={};
+  document.querySelectorAll('#labBody tr[data-lab]').forEach(function(r){var i=r.querySelectorAll('input:not([readonly])');o[r.dataset.lab]=numOrNull(i[0].value)});
+  return o;
+}
+function setCampo(id,v){var el=document.getElementById(id);if(el)el.value=(v==null?'':v)}
+
+/* Estado completo del formulario (se guarda en presupuesto.form para poder editar y para "Últimos 3") */
+function getFormState(){
+  var campos={};
+  CAMPOS.forEach(function(id){var el=document.getElementById(id);if(el)campos[id]=String(el.value)});
+  var fijo=document.querySelector('#equipBody tr[data-fixed]');
+  var chk=function(id){var e=document.getElementById(id);return !!(e&&e.checked)};
+  var man=function(id){var e=document.getElementById(id);return !!(e&&e.dataset.manual)};
+  return {
+    v:2,campos:campos,
+    tablas:{maq:leerTabla('maq'),hon:leerTabla('hon'),otros:leerTabla('otros'),peaje:leerTabla('peaje'),inf:leerTabla('inf'),equip:leerEquipos(),lab:leerLab(),equipFijo:fijo?parseFloat(fijo.dataset.fixed)||0:null},
+    chk:{prep:chk('chkImpPrep'),lab:chk('chkImpLab'),inf:chk('chkImpInf')},
+    pesoManual:{prep:man('pesoPrep'),lab:man('pesoLab'),inf:man('pesoInf')},
+    montoManual:man('montoSolicitar')
+  };
+}
+
+function marcarCambio(){formDirty=true}
+
+function renderNewForm(){
   editingId=null;R={};
-  document.getElementById('rc').innerHTML='<div class="rp-empty">Completá el formulario para ver el resumen</div>';
+  document.title='Nuevo presupuesto — SoilTech';
   document.getElementById('rpTitle').textContent='Nuevo presupuesto';
+  document.getElementById('rc').innerHTML='<div class="rp-empty">Completá el formulario para ver el resumen</div>';
+  renderFormCrumbs('Nuevo presupuesto',false);
+  document.getElementById('formNote').innerHTML='<div class="form-note info">El formulario arranca vacío a propósito: solo vienen cargados tus porcentajes fijos (imprevisto, retención, anticipo y margen) y los precios de laboratorio. Los campos en <strong>amarillo</strong> faltan completar. Usá <strong>🕘 Últimos 3</strong> en cada sección para copiar valores de presupuestos anteriores.</div>';
   showPanel('panelForm');
   buildFormHTML();
   initFormWidgets();
+  Object.keys(POLITICAS).forEach(function(k){setCampo(k,POLITICAS[k])});
+  Object.keys(TABLAS_DEF).forEach(function(k){setTabla(k,TABLAS_DEF[k])});
+  formDirty=false;
   calc();
 }
 
-/* Panel navigation */
-function showPanel(id){
-  ['panelDash','panelDetail','panelForm'].forEach(function(p){document.getElementById(p).classList.remove('active')});
-  document.getElementById(id).classList.add('active');
+function openEdit(id){
+  var p=findProj(id);
+  if(!p){noEncontrado();return;}
+  editingId=id;
+  document.title='Editar '+(p.nombre||'')+' — SoilTech';
+  document.getElementById('rpTitle').textContent='Editando: '+(p.nombre||'');
+  renderFormCrumbs(p.nombre||'Sin nombre',true);
+  showPanel('panelForm');
+  populateForm(p);
+  formDirty=false;
 }
-function backToDash(){
-  showPanel('panelDash');
-  loadAll();
+
+function renderFormCrumbs(nombre,esEdicion){
+  var id=editingId?encodeURIComponent(editingId):'';
+  document.getElementById('formCrumbs').innerHTML=
+    '<button class="back-btn" onclick="backFromForm()" title="Volver (Esc)">← '+(esEdicion?'Volver al proyecto':'Proyectos')+'</button>'+
+    '<span class="path"><a href="#/">Proyectos</a> / '+(esEdicion?'<a href="#/p/'+id+'">'+esc(nombre)+'</a> / <strong>Editar</strong>':'<strong>'+esc(nombre)+'</strong>')+'</span>'+
+    '<span class="acts"><span class="pend-count" id="pendCount" onclick="irAPendiente()"></span>'+
+      '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="showProp()">📄 Propuesta</button>'+
+      (esEdicion?'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="exportXlsx()" title="Exporta la versión guardada">📥 Excel</button>':'')+
+      '<button class="btn btn-g" onclick="guardar()">💾 Guardar</button>'+
+    '</span>';
 }
-function backToDetail(){
-  showPanel('panelDetail');
-}
+
+var ICON_HIST='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg>';
+function sc(titulo,key){return '<div class="sc" id="sec_'+(key||'x')+'">'+titulo+(key?'<button type="button" class="hist-btn" onclick="showHist(\''+key+'\')" title="Ver valores de los últimos 3 presupuestos">'+ICON_HIST+'Últimos 3</button>':'')+'</div>'}
+function fN(id,label,hint,extra){return '<div class="f"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="number"'+(extra||'')+'>'+(hint!=null?'<div class="f-hint" id="'+id+'_hint">'+hint+'</div>':'')+'</div>'}
+function fRO(id,label){return '<div class="f"><label>'+label+'</label><input id="'+id+'" readonly tabindex="-1"></div>'}
 
 function buildFormHTML(){
   document.getElementById('formContent').innerHTML=
-  /* ── SUPUESTOS: Datos del Proyecto ── */
-  '<div class="sc">Datos del Proyecto</div>'+
+  /* ── Datos del Proyecto ── */
+  sc('Datos del Proyecto')+
   '<div class="g2" style="gap:10px">'+
-    '<div class="cd"><div class="cd-t">CLIENTE</div><div class="f" style="display:flex;gap:4px"><select id="cliSel" onchange="onCli()" style="flex:1"><option value="">— Seleccionar —</option></select><button class="btn btn-g" style="padding:4px 8px;font-size:10px" onclick="showModal(\'newCliModal\')">+</button></div><div class="f"><label>Contacto</label><input id="cliContacto"></div></div>'+
-    '<div class="cd"><div class="cd-t">PROYECTO</div><div class="f"><label>Nombre</label><input id="proyNombre" placeholder="Estancia Santa Isabel"></div><div class="f"><label>Tipo de Servicio</label><select id="tipoServicio"><option value="">— Seleccionar —</option></select></div><div class="g2"><div class="f"><label>Ubicación</label><input id="proyUbi" placeholder="San Pedro"></div><div class="f"><label>Superficie (ha)</label><input id="superficie" type="number" value="2000" oninput="calc()"></div></div></div>'+
+    '<div class="cd"><div class="cd-t">CLIENTE</div><div class="f" style="display:flex;gap:4px"><select id="cliSel" onchange="onCli()" style="flex:1"><option value="">— Seleccionar —</option></select><button class="btn btn-g" style="padding:4px 10px;font-size:12px" title="Nuevo cliente" onclick="showModal(\'newCliModal\')">+</button></div><div class="f"><label for="cliContacto">Contacto</label><input id="cliContacto"></div></div>'+
+    '<div class="cd"><div class="cd-t">PROYECTO</div><div class="f"><label for="proyNombre">Nombre</label><input id="proyNombre" placeholder="Ej.: Estancia Santa Isabel"></div><div class="f"><label for="tipoServicio">Tipo de Servicio</label><select id="tipoServicio"><option value="">— Seleccionar —</option></select></div><div class="g2"><div class="f"><label for="proyUbi">Ubicación</label><input id="proyUbi" placeholder="Ej.: San Pedro"></div>'+fN('superficie','Superficie (ha)')+'</div></div>'+
   '</div>'+
 
-  /* ── SUPUESTOS: Parámetros Generales ── */
-  '<div class="sc">Parámetros Generales</div>'+
+  /* ── Parámetros Generales ── */
+  sc('Parámetros Generales','params')+
   '<div class="cd"><div class="g5">'+
-    '<div class="f"><label>Cotización Gs/USD</label><input id="cotizacion" type="number" value="6500" oninput="calc()"><div class="f-hint">Tipo cambio BCP</div></div>'+
-    '<div class="f"><label>Imprevisto (%)</label><input id="pImp" type="number" value="10" oninput="calc()"><div class="f-hint">Colchón operativo</div></div>'+
-    '<div class="f"><label>Retención IVA (%)</label><input id="pRet" type="number" value="7" oninput="calc()"><div class="f-hint">Retención DNIT</div></div>'+
-    '<div class="f"><label>Anticipo (%)</label><input id="pAnt" type="number" value="50" oninput="calc()"><div class="f-hint">Política comercial</div></div>'+
-    '<div class="f"><label>Saldo (%)</label><input id="pSaldo" readonly><div class="f-hint">Contra entrega</div></div>'+
+    fN('cotizacion','Cotización Gs/USD','Tipo cambio BCP',' data-gs="1"')+
+    fN('pImp','Imprevisto (%)','Colchón operativo')+
+    fN('pRet','Retención IVA (%)','Retención DNIT')+
+    fN('pAnt','Anticipo (%)','Política comercial')+
+    '<div class="f"><label>Saldo (%)</label><input id="pSaldo" readonly tabindex="-1"><div class="f-hint">Contra entrega</div></div>'+
   '</div></div>'+
 
-  /* ── SUPUESTOS: Muestreo ── */
-  '<div class="sc">Muestreo</div>'+
+  /* ── Muestreo ── */
+  sc('Muestreo','muestreo')+
   '<div class="cd"><div class="g5">'+
-    '<div class="f"><label>Nº Calicatas</label><input id="calicatas" type="number" value="11" oninput="calc()"></div>'+
-    '<div class="f"><label>Muestras/calicata</label><input id="mpc" type="number" value="3" oninput="calc()"></div>'+
-    '<div class="f"><label>Nº Barrenadas</label><input id="barrenadas" type="number" value="11" oninput="calc()"></div>'+
-    '<div class="f"><label>Muestras/barrenada</label><input id="mpb" type="number" value="1" oninput="calc()"></div>'+
-    '<div class="f"><label>Total muestras</label><input id="totalM" readonly></div>'+
+    fN('calicatas','Nº Calicatas')+fN('mpc','Muestras/calicata')+fN('barrenadas','Nº Barrenadas')+fN('mpb','Muestras/barrenada')+fRO('totalM','Total muestras')+
   '</div><div class="g4">'+
-    '<div class="f"><label>Muest. calicatas</label><input id="tmCal" readonly></div>'+
-    '<div class="f"><label>Muest. barrenadas</label><input id="tmBar" readonly></div>'+
-    '<div class="f"><label>Densidad ha/cal</label><input id="densidad" readonly></div>'+
-    '<div class="f"><label>Superficie (ha)</label><input id="supRef" readonly></div>'+
+    fRO('tmCal','Muest. calicatas')+fRO('tmBar','Muest. barrenadas')+fRO('densidad','Densidad ha/cal')+fRO('supRef','Superficie (ha)')+
   '</div></div>'+
 
-  /* ── SUPUESTOS: Movilidad y Logística ── */
-  '<div class="sc">Movilidad y Logística</div>'+
+  /* ── Movilidad y Logística ── */
+  sc('Movilidad y Logística','movilidad')+
   '<div class="cd"><div class="g5">'+
-    '<div class="f"><label>Nº Vehículos</label><input id="nVehiculos" type="number" value="2" oninput="calc()"></div>'+
-    '<div class="f"><label>Días de campo</label><input id="diasCampo" type="number" value="4" oninput="calc()"></div>'+
-    '<div class="f"><label>Días totales (incl. traslado)</label><input id="diasTotal" type="number" value="5" oninput="calc()"></div>'+
-    '<div class="f"><label>Km ida+vuelta</label><input id="distKm" type="number" value="350" oninput="calc()"></div>'+
-    '<div class="f"><label>Nº Viajes</label><input id="nViajes" type="number" value="2" oninput="calc()"></div>'+
+    fN('nVehiculos','Nº Vehículos')+fN('diasCampo','Días de campo')+fN('diasTotal','Días totales (incl. traslado)')+fN('distKm','Km ida+vuelta')+fN('nViajes','Nº Viajes')+
   '</div><div class="g5">'+
-    '<div class="f"><label>Consumo L/100km</label><input id="consumo" type="number" value="12" oninput="calc()"></div>'+
-    '<div class="f"><label>Precio Gs/Litro</label><input id="pComb" type="number" value="9000" oninput="calc()"></div>'+
-    '<div class="f"><label>Alquiler/día (Gs)</label><input id="cAlq" type="number" value="715000" oninput="calc()"></div>'+
-    '<div class="f"><label>Nº Personas campo</label><input id="personas" type="number" value="4" oninput="calc()"></div>'+
-    '<div class="f"><label></label></div>'+
+    fN('consumo','Consumo L/100km')+fN('pComb','Precio Gs/Litro','',' data-gs="1"')+fN('cAlq','Alquiler/día (Gs)','',' data-gs="1"')+fN('personas','Nº Personas campo')+'<div class="f"></div>'+
   '</div><div class="g2">'+
-    '<div class="f"><label>Viático/pers/día (Gs)</label><input id="cCons" type="number" value="100000" oninput="calc()"></div>'+
-    '<div class="f"><label>Hospedaje/pers/día (Gs)</label><input id="cHosp" type="number" value="100000" oninput="calc()"></div>'+
+    fN('cCons','Viático/pers/día (Gs)','',' data-gs="1"')+fN('cHosp','Hospedaje/pers/día (Gs)','',' data-gs="1"')+
   '</div>'+
   '<div class="aux-box" id="auxMovilidad"></div>'+
   '<div class="sub-bar" style="margin-top:8px"><span class="sb-label">Subtotal Movilidad + Viáticos</span><span class="sb-vals"><span class="sb-gs" id="subMovGs">—</span><span class="sb-usd" id="subMovUsd">—</span><span class="sb-pct" id="subMovPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── PREPARACIÓN DE CAMPO: Maquinaria ── */
-  '<div class="sc">Preparación de Campo — Maquinaria</div>'+
+  /* ── Maquinaria ── */
+  sc('Preparación de Campo — Maquinaria','maq')+
   '<div class="cd">'+
-    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Máquina</th><th style="width:60px">Cant.</th><th style="width:80px">Horas</th><th style="width:110px">Precio/hora (Gs)</th><th style="width:110px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="maqBody">'+
-      '<tr><td>1</td><td><input value="Retropala" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="330000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr>'+
-    '</tbody></table>'+
-    '<button class="ab" onclick="addMaq()">+ Agregar máquina</button>'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Máquina</th><th style="width:60px">Cant.</th><th style="width:80px">Horas</th><th style="width:110px">Precio/hora (Gs)</th><th style="width:110px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="maqBody"></tbody></table>'+
+    '<button class="ab" onclick="addMaq();marcarCambio();calc()">+ Agregar máquina</button>'+
     '<div class="sub-bar"><span class="sb-label">Subtotal Maquinaria</span><span class="sb-vals"><span class="sb-gs" id="subMaqGs">—</span><span class="sb-usd" id="subMaqUsd">—</span><span class="sb-pct" id="subMaqPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── PREPARACIÓN DE CAMPO: Honorarios ── */
-  '<div class="sc">Preparación de Campo — Honorarios Profesionales</div>'+
+  /* ── Honorarios ── */
+  sc('Preparación de Campo — Honorarios Profesionales','hon')+
   '<div class="cd">'+
-    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Categoría</th><th>Concepto / Nombre</th><th style="width:50px">Cant.</th><th style="width:80px">Unidad</th><th style="width:50px">Días</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="honBody">'+
-      '<tr><td>1.1</td><td><select style="width:100%"><option>Honorarios Profesional Senior</option><option>Honorarios</option></select></td><td><input value="Dr. Arnulfo Encina" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Por calicata</option><option>Honorario fijo</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="1500000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
-      '<tr><td>1.2</td><td><select style="width:100%"><option>Honorarios Coordinador Campo</option><option>Honorarios</option></select></td><td><input value="David Leckie" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="5000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
-      '<tr><td>1.3</td><td><select style="width:100%"><option>Honorarios</option><option>Honorarios Profesional Senior</option></select></td><td><input value="Técnico 2" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="2000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
-      '<tr><td>1.4</td><td><select style="width:100%"><option>Honorarios</option></select></td><td><input value="Ayudante 1" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="600000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
-      '<tr><td>1.5</td><td><select style="width:100%"><option>Honorarios</option></select></td><td><input value="Ayudante 2" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="600000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td></tr>'+
-    '</tbody></table>'+
-    '<button class="ab" onclick="addHon()">+ Agregar persona</button>'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Categoría</th><th>Concepto / Nombre</th><th style="width:50px">Cant.</th><th style="width:110px">Unidad</th><th style="width:50px">Días</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="honBody"></tbody></table>'+
+    '<button class="ab" onclick="addHon();marcarCambio();calc()">+ Agregar persona</button>'+
     '<div class="sub-bar" id="subHon"><span class="sb-label">Subtotal Honorarios</span><span class="sb-vals"><span class="sb-gs" id="subHonGs">—</span><span class="sb-usd" id="subHonUsd">—</span><span class="sb-pct" id="subHonPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── PREPARACIÓN DE CAMPO: Equipos ── */
-  '<div class="sc">Uso de Equipos</div>'+
+  /* ── Equipos ── */
+  sc('Uso de Equipos','equip')+
   '<div class="cd">'+
     '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Equipo</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:60px">Días</th><th style="width:100px">Costo uso/mes</th><th style="width:100px">Subtotal (Gs)</th></tr></thead><tbody id="equipBody"></tbody></table>'+
     '<div class="sub-bar"><span class="sb-label">Subtotal Equipos</span><span class="sb-vals"><span class="sb-gs" id="subEquipGs">—</span><span class="sb-usd" id="subEquipUsd">—</span><span class="sb-pct" id="subEquipPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── PREPARACIÓN DE CAMPO: Otros Gastos ── */
-  '<div class="sc">Otros Gastos de Campo</div>'+
+  /* ── Otros Gastos ── */
+  sc('Otros Gastos de Campo','otros')+
   '<div class="cd">'+
-    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Concepto</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:60px">Días</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="otrosBody">'+
-      '<tr><td>5.1</td><td><input value="Gabinete (impresiones)" style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Global</td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="100000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
-      '<tr><td>5.2</td><td><input value="Materiales varios" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Global</td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="380000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
-      '<tr><td>5.3</td><td><input value="Encomienda/documentos" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Envío</td><td><input type="number" value="4" style="width:100%" oninput="calc()"></td><td><input type="number" value="30000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
-      '<tr><td>5.4</td><td><input value="Encomienda/laboratorio" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Envío</td><td><input type="number" value="4" style="width:100%" oninput="calc()"></td><td><input type="number" value="40000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td></td></tr>'+
-    '</tbody></table>'+
-    '<button class="ab" onclick="addOtro()">+ Agregar gasto</button>'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Concepto</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:60px">Días</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Subtotal (Gs)</th><th style="width:20px"></th></tr></thead><tbody id="otrosBody"></tbody></table>'+
+    '<button class="ab" onclick="addOtro();marcarCambio();calc()">+ Agregar gasto</button>'+
     '<div class="sub-bar"><span class="sb-label">Subtotal Otros</span><span class="sb-vals"><span class="sb-gs" id="subOtrosGs">—</span><span class="sb-usd" id="subOtrosUsd">—</span><span class="sb-pct" id="subOtrosPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── PEAJE ── */
-  '<div class="sc">Peaje</div>'+
-  '<div class="cd"><table class="ht"><thead><tr><th>Tramo</th><th style="width:80px">Precio</th><th style="width:40px">Cant</th><th style="width:20px"></th></tr></thead><tbody id="peajeBody"><tr><td><input value="Ida y vuelta" style="width:100%" oninput="calc()"></td><td><input type="number" value="30000" style="width:100%" oninput="calc()"></td><td><input type="number" value="2" style="width:100%" oninput="calc()"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr></tbody></table><button class="ab" onclick="addPeaje()">+ Peaje</button>'+
+  /* ── Peaje ── */
+  sc('Peaje','peaje')+
+  '<div class="cd"><table class="ht"><thead><tr><th>Tramo</th><th style="width:100px">Precio (Gs)</th><th style="width:60px">Cant.</th><th style="width:20px"></th></tr></thead><tbody id="peajeBody"></tbody></table><button class="ab" onclick="addPeaje();marcarCambio();calc()">+ Peaje</button>'+
   '<div class="sub-bar"><span class="sb-label">Subtotal Peaje</span><span class="sb-vals"><span class="sb-gs" id="subPeajeGs">—</span><span class="sb-usd" id="subPeajeUsd">—</span><span class="sb-pct" id="subPeajePct">—</span></span></div>'+
   '</div>'+
 
   /* ── TOTAL PREPARACIÓN ── */
-  '<div class="sub-bar" style="background:var(--g);margin-top:10px;padding:10px 14px;font-size:13px;border-radius:8px"><span class="sb-label" style="font-size:12px">TOTAL PREPARACIÓN DE CAMPO</span><span class="sb-vals"><span class="sb-gs" id="subPrepGs" style="font-size:13px">—</span><span class="sb-usd" id="subPrepUsd" style="font-size:13px">—</span><span class="sb-pct" id="subPrepPct">—</span></span></div>'+
+  '<div class="sub-bar" style="background:var(--g);margin-top:10px;padding:10px 14px;font-size:13px;border-radius:8px"><span class="sb-label" style="font-size:12px">TOTAL PREPARACIÓN DE CAMPO</span><span class="sb-vals"><span class="sb-gs" id="subPrepGs" style="font-size:13px">—</span><span class="sb-usd" id="subPrepUsd" style="font-size:13px;color:#fff">—</span><span class="sb-pct" id="subPrepPct">—</span></span></div>'+
 
-  /* ── LABORATORIO ── */
-  '<div class="sc">Análisis de Laboratorio</div>'+
+  /* ── Laboratorio ── */
+  sc('Análisis de Laboratorio','lab')+
   '<div class="cd"><div class="cd-t">LABORATORIO <span class="pct" id="labHeader"></span></div>'+
     '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Análisis</th><th style="width:80px">Cantidad</th><th style="width:70px">Unidad</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Costo Total (Gs)</th><th style="width:80px">Costo USD</th></tr></thead><tbody id="labBody"></tbody></table>'+
     '<div class="sub-bar"><span class="sb-label">Total Laboratorio</span><span class="sb-vals"><span class="sb-gs" id="subLabGs">—</span><span class="sb-usd" id="subLabUsd">—</span><span class="sb-pct" id="subLabPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── INFORME FINAL ── */
-  '<div class="sc">Informe Final — Honorarios de Gabinete</div>'+
+  /* ── Informe final ── */
+  sc('Informe Final — Honorarios de Gabinete','inf')+
   '<div class="cd">'+
-    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Concepto</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Costo Total (Gs)</th><th style="width:80px">Costo USD</th><th style="width:20px"></th></tr></thead><tbody id="infBody">'+
-      '<tr><td>1</td><td><input value="Trabajos SIG y Geoportal" style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td>Consultor</td><td><input type="number" value="1000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td></td></tr>'+
-      '<tr><td>2</td><td><input value="Informe técnico" style="width:100%"></td><td><input type="number" value="2" style="width:100%" oninput="calc()"></td><td>Consultor</td><td><input type="number" value="7000000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td></td></tr>'+
-      '<tr><td>3</td><td><input value="Traducción" style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Traductor</td><td><input type="number" value="1950000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td></tr>'+
-    '</tbody></table>'+
-    '<button class="ab" onclick="addInf()">+ Agregar ítem</button>'+
+    '<table class="ht"><thead><tr><th style="width:30px">Nº</th><th>Concepto</th><th style="width:60px">Cant.</th><th style="width:80px">Unidad</th><th style="width:100px">Costo Unit. (Gs)</th><th style="width:100px">Costo Total (Gs)</th><th style="width:80px">Costo USD</th><th style="width:20px"></th></tr></thead><tbody id="infBody"></tbody></table>'+
+    '<button class="ab" onclick="addInf();marcarCambio();calc()">+ Agregar ítem</button>'+
     '<div class="sub-bar"><span class="sb-label">Total Informe</span><span class="sb-vals"><span class="sb-gs" id="subInfGs">—</span><span class="sb-usd" id="subInfUsd">—</span><span class="sb-pct" id="subInfPct">—</span></span></div>'+
   '</div>'+
 
-  /* ── PESOS DE RIESGO — rediseñado ── */
-  '<div class="sc">Imprevisto Ponderado</div>'+
-  '<div class="peso-card"><div class="cd-t">DISTRIBUCIÓN DEL IMPREVISTO POR CATEGORÍA</div>'+
-    '<div class="peso-row"><label class="chk"><input type="checkbox" id="chkImpPrep" checked onchange="calc()"> Preparación</label><span style="color:rgba(255,255,255,0.4);font-size:10px">Peso:</span><input class="peso-input" id="pesoPrep" type="number" value="60" oninput="markPeso(this)"><span style="color:rgba(255,255,255,0.4);font-size:10px">%</span><span class="peso-result" id="resImpPrep"></span></div>'+
-    '<div class="peso-row"><label class="chk"><input type="checkbox" id="chkImpLab" checked onchange="calc()"> Laboratorio</label><span style="color:rgba(255,255,255,0.4);font-size:10px">Peso:</span><input class="peso-input" id="pesoLab" type="number" value="15" oninput="markPeso(this)"><span style="color:rgba(255,255,255,0.4);font-size:10px">%</span><span class="peso-result" id="resImpLab"></span></div>'+
-    '<div class="peso-row"><label class="chk"><input type="checkbox" id="chkImpInf" onchange="calc()"> Informe</label><span style="color:rgba(255,255,255,0.4);font-size:10px">Peso:</span><input class="peso-input" id="pesoInf" type="number" value="25" oninput="markPeso(this)"><span style="color:rgba(255,255,255,0.4);font-size:10px">%</span><span class="peso-result" id="resImpInf"></span></div>'+
+  /* ── Imprevisto ponderado ── */
+  sc('Imprevisto Ponderado')+
+  '<div class="peso-card"><div class="cd-t">DISTRIBUCIÓN DEL IMPREVISTO POR CATEGORÍA <span class="pct" style="color:rgba(255,255,255,0.5)">(los pesos se calculan solos hasta que los cambies)</span></div>'+
+    '<div class="peso-row"><label class="chk"><input type="checkbox" id="chkImpPrep" checked> Preparación</label><span style="color:rgba(255,255,255,0.4);font-size:10px">Peso:</span><input class="peso-input" id="pesoPrep" type="number" oninput="markPeso(this)"><span style="color:rgba(255,255,255,0.4);font-size:10px">%</span><span class="peso-result" id="resImpPrep"></span></div>'+
+    '<div class="peso-row"><label class="chk"><input type="checkbox" id="chkImpLab" checked> Laboratorio</label><span style="color:rgba(255,255,255,0.4);font-size:10px">Peso:</span><input class="peso-input" id="pesoLab" type="number" oninput="markPeso(this)"><span style="color:rgba(255,255,255,0.4);font-size:10px">%</span><span class="peso-result" id="resImpLab"></span></div>'+
+    '<div class="peso-row"><label class="chk"><input type="checkbox" id="chkImpInf"> Informe</label><span style="color:rgba(255,255,255,0.4);font-size:10px">Peso:</span><input class="peso-input" id="pesoInf" type="number" oninput="markPeso(this)"><span style="color:rgba(255,255,255,0.4);font-size:10px">%</span><span class="peso-result" id="resImpInf"></span></div>'+
     '<div class="peso-total"><span>TOTAL IMPREVISTO</span><span class="pt-val" id="totalImpPeso">—</span></div>'+
   '</div>'+
 
-  /* ── RESUMEN: Monto a Solicitar ── */
-  '<div class="sc">Monto a Solicitar</div>'+
+  /* ── Monto a Solicitar ── */
+  sc('Monto a Solicitar','margen')+
   '<div class="cd">'+
     '<div style="background:var(--sf2);border-radius:8px;padding:12px 14px;margin-bottom:10px">'+
       '<div style="font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;margin-bottom:8px">Total calculado (costos + imprevisto + retención)</div>'+
       '<div class="g4" style="gap:6px;margin-bottom:6px">'+
-        '<div class="f" style="margin:0"><label>Guaraníes</label><input id="totalCalcGs" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
-        '<div class="f" style="margin:0"><label>Margen SoilTech Gs</label><div style="display:flex;gap:4px;align-items:center"><input id="pctMargen" type="number" value="15" style="width:50px;font-size:12px;text-align:center" oninput="calc()"><span style="font-size:10px;color:var(--tx3)">%</span><input id="margenSoilGs" readonly style="flex:1;background:#fff;font-weight:600;color:var(--gd);font-size:12px"></div></div>'+
-        '<div class="f" style="margin:0"><label>Monto total Gs.</label><input id="montoTotalGs" readonly style="background:#fff;font-weight:700;color:var(--g);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Guaraníes</label><input id="totalCalcGs" readonly tabindex="-1" style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label for="pctMargen">Margen SoilTech Gs</label><div style="display:flex;gap:4px;align-items:center"><input id="pctMargen" type="number" style="width:56px;font-size:12px;text-align:center"><span style="font-size:10px;color:var(--tx3)">%</span><input id="margenSoilGs" readonly tabindex="-1" style="flex:1;background:#fff;font-weight:600;color:var(--gd);font-size:12px"></div></div>'+
+        '<div class="f" style="margin:0"><label>Monto total Gs.</label><input id="montoTotalGs" readonly tabindex="-1" style="background:#fff;font-weight:700;color:var(--g);font-size:13px"></div>'+
         '<div class="f" style="margin:0"></div>'+
       '</div>'+
       '<div class="g4" style="gap:6px">'+
-        '<div class="f" style="margin:0"><label>Dólares (exacto)</label><input id="totalCalcUsd" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
-        '<div class="f" style="margin:0"><label>Margen SoilTech USD</label><input id="margenSoilUsd" readonly style="background:#fff;font-weight:600;color:var(--gd);font-size:12px"></div>'+
-        '<div class="f" style="margin:0"><label>Monto total USD</label><input id="montoTotalUsd" readonly style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
-        '<div class="f" style="margin:0"><label>Sugerido Redondeado USD</label><input id="totalSugerido" readonly style="background:#fff;font-weight:700;color:var(--g);font-size:14px"></div>'+
+        '<div class="f" style="margin:0"><label>Dólares (exacto)</label><input id="totalCalcUsd" readonly tabindex="-1" style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Margen SoilTech USD</label><input id="margenSoilUsd" readonly tabindex="-1" style="background:#fff;font-weight:600;color:var(--gd);font-size:12px"></div>'+
+        '<div class="f" style="margin:0"><label>Monto total USD</label><input id="montoTotalUsd" readonly tabindex="-1" style="background:#fff;font-weight:700;color:var(--gd);font-size:13px"></div>'+
+        '<div class="f" style="margin:0"><label>Sugerido Redondeado USD</label><input id="totalSugerido" readonly tabindex="-1" style="background:#fff;font-weight:700;color:var(--g);font-size:14px"></div>'+
       '</div>'+
     '</div>'+
     '<div class="g2">'+
-      '<div class="f"><label>Monto a solicitar (USD)</label><input id="montoSolicitar" type="number" oninput="calcSolicitar()" style="font-size:14px;font-weight:700"><div class="f-hint">Escribí tu cifra final — dejá vacío para usar el sugerido</div></div>'+
-      '<div class="f"><label>Margen resultante</label><input id="margenResult" readonly style="background:var(--sf2);font-weight:700;color:var(--g)"></div>'+
+      '<div class="f"><label for="montoSolicitar">Monto a solicitar (USD)</label><input id="montoSolicitar" type="number" oninput="calcSolicitar()" style="font-size:14px;font-weight:700"><div class="f-hint">Escribí tu cifra final — dejá vacío para usar el sugerido</div></div>'+
+      '<div class="f"><label>Margen resultante</label><input id="margenResult" readonly tabindex="-1" style="background:var(--sf2);font-weight:700;color:var(--g)"></div>'+
     '</div>'+
   '</div>';
+
+  /* Un solo listener para todo el formulario: recalcula y marca cambios */
+  var fc=document.getElementById('formContent');
+  fc.oninput=function(e){if(e.target.id==='montoSolicitar'||e.target.classList.contains('peso-input'))return marcarCambio();marcarCambio();calc()};
+  fc.onchange=function(e){if(e.target.tagName==='SELECT'||e.target.type==='checkbox'){marcarCambio();calc()}};
 }
 
-function initFormWidgets(){
-  var sel=document.getElementById('cliSel');
-  sel.innerHTML='<option value="">— Seleccionar —</option>';
-  CLIS.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.nombre;sel.appendChild(o)});
+function initFormWidgets(labPrecios,equipVals,equipFijo){
+  llenarClientes();
   var ts=document.getElementById('tipoServicio');
   ts.innerHTML='<option value="">— Seleccionar —</option>';
   SERVICIOS.forEach(function(s){var o=document.createElement('option');o.value=s.code;o.textContent=s.code+' — '+s.name;ts.appendChild(o)});
-  buildEquipTable();
-  buildLabTable();
+  buildEquipTable(equipVals,equipFijo);
+  buildLabTable(labPrecios);
+}
+function llenarClientes(seleccion){
+  var sel=document.getElementById('cliSel');if(!sel)return;
+  var prev=seleccion!=null?seleccion:sel.value;
+  sel.innerHTML='<option value="">— Seleccionar —</option>';
+  CLIS.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.nombre;sel.appendChild(o)});
+  sel.value=prev||'';
+}
+function seleccionarClientePorNombre(nombre){
+  var sel=document.getElementById('cliSel'),n=(nombre||'').toUpperCase().trim();
+  for(var i=0;i<sel.options.length;i++){if(i>0&&sel.options[i].text.toUpperCase().trim()===n){sel.selectedIndex=i;return true}}
+  return false;
 }
 
-function buildEquipTable(){
+function buildEquipTable(vals,fijo){
+  vals=vals||{};
   var tb=document.getElementById('equipBody');
   tb.innerHTML=EQUIPOS.map(function(e,i){
-    return '<tr data-equip="'+e.id+'"><td>4.'+(i+1)+'</td><td>'+e.name+'</td><td><input type="number" value="'+(e.id==='cilindro'?0:1)+'" style="width:100%" oninput="calc()"></td><td>'+(e.id==='cilindro'?'Paq. 10 cilindros':'Unidad')+'</td><td><input type="number" value="'+(e.id==='penetrometro'?1:8)+'" style="width:100%" oninput="calc()"></td><td style="text-align:right;font-size:10px;color:var(--tx2)">'+fmtGs(e.costoMes)+'</td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td></tr>';
-  }).join('');
+    var v=vals[e.id]||{};
+    return '<tr data-equip="'+e.id+'"><td>4.'+(i+1)+'</td><td>'+e.name+'</td><td>'+numIn(v.c)+'</td><td>'+(e.id==='cilindro'?'Paq. 10 cilindros':'Unidad')+'</td><td>'+numIn(v.d)+'</td><td style="text-align:right;font-size:10px;color:var(--tx2)">'+fmtGs(e.costoMes)+'</td>'+RO+'</tr>';
+  }).join('')+
+  (fijo>0?'<tr data-fixed="'+fijo+'"><td>—</td><td colspan="5" style="font-size:11px;color:#92400E">Total guardado con la versión anterior (sin detalle por equipo) <button class="ab" style="margin:0 0 0 6px" onclick="quitarEquipoFijo(this)">Quitar y cargar por equipo</button></td><td><input readonly tabindex="-1" value="'+fmtGs(fijo)+'" style="width:100%;background:var(--sf2);font-weight:600"></td></tr>':'');
 }
+function quitarEquipoFijo(b){b.closest('tr').remove();marcarCambio();calc()}
 
-function buildLabTable(){
+function buildLabTable(precios){
+  precios=precios||{};
   var tb=document.getElementById('labBody');
   tb.innerHTML=LAB_PRES.map(function(a,i){
-    return '<tr data-lab="'+a.id+'"><td>'+(i+1)+'</td><td>'+a.name+'</td><td><input type="number" value="0" style="width:100%" oninput="calc()" id="labQty_'+a.id+'"></td><td>Muestra</td><td><input type="number" value="'+a.price+'" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td></tr>';
+    var pr=precios[a.id]!=null?precios[a.id]:a.price;
+    return '<tr data-lab="'+a.id+'"><td>'+(i+1)+'</td><td>'+a.name+'</td><td><input type="number" readonly tabindex="-1" style="width:100%;background:var(--sf2)" id="labQty_'+a.id+'" title="Se calcula con las muestras"></td><td>Muestra</td><td>'+numIn(pr)+'</td>'+RO+'<td><input readonly tabindex="-1" style="width:100%;background:var(--sf2)"></td></tr>';
   }).join('');
 }
 
 function populateForm(p){
-  buildFormHTML();initFormWidgets();
-  document.getElementById('proyNombre').value=p.nombre||'';
-  document.getElementById('proyUbi').value=p.ubicacion||'';
-  document.getElementById('superficie').value=p.superficie||2000;
-  document.getElementById('cotizacion').value=p.cotizacion||6500;
-  document.getElementById('tipoServicio').value=p.tipoServicio||'';
-  var sel=document.getElementById('cliSel');
-  for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===p.cliente){sel.selectedIndex=i;break}}
-  var pr=p.presupuesto||{};
-  /* Muestreo — siempre setear, usar fallback del proyecto o default */
-  document.getElementById('calicatas').value=pr.cal||p.calicatas||11;
-  document.getElementById('barrenadas').value=pr.bar||11;
-  document.getElementById('mpc').value=pr.mpc||3;
-  document.getElementById('mpb').value=pr.mpb||1;
-  /* Movilidad */
-  document.getElementById('nVehiculos').value=pr.nVehiculos||2;
-  document.getElementById('diasCampo').value=pr.diasCampo||4;
-  document.getElementById('diasTotal').value=pr.diasTotal||5;
-  document.getElementById('nViajes').value=pr.nViajes||2;
-  document.getElementById('distKm').value=pr.distKm||350;
-  document.getElementById('consumo').value=pr.consumo||12;
-  document.getElementById('pComb').value=pr.pComb||9000;
-  document.getElementById('cAlq').value=pr.cAlq||715000;
-  document.getElementById('personas').value=pr.personas||4;
-  document.getElementById('cCons').value=pr.cCons||100000;
-  document.getElementById('cHosp').value=pr.cHosp||100000;
-  /* Parámetros */
-  document.getElementById('pImp').value=pr.pImp||10;
-  document.getElementById('pRet').value=pr.pRet||7;
-  document.getElementById('pAnt').value=pr.pAnt||50;
-  document.getElementById('pesoPrep').value=pr.pesoPrep||60;
-  document.getElementById('pesoLab').value=pr.pesoLab||15;
-  document.getElementById('pesoInf').value=pr.pesoInf||25;
-  if(pr.pctMargen)document.getElementById('pctMargen').value=pr.pctMargen;
-  /* Monto a solicitar — dejar que recalcule según los costos actuales */
-  /* Si el usuario quiere fijar un monto, lo escribe manualmente en el campo */
+  var pr=p.presupuesto||{},f=pr.form&&pr.form.v?pr.form:null;
+  var nota='';
+  buildFormHTML();
+  if(f){
+    var t=f.tablas||{};
+    initFormWidgets(t.lab,t.equip,t.equipFijo);
+    CAMPOS.forEach(function(id){if(f.campos&&f.campos[id]!=null)setCampo(id,f.campos[id])});
+    ['maq','hon','otros','peaje','inf'].forEach(function(k){setTabla(k,t[k]||[])});
+    var c=f.chk||{};
+    document.getElementById('chkImpPrep').checked=!!c.prep;
+    document.getElementById('chkImpLab').checked=!!c.lab;
+    document.getElementById('chkImpInf').checked=!!c.inf;
+    var pm=f.pesoManual||{};
+    if(pm.prep)document.getElementById('pesoPrep').dataset.manual='1';
+    if(pm.lab)document.getElementById('pesoLab').dataset.manual='1';
+    if(pm.inf)document.getElementById('pesoInf').dataset.manual='1';
+    if(f.montoManual&&document.getElementById('montoSolicitar').value)document.getElementById('montoSolicitar').dataset.manual='1';
+  }else if(p.presupuesto){
+    /* Presupuesto guardado con la versión anterior: se reconstruye con los totales guardados */
+    initFormWidgets(null,null,pr.equip>0?pr.equip:null);
+    var n=function(v){return v==null?'':v};
+    setCampo('cotizacion',n(pr.cot!=null?pr.cot:p.cotizacion));
+    setCampo('superficie',n(pr.sup!=null?pr.sup:p.superficie));
+    setCampo('calicatas',n(pr.cal!=null?pr.cal:p.calicatas));
+    ['mpc','mpb','nVehiculos','diasCampo','diasTotal','nViajes','distKm','consumo','pComb','cAlq','personas','cCons','cHosp','pImp','pRet','pAnt','pctMargen'].forEach(function(k){setCampo(k,n(pr[k]))});
+    setCampo('barrenadas',n(pr.bar));
+    if(pr.pctMargen==null)setCampo('pctMargen',POLITICAS.pctMargen);
+    document.querySelectorAll('#equipBody tr[data-equip] input:not([readonly])').forEach(function(i){i.value=0});
+    var hon=(p.honorarios||[]).map(function(h){return{cat:h.categoria,n:h.nombre,c:h.cantidad,u:h.unidad,d:h.dias,p:h.costoUnit}});
+    if(!hon.length&&pr.hon>0)hon=[{cat:'Honorarios',n:'Honorarios (total guardado)',c:1,u:'Honorario fijo',d:1,p:pr.hon}];
+    setTabla('hon',hon);
+    setTabla('maq',pr.maq>0?[{n:'Maquinaria (total guardado)',c:1,h:1,p:pr.maq}]:[]);
+    setTabla('otros',pr.otros>0?[{n:'Otros gastos (total guardado)',c:1,u:'Global',d:1,p:pr.otros}]:[]);
+    setTabla('peaje',pr.peaje>0?[{n:'Peaje (total guardado)',p:pr.peaje,c:1}]:[]);
+    setTabla('inf',pr.sInf>0?[{n:'Informe (total guardado)',c:1,u:'Global',p:pr.sInf}]:[]);
+    if(pr.montoSolicitar>0){setCampo('montoSolicitar',pr.montoSolicitar);document.getElementById('montoSolicitar').dataset.manual='1'}
+    nota='<div class="form-note warn"><strong>Presupuesto guardado con la versión anterior del panel.</strong> Esa versión no guardaba el detalle de maquinaria, otros gastos, peaje, informe y equipos: se cargaron como una sola fila con el total guardado. Revisalas y, si querés, reemplazalas por el detalle. Al guardar, ya queda completo.</div>';
+  }else{
+    /* Proyecto sin presupuesto (creado en la app): formulario vacío con los datos del proyecto */
+    initFormWidgets();
+    Object.keys(POLITICAS).forEach(function(k){setCampo(k,POLITICAS[k])});
+    Object.keys(TABLAS_DEF).forEach(function(k){setTabla(k,TABLAS_DEF[k])});
+    setCampo('cotizacion',p.cotizacion||'');
+    setCampo('superficie',p.superficie!=null?p.superficie:'');
+    setCampo('calicatas',p.calicatas!=null?p.calicatas:'');
+    nota='<div class="form-note info">Este proyecto se creó desde la app y todavía no tiene presupuesto. Completá los campos en amarillo o copiá valores con <strong>🕘 Últimos 3</strong>.</div>';
+  }
+  /* Los datos generales siempre salen del proyecto (pueden haber cambiado al aprobar) */
+  setCampo('proyNombre',p.nombre||'');
+  setCampo('proyUbi',p.ubicacion||'');
+  setCampo('tipoServicio',p.tipoServicio||'');
+  var cs=document.getElementById('cliSel');
+  var guardado=f&&f.campos?f.campos.cliSel:'';
+  var cli=CLIS.find(function(c){return c.id===guardado});
+  if(!(cli&&(cli.nombre||'').toUpperCase()===(p.cliente||'').toUpperCase()&&(cs.value=guardado)))seleccionarClientePorNombre(p.cliente);
+  if(p.cliente&&!cs.value)nota+='<div class="form-note warn">El cliente «'+esc(p.cliente)+'» no está en la lista de clientes. Elegilo o crealo con el botón +.</div>';
+  if(cs.value&&!document.getElementById('cliContacto').value)onCli();
+  document.getElementById('formNote').innerHTML=nota;
   calc();
 }
 
-function onCli(){var c=CLIS.find(function(x){return x.id===document.getElementById('cliSel').value});if(c)document.getElementById('cliContacto').value=c.contacto||c.nombre||'';}
+function onCli(){var c=CLIS.find(function(x){return x.id===document.getElementById('cliSel').value});document.getElementById('cliContacto').value=c?(c.contacto||c.nombre||''):''}
+function renumberHon(){renumerar('honBody')}
+
+/* Campos pendientes (vacíos) */
+function camposPendientes(){
+  var out=[];
+  Object.keys(REQ).forEach(function(id){var el=document.getElementById(id);if(el&&String(el.value).trim()==='')out.push({el:el,txt:REQ[id],hard:OBLIG.indexOf(id)>=0})});
+  var tablas=[['maqBody','Maquinaria',0],['honBody','Honorarios',0],['equipBody','Equipos',-1],['otrosBody','Otros gastos',0],['peajeBody','Peaje',0],['labBody','Laboratorio',-1],['infBody','Informe final',0]];
+  tablas.forEach(function(t){
+    document.querySelectorAll('#'+t[0]+' tr').forEach(function(r,i){
+      var ins=Array.from(r.querySelectorAll('input[type=number]:not([readonly])'));
+      var vacios=ins.filter(function(x){return x.value===''});
+      if(!vacios.length)return;
+      var nom=t[2]===-1?(r.children[1]?r.children[1].textContent:''):((r.querySelector('input:not([type=number])')||{}).value||('fila '+(i+1)));
+      vacios.forEach(function(x){out.push({el:x,txt:t[1]+' · '+nom,tabla:true})});
+    });
+  });
+  return out;
+}
+function marcarPendientes(){
+  document.querySelectorAll('#formContent .pend').forEach(function(e){e.classList.remove('pend')});
+  var lista=camposPendientes();
+  lista.forEach(function(x){x.el.classList.add('pend')});
+  var pc=document.getElementById('pendCount');
+  if(pc){
+    pc.className='pend-count'+(lista.length?'':' ok');
+    pc.textContent=lista.length?lista.length+' dato'+(lista.length===1?'':'s')+' sin completar':'✓ Todo completo';
+    pc.title=lista.length?'Ir al primero':'';
+  }
+  return lista;
+}
+function irAPendiente(){var l=camposPendientes();if(l.length)enfocar(l[0].el)}
+function enfocar(el){
+  hideModal('reviewModal');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(function(){el.focus();el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')},250);
+}
 
 /* ═══════════════════════════════════════ */
-/*  TABLE HELPERS                          */
+/*  ÚLTIMOS 3 PRESUPUESTOS                 */
 /* ═══════════════════════════════════════ */
-function renumberHon(){
-  document.querySelectorAll('#honBody tr').forEach(function(r,i){r.querySelector('td').textContent='1.'+(i+1)});
+var HIST={
+  params:{t:'Parámetros generales',f:[['cotizacion','Cotización Gs/USD','cot','gs'],['pImp','Imprevisto','pImp','pct'],['pRet','Retención IVA','pRet','pct'],['pAnt','Anticipo','pAnt','pct']]},
+  muestreo:{t:'Muestreo',f:[['superficie','Superficie (ha)','sup','n'],['calicatas','Nº calicatas','cal','n'],['mpc','Muestras/calicata','mpc','n'],['barrenadas','Nº barrenadas','bar','n'],['mpb','Muestras/barrenada','mpb','n']]},
+  movilidad:{t:'Movilidad y logística',f:[['nVehiculos','Nº vehículos','nVehiculos','n'],['diasCampo','Días de campo','diasCampo','n'],['diasTotal','Días totales','diasTotal','n'],['distKm','Km ida+vuelta','distKm','n'],['nViajes','Nº viajes','nViajes','n'],['consumo','Consumo L/100km','consumo','n'],['pComb','Precio combustible (Gs/L)','pComb','gs'],['cAlq','Alquiler/día','cAlq','gs'],['personas','Personas en campo','personas','n'],['cCons','Viático/pers/día','cCons','gs'],['cHosp','Hospedaje/pers/día','cHosp','gs']]},
+  margen:{t:'Margen SoilTech',f:[['pctMargen','Margen SoilTech','pctMargen','pct']]},
+  maq:{t:'Maquinaria',tabla:'maq',total:'maq'},
+  hon:{t:'Honorarios profesionales',tabla:'hon',total:'hon'},
+  otros:{t:'Otros gastos de campo',tabla:'otros',total:'otros'},
+  peaje:{t:'Peaje',tabla:'peaje',total:'peaje'},
+  inf:{t:'Informe final',tabla:'inf',total:'sInf'},
+  equip:{t:'Uso de equipos',especial:'equip',total:'equip'},
+  lab:{t:'Precios de laboratorio',especial:'lab',total:'sLab'}
+};
+function histFuentes(){
+  return ALL.filter(function(p){return p.presupuesto&&p._id!==editingId})
+    .sort(function(a,b){return fechaProy(b)-fechaProy(a)}).slice(0,3);
 }
-function addMaq(){
-  var tb=document.getElementById('maqBody'),n=tb.rows.length+1;
-  var tr=document.createElement('tr');
-  tr.innerHTML='<td>'+n+'</td><td><input style="width:100%"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="330000" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';
-  tb.appendChild(tr);
+function histValor(p,id,key){
+  var pr=p.presupuesto||{},f=pr.form;
+  if(f&&f.campos&&f.campos[id]!=null&&f.campos[id]!=='')return parseFloat(f.campos[id]);
+  if(key==='sup'&&pr.sup==null)return p.superficie;
+  if(key==='cot'&&pr.cot==null)return p.cotizacion;
+  return pr[key];
 }
-function addHon(){
-  var tb=document.getElementById('honBody'),n=tb.rows.length+1;
-  var tr=document.createElement('tr');
-  tr.innerHTML='<td>1.'+n+'</td><td><select style="width:100%"><option>Honorarios</option><option>Honorarios Profesional Senior</option><option>Honorarios Coordinador Campo</option></select></td><td><input style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><select style="width:100%" onchange="calc()"><option>Honorario fijo</option><option>Por calicata</option><option>Por día</option></select></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();renumberHon();calc()">×</button></td>';
-  tb.appendChild(tr);
+function histFmt(v,tipo){
+  if(v==null||v===''||isNaN(v))return null;
+  if(tipo==='gs')return '₲ '+fmtGs(+v);
+  if(tipo==='pct')return v+'%';
+  return fmtGs(+v)===String(v)?String(v):String(+v);
 }
-function addPeaje(){var tb=document.getElementById('peajeBody'),tr=document.createElement('tr');tr.innerHTML='<td><input style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';tb.appendChild(tr)}
-function addOtro(){
-  var tb=document.getElementById('otrosBody'),n=tb.rows.length+1;
-  var tr=document.createElement('tr');
-  tr.innerHTML='<td>5.'+n+'</td><td><input style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Global</td><td><input type="number" value="1" style="width:100%" oninput="calc()"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';
-  tb.appendChild(tr);
+function histCab(p){return '<span class="pn" title="'+esc(p.nombre)+'">'+esc(p.nombre||'Sin nombre')+'</span><span class="pd">'+esc(p.cliente||'')+' · '+fechaTxt(fechaProy(p))+'</span>'}
+function histFilas(p,key){
+  var pr=p.presupuesto||{},f=pr.form;
+  if(f&&f.tablas&&f.tablas[key])return f.tablas[key];
+  if(key==='hon'&&p.honorarios&&p.honorarios.length)return p.honorarios.map(function(h){return{cat:h.categoria,n:h.nombre,c:h.cantidad,u:h.unidad,d:h.dias,p:h.costoUnit}});
+  return null;
 }
-function addInf(){
-  var tb=document.getElementById('infBody'),n=tb.rows.length+1;
-  var tr=document.createElement('tr');
-  tr.innerHTML='<td>'+n+'</td><td><input style="width:100%"></td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td>Consultor</td><td><input type="number" value="0" style="width:100%" oninput="calc()"></td><td><input readonly style="width:100%;background:var(--sf2);font-weight:600"></td><td><input readonly style="width:100%;background:var(--sf2)"></td><td><button class="rm" onclick="this.closest(\'tr\').remove();calc()">×</button></td>';
-  tb.appendChild(tr);
+function histResumenFila(key,r){
+  var g=function(v){return v==null?'—':fmtGs(v)};
+  if(key==='maq')return esc(r.n||'—')+' · '+g(r.c)+' × '+g(r.h)+' h × ₲'+g(r.p);
+  if(key==='hon')return esc(r.n||r.cat||'—')+' · '+g(r.c)+' × '+esc(r.u||'')+' · '+g(r.d)+' d × ₲'+g(r.p);
+  if(key==='otros')return esc(r.n||'—')+' · '+g(r.c)+' × '+g(r.d)+' × ₲'+g(r.p);
+  if(key==='peaje')return esc(r.n||'—')+' · ₲'+g(r.p)+' × '+g(r.c);
+  if(key==='inf')return esc(r.n||'—')+' · '+g(r.c)+' × ₲'+g(r.p);
+  return '';
+}
+var histCache=[];
+function showHist(key){
+  var H=HIST[key];if(!H)return;
+  var fuentes=histFuentes();histCache=fuentes;
+  document.getElementById('histTitle').textContent=H.t+' — últimos 3 presupuestos';
+  var body='';
+  if(!fuentes.length){
+    document.getElementById('histSub').textContent='';
+    document.getElementById('histBody').innerHTML='<div class="hist-empty">Todavía no hay otros presupuestos guardados para comparar.</div>';
+    showModal('histModal');return;
+  }
+  if(H.f){
+    document.getElementById('histSub').textContent='Tocá un valor para usarlo, o «Usar todos» para copiar la columna entera.';
+    body='<table class="htab"><thead><tr><th>Campo</th><th>Actual</th>'+fuentes.map(function(p,i){
+      return '<th>'+histCab(p)+'<button class="use-all" onclick="histUsarTodos(\''+key+'\','+i+')">Usar todos</button></th>';
+    }).join('')+'</tr></thead><tbody>'+H.f.map(function(fd){
+      var el=document.getElementById(fd[0]);var cur=el?el.value:'';
+      return '<tr><td class="lbl">'+fd[1]+'</td><td class="cur">'+(histFmt(cur,fd[3])||'<span class="hv-na">vacío</span>')+'</td>'+fuentes.map(function(p,i){
+        var v=histValor(p,fd[0],fd[2]),t=histFmt(v,fd[3]);
+        if(t==null)return '<td><span class="hv-na">—</span></td>';
+        var same=cur!==''&&parseFloat(cur)===parseFloat(v);
+        return '<td><button class="hv'+(same?' same':'')+'" title="'+(same?'Igual al actual':'Usar este valor')+'" onclick="histUsar(\''+fd[0]+'\','+(+v)+')">'+t+'</button></td>';
+      }).join('')+'</tr>';
+    }).join('')+'</tbody></table>';
+  }else if(H.tabla){
+    document.getElementById('histSub').textContent='«Copiar filas» reemplaza la tabla actual por la de ese presupuesto.';
+    var curTot=R[H.total]||0;
+    body='<div class="hist-cur">Actual: <strong>₲ '+fmtGs(curTot)+'</strong></div><div class="hcols">'+fuentes.map(function(p,i){
+      var filas=histFilas(p,H.tabla),tot=(p.presupuesto||{})[H.total]||0;
+      return '<div class="hcol"><div class="pn">'+esc(p.nombre||'Sin nombre')+'</div><div class="pd">'+esc(p.cliente||'')+' · '+fechaTxt(fechaProy(p))+'</div>'+
+        (filas?(filas.length?'<ul>'+filas.map(function(r){return '<li>'+histResumenFila(H.tabla,r)+'</li>'}).join('')+'</ul>':'<ul><li>Sin filas</li></ul>'):'<ul><li>Sin detalle (versión anterior del panel)</li></ul>')+
+        '<div class="ht">Total ₲ '+fmtGs(tot)+'</div>'+
+        '<button class="use-all" '+(filas?'':'disabled ')+'onclick="histCopiarTabla(\''+H.tabla+'\','+i+')">Copiar filas</button></div>';
+    }).join('')+'</div>';
+  }else if(H.especial==='equip'){
+    document.getElementById('histSub').textContent='Cantidad × días de uso de cada equipo. «Usar» copia la columna.';
+    body='<table class="htab"><thead><tr><th>Equipo</th><th>Actual</th>'+fuentes.map(function(p,i){
+      var ok=p.presupuesto.form&&p.presupuesto.form.tablas&&p.presupuesto.form.tablas.equip;
+      return '<th>'+histCab(p)+(ok?'<button class="use-all" onclick="histUsarEquipos('+i+')">Usar</button>':'')+'</th>';
+    }).join('')+'</tr></thead><tbody>'+EQUIPOS.map(function(e){
+      var i=document.querySelectorAll('#equipBody tr[data-equip="'+e.id+'"] input:not([readonly])');
+      var cur=i.length?(i[0].value||'–')+' × '+(i[1].value||'–')+' d':'';
+      return '<tr><td class="lbl">'+e.name+'</td><td class="cur">'+cur+'</td>'+fuentes.map(function(p){
+        var t=p.presupuesto.form&&p.presupuesto.form.tablas&&p.presupuesto.form.tablas.equip;
+        var v=t&&t[e.id];
+        return '<td>'+(v?(v.c==null?'–':v.c)+' × '+(v.d==null?'–':v.d)+' d':'<span class="hv-na">—</span>')+'</td>';
+      }).join('')+'</tr>';
+    }).join('')+'<tr><td class="lbl"><strong>Total</strong></td><td class="cur">₲ '+fmtGs(R.equip||0)+'</td>'+fuentes.map(function(p){return '<td><strong>₲ '+fmtGs(p.presupuesto.equip||0)+'</strong></td>'}).join('')+'</tr></tbody></table>';
+  }else if(H.especial==='lab'){
+    document.getElementById('histSub').textContent='Precio unitario por análisis. Tocá un precio para usarlo.';
+    body='<table class="htab"><thead><tr><th>Análisis</th><th>Actual</th>'+fuentes.map(function(p){return '<th>'+histCab(p)+'</th>'}).join('')+'</tr></thead><tbody>'+LAB_PRES.map(function(a){
+      var inp=document.querySelectorAll('#labBody tr[data-lab="'+a.id+'"] input:not([readonly])')[0];
+      var cur=inp?inp.value:'';
+      return '<tr><td class="lbl">'+a.name+'</td><td class="cur">'+(cur!==''?'₲ '+fmtGs(+cur):'vacío')+'</td>'+fuentes.map(function(p){
+        var t=p.presupuesto.form&&p.presupuesto.form.tablas&&p.presupuesto.form.tablas.lab;
+        var v=t?t[a.id]:null;
+        if(v==null)return '<td><span class="hv-na">—</span></td>';
+        var same=cur!==''&&+cur===+v;
+        return '<td><button class="hv'+(same?' same':'')+'" onclick="histUsarLab(\''+a.id+'\','+(+v)+')">₲ '+fmtGs(+v)+'</button></td>';
+      }).join('')+'</tr>';
+    }).join('')+'<tr><td class="lbl"><strong>Total lab.</strong></td><td class="cur">₲ '+fmtGs(R.sLab||0)+'</td>'+fuentes.map(function(p){return '<td><strong>₲ '+fmtGs(p.presupuesto.sLab||0)+'</strong></td>'}).join('')+'</tr></tbody></table>';
+  }
+  document.getElementById('histBody').innerHTML=body;
+  histKey=key;
+  showModal('histModal');
+}
+var histKey=null;
+function histAplicado(el,msg){
+  marcarCambio();calc();
+  if(el){el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}
+  toast('✓ '+msg);
+  if(histKey)showHist(histKey);
+}
+function histUsar(id,v){var el=document.getElementById(id);if(!el)return;el.value=v;if(id==='montoSolicitar'||id.indexOf('peso')===0)el.dataset.manual='1';histAplicado(el,'Valor aplicado')}
+function histUsarTodos(key,i){
+  var p=(histCache.length?histCache:histFuentes())[i];if(!p)return;var n=0;
+  HIST[key].f.forEach(function(fd){var v=histValor(p,fd[0],fd[2]);if(v!=null&&!isNaN(v)){document.getElementById(fd[0]).value=v;n++}});
+  hideModal('histModal');histKey=null;
+  histAplicado(null,n+' valores copiados de '+(p.nombre||'otro presupuesto'));
+  var s=document.getElementById('sec_'+key);if(s)s.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function histCopiarTabla(key,i){
+  var p=(histCache.length?histCache:histFuentes())[i];var filas=p&&histFilas(p,key);if(!filas)return;
+  setTabla(key,filas);
+  hideModal('histModal');histKey=null;
+  histAplicado(null,'Filas copiadas de '+(p.nombre||'otro presupuesto'));
+}
+function histUsarEquipos(i){
+  var p=(histCache.length?histCache:histFuentes())[i];var t=p&&p.presupuesto.form&&p.presupuesto.form.tablas;if(!t||!t.equip)return;
+  var fijo=document.querySelector('#equipBody tr[data-fixed]');if(fijo)fijo.remove();
+  document.querySelectorAll('#equipBody tr[data-equip]').forEach(function(r){
+    var v=t.equip[r.dataset.equip]||{},ins=r.querySelectorAll('input:not([readonly])');
+    ins[0].value=v.c==null?'':v.c;ins[1].value=v.d==null?'':v.d;
+  });
+  hideModal('histModal');histKey=null;
+  histAplicado(null,'Equipos copiados de '+(p.nombre||'otro presupuesto'));
+}
+function histUsarLab(id,v){
+  var inp=document.querySelectorAll('#labBody tr[data-lab="'+id+'"] input:not([readonly])')[0];
+  if(inp){inp.value=v;histAplicado(inp,'Precio aplicado')}
 }
 
 function getPeajeTotal(){return Array.from(document.querySelectorAll('#peajeBody tr')).reduce(function(s,r){var inp=r.querySelectorAll('input');return s+(parseFloat(inp[1]&&inp[1].value)||0)*(parseInt(inp[2]&&inp[2].value)||0)},0)}
@@ -939,6 +1445,7 @@ function calc(){
   /* — Equipos (depreciación: costo_mes × cant × días) — */
   var equipTotal=0;
   Array.from(document.querySelectorAll('#equipBody tr')).forEach(function(r){
+    if(r.dataset.fixed){equipTotal+=parseFloat(r.dataset.fixed)||0;return;}
     var inp=r.querySelectorAll('input');
     var cant=parseFloat(inp[0]&&inp[0].value)||0;
     var dias_e=parseFloat(inp[1]&&inp[1].value)||0;
@@ -985,7 +1492,7 @@ function calc(){
     var qty=parseFloat(inp[0]&&inp[0].value)||0;
     var price=parseFloat(inp[1]&&inp[1].value)||0;
     var total=qty*price;
-    var roInputs=r.querySelectorAll('input[readonly]');
+    var roInputs=r.querySelectorAll('input[readonly]:not([id^="labQty_"])');
     if(roInputs[0])roInputs[0].value=fmtGs(total);
     if(roInputs[1])roInputs[1].value=cot>0?fmtUsd(total/cot):'—';
     sLab+=total;
@@ -1169,16 +1676,23 @@ function calc(){
     anticGs:anticGs,saldoGs:saldoGs,egresosT1:egresosT1,egresosT2:egresosT2,
     saldoFlT1:saldoT1,saldoFlT2:saldoT2,
     /* Ratios */
-    costoHa:cot>0?subDirecto/cot/sup:0,
-    costoCal:cot>0?subDirecto/cot/cal:0,
-    costoMuestra:cot>0?subDirecto/cot/tm:0,
-    costoLabMuestra:cot>0?sLab/cot/tm:0,
+    costoHa:cot>0&&sup>0?subDirecto/cot/sup:0,
+    costoCal:cot>0&&cal>0?subDirecto/cot/cal:0,
+    costoMuestra:cot>0&&tm>0?subDirecto/cot/tm:0,
+    costoLabMuestra:cot>0&&tm>0?sLab/cot/tm:0,
     densHa:cal>0?sup/cal:0,
     /* Pesos */
     pesoPrep:V('pesoPrep'),pesoLab:V('pesoLab'),pesoInf:V('pesoInf'),
     pImp:V('pImp'),pRet:V('pRet')
   };
   renderSummary();
+  /* Ayudas visuales: montos formateados y campos pendientes */
+  document.querySelectorAll('#formContent input[data-gs]').forEach(function(el){
+    var h=document.getElementById(el.id+'_hint');if(!h)return;
+    if(el.value!==''){h.textContent='₲ '+fmtGs(parseFloat(el.value)||0)+(el.id==='cotizacion'?' por USD':'');h.classList.add('money')}
+    else{h.textContent=el.id==='cotizacion'?'Tipo cambio BCP':'';h.classList.remove('money')}
+  });
+  marcarPendientes();
 }
 
 function calcSolicitar(){
@@ -1321,27 +1835,96 @@ function buildCatSummary(pr,cot){
 /* ═══════════════════════════════════════ */
 function getHonorarios(){return Array.from(document.querySelectorAll('#honBody tr')).map(function(r){var inp=r.querySelectorAll('input');var sels=r.querySelectorAll('select');return{categoria:sels[0]?sels[0].value:'',nombre:inp.length>0?inp[0].value:'',cantidad:parseFloat(inp[1]&&inp[1].value)||0,unidad:sels[1]?sels[1].value:'',dias:parseFloat(inp[2]&&inp[2].value)||0,costoUnit:parseFloat(inp[3]&&inp[3].value)||0}})}
 
-function guardar(){
-  var n=document.getElementById('proyNombre').value||'Sin nombre';
-  var sel=document.getElementById('cliSel');var cN=sel.selectedIndex>0?sel.options[sel.selectedIndex].text:'Sin cliente';
+function guardar(forzar){
+  calc();
+  var pend=marcarPendientes();
+  var cotV=parseFloat(document.getElementById('cotizacion').value);
+  var extra=[];
+  if(document.getElementById('cotizacion').value!==''&&!(cotV>0))extra.push({el:document.getElementById('cotizacion'),txt:'La cotización tiene que ser mayor a 0',hard:true});
+  if((R.montoSolicitar||0)<=0)extra.push({el:document.getElementById('montoSolicitar'),txt:'El monto a solicitar quedó en 0'});
+  if((R.hon||0)<=0)extra.push({el:document.querySelector('#honBody input')||document.getElementById('sec_hon'),txt:'Honorarios de campo en 0'});
+  if((R.sInf||0)<=0)extra.push({el:document.querySelector('#infBody input')||document.getElementById('sec_inf'),txt:'Informe final en 0'});
+  var lista=extra.concat(pend).sort(function(a,b){return (b.hard?1:0)-(a.hard?1:0)});
+  var duros=lista.filter(function(x){return x.hard});
+  if(duros.length||(!forzar&&lista.length)){
+    window.__rev=lista;
+    document.getElementById('revTitle').textContent=duros.length?'Faltan datos obligatorios':'Revisá antes de guardar';
+    document.getElementById('revIntro').textContent=duros.length
+      ?'No se puede guardar sin nombre, cliente y cotización. Los demás puntos son avisos.'
+      :'Hay '+lista.length+' punto'+(lista.length===1?'':'s')+' para revisar. Si están bien así (por ejemplo, un valor que no aplica), poné 0 o guardá igual.';
+    var max=40;
+    document.getElementById('revList').innerHTML=lista.slice(0,max).map(function(x,i){
+      return '<li class="'+(x.hard?'hard':'')+'"><span>'+esc(x.txt)+(x.tabla?' <span style="color:var(--tx3)">(vacío)</span>':'')+'</span><button onclick="enfocar(window.__rev['+i+'].el)">Ir →</button></li>';
+    }).join('')+(lista.length>max?'<li><span>… y '+(lista.length-max)+' más</span></li>':'');
+    document.getElementById('revForce').style.display=duros.length?'none':'';
+    showModal('reviewModal');
+    return;
+  }
+  var n=document.getElementById('proyNombre').value.trim();
+  var sel=document.getElementById('cliSel');var cN=sel.options[sel.selectedIndex].text;
+  var previo=editingId?findProj(editingId):null;
+  var aprobado=previo&&previo.estado&&previo.estado!=='Cotización';
+  var pres=Object.assign({},R,{form:getFormState()});
   var data={
-    nombre:n.toUpperCase(),cliente:cN.toUpperCase(),estado:'Cotización',
-    valorUsd:R.montoSolicitar||R.totU,cotizacion:parseFloat(document.getElementById('cotizacion').value)||6500,
+    nombre:n.toUpperCase(),cliente:cN.toUpperCase(),
+    cotizacion:cotV,
     ubicacion:document.getElementById('proyUbi').value,
     superficie:parseFloat(document.getElementById('superficie').value)||0,
     calicatas:parseInt(document.getElementById('calicatas').value)||0,
-    totalMuestras:R.tm,
+    totalMuestras:R.tm||0,
     tipoServicio:document.getElementById('tipoServicio').value,
-    presupuesto:R,honorarios:getHonorarios()
+    presupuesto:pres,honorarios:getHonorarios()
   };
+  /* Un proyecto ya aprobado conserva su estado y su valor facturado */
+  if(!aprobado)data.valorUsd=R.montoSolicitar||R.totU||0;
+  var btns=document.querySelectorAll('#formCrumbs .btn-g');btns.forEach(function(b){b.disabled=true;b.textContent='Guardando…'});
+  var fin=function(){btns.forEach(function(b){b.disabled=false;b.textContent='💾 Guardar'})};
+  var op;
   if(editingId){
     data.fechaModificacion=firebase.firestore.FieldValue.serverTimestamp();
-    db.collection('proyectos').doc(editingId).update(data).then(function(){toast('✅ Cotización actualizada');backToDash()}).catch(function(e){toast('❌ '+e.message)});
+    var id=editingId;
+    op=db.collection('proyectos').doc(id).update(data).then(function(){
+      return previo&&previo.estado==='En Curso'?sincronizarAsignaciones(id,pres):null;
+    }).then(function(){toast(aprobado&&previo.estado==='En Curso'?'✅ Presupuesto y asignaciones actualizados':'✅ Presupuesto actualizado');return id});
   }else{
+    data.estado='Cotización';
     data.fechaCreacion=firebase.firestore.FieldValue.serverTimestamp();
     data.fechaRegistro=firebase.firestore.FieldValue.serverTimestamp();
-    db.collection('proyectos').add(data).then(function(){toast('✅ Cotización guardada');backToDash()}).catch(function(e){toast('❌ '+e.message)});
+    op=db.collection('proyectos').add(data).then(function(ref){toast('✅ Presupuesto guardado');return ref.id});
   }
+  op.then(function(id){
+    formDirty=false;fin();
+    return loadAll().then(function(){nav('#/p/'+encodeURIComponent(id))});
+  }).catch(function(e){fin();toast('❌ '+e.message)});
+}
+
+/* Montos por categoría que usa la app como presupuesto del proyecto */
+function asignacionesDe(pres){
+  return {
+    Maquinaria:pres.maq||0,
+    Camioneta:pres.alq||0,
+    Combustible:pres.comb||0,
+    'Consumición':pres.cons||0,
+    Hospedaje:pres.hosp||0,
+    Colaboradores:pres.hon||0,
+    'Implementos de trabajo':pres.otros||0,
+    Laboratorio:pres.sLab||0,
+    Peaje:pres.peaje||0,
+    Varios:pres.equip||0
+  };
+}
+function sincronizarAsignaciones(id,pres){
+  var ref=db.collection('proyectos').doc(id).collection('asignaciones');
+  var asig=asignacionesDe(pres);
+  return Promise.all(Object.keys(asig).map(function(k){
+    return asig[k]>0?ref.doc(k).set({monto:asig[k],categoria:k}):ref.doc(k).delete();
+  }));
+}
+
+function refrescarVista(){
+  return loadAll().then(function(){
+    if(document.getElementById('panelDetail').classList.contains('active')&&editingId)openCot(editingId);
+  });
 }
 
 /* ═══════════════════════════════════════ */
@@ -1359,11 +1942,13 @@ function saveCli(){
     localidad:(document.getElementById('ncLocal').value||'').toUpperCase(),
     contacto:document.getElementById('ncContacto').value,
     fechaAlta:new Date()
-  }).then(function(){
+  }).then(function(ref){
     toast('✅ Cliente guardado');hideModal('newCliModal');
     ['ncNombre','ncRuc','ncTel','ncDir','ncLocal','ncContacto'].forEach(function(id){document.getElementById(id).value=''});
     document.getElementById('ncDepto').selectedIndex=0;
-    loadAll();
+    return loadAll().then(function(){
+      if(document.getElementById('cliSel')){llenarClientes(ref.id);onCli();marcarCambio();calc();}
+    });
   }).catch(function(e){toast('❌ '+e.message)});
 }
 
@@ -1406,19 +1991,7 @@ function confirmApprove(){
     estado:'En Curso',fechaInicio:fechaInicio?new Date(fechaInicio+'T12:00:00'):null,fechaFin:null,
     fechaAprobacion:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){
-    var pres=p.presupuesto||{};
-    var asig={
-      Maquinaria:pres.maq||0,
-      Camioneta:pres.alq||0,
-      Combustible:pres.comb||0,
-      'Consumición':pres.cons||0,
-      Hospedaje:pres.hosp||0,
-      Colaboradores:pres.hon||0,
-      'Implementos de trabajo':pres.otros||0,
-      Laboratorio:pres.sLab||0,
-      Peaje:pres.peaje||0,
-      Varios:pres.equip||0
-    };
+    var asig=asignacionesDe(p.presupuesto||{});
     var promises=[];
     Object.keys(asig).forEach(function(k){if(asig[k]>0)promises.push(db.collection('proyectos').doc(p.id).collection('asignaciones').doc(k).set({monto:asig[k],categoria:k}))});
     return Promise.all(promises);
@@ -1487,9 +2060,19 @@ function showProp(){
 /* ═══════════════════════════════════════ */
 /*  MISC                                   */
 /* ═══════════════════════════════════════ */
-function deleteCot(id){if(!confirm('¿Eliminar cotización?'))return;db.collection('proyectos').doc(id).delete().then(function(){toast('🗑 Eliminada');loadAll()}).catch(function(e){toast('❌ '+e.message)})}
-function finishProject(id){if(!confirm('¿Finalizar proyecto?'))return;db.collection('proyectos').doc(id).update({estado:'Finalizado'}).then(function(){toast('✔ Finalizado');loadAll()}).catch(function(e){toast('❌ '+e.message)})}
-function resetForm(){if(confirm('¿Limpiar?'))location.reload()}
+function deleteCot(id){
+  var p=findProj(id);
+  if(!confirm('¿Eliminar la cotización «'+((p&&p.nombre)||'')+'»? No se puede deshacer.'))return;
+  db.collection('proyectos').doc(id).delete().then(function(){
+    toast('🗑 Cotización eliminada');
+    if(editingId===id){editingId=null;nav('#/')}else loadAll();
+  }).catch(function(e){toast('❌ '+e.message)});
+}
+function finishProject(id){
+  var p=findProj(id);
+  if(!confirm('¿Marcar «'+((p&&p.nombre)||'')+'» como finalizado?'))return;
+  db.collection('proyectos').doc(id).update({estado:'Finalizado',fechaModificacion:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){toast('✔ Proyecto finalizado');refrescarVista()}).catch(function(e){toast('❌ '+e.message)});
+}
 
 /* ═══════════════════════════════════════ */
 /*  EXPORTAR EXCEL — formato TEMPLATE     */
