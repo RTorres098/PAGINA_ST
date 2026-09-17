@@ -42,6 +42,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .side-bg{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:50;display:none}.side-bg.show{display:block}
 .side{position:fixed;top:0;right:-540px;width:520px;height:100vh;background:var(--sf);overflow-y:auto;padding:24px;box-shadow:-4px 0 30px rgba(0,0,0,0.2);transition:right .25s ease;z-index:51}
 .side.show{right:0}
+.cm-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:70;display:none;align-items:center;justify-content:center;padding:20px}.cm-bg.show{display:flex}
+.cm{background:var(--sf);border-radius:14px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.cm h3{font-size:16px;color:var(--gd);margin-bottom:4px}.cm .sub{font-size:12px;color:var(--tx2);margin-bottom:14px}
+.cm .x{position:absolute;top:10px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3)}
+.cm-dup{padding:8px 10px;border-radius:8px;background:#FFF7ED;border:1px solid #FED7AA;color:#92400E;font-size:11px;margin-bottom:8px}
+.guardar-cli{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--gd);background:var(--gl);border:1px solid rgba(52,166,120,0.25);border-radius:6px;padding:6px 8px;margin:2px 0 6px;cursor:pointer}
+.guardar-cli input{accent-color:var(--g)}
 .side .x{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3)}
 .sec{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;margin:14px 0 6px;letter-spacing:1px}
 .f{margin-bottom:6px}.f label{display:block;font-size:9px;font-weight:600;color:var(--tx2);text-transform:uppercase;margin-bottom:1px}
@@ -66,7 +73,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <div class="app">
   <header class="st-top">
     <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
-    <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../presupuesto/#/balance">Balance</a><a class="on" href="./">Facturación</a></nav>
+    <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../presupuesto/#/balance">Balance</a><a href="../clientes/">Clientes</a><a class="on" href="./">Facturación</a></nav>
     <div class="st-right">
       <button class="st-btn st-btn-ghost" id="seedBtn" onclick="seedHistorical()" style="display:none">📥 Cargar historial Excel</button>
       <button class="st-btn st-btn-g" onclick="openNew()">+ Nueva factura</button>
@@ -89,6 +96,18 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
   <div id="sideContent"></div>
 </div>
 
+<!-- Nuevo cliente -->
+<div class="cm-bg" id="cliModal"><div class="cm"><button class="x" onclick="cerrarNuevoCli()">×</button>
+  <h3>Nuevo cliente</h3><div class="sub">Se guarda en la lista de clientes (también la usa la app).</div>
+  <div id="ncDup"></div>
+  <div class="f"><label>Razón social / Nombre *</label><input id="ncNombre" oninput="dupNuevoCli()"></div>
+  <div class="g2"><div class="f"><label>RUC / CI</label><input id="ncRuc" oninput="dupNuevoCli()"></div><div class="f"><label>Teléfono</label><input id="ncTel"></div></div>
+  <div class="g2"><div class="f"><label>Departamento</label><select id="ncDepto"><option value="">— Seleccionar —</option></select></div><div class="f"><label>Localidad</label><input id="ncLocal"></div></div>
+  <div class="f"><label>Persona de contacto</label><input id="ncContacto"></div>
+  <div class="f"><label>Dirección</label><input id="ncDir"></div>
+  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-g" id="ncGuardar" style="flex:1;padding:10px" onclick="guardarNuevoCli()">Guardar y usar en la factura</button><button class="btn" style="background:var(--sf2);color:var(--tx)" onclick="cerrarNuevoCli()">Cancelar</button></div>
+</div></div>
+
 <!-- Print page -->
 <div class="pp" id="pp"></div>
 
@@ -105,6 +124,16 @@ firebase.initializeApp(FIREBASE_CONFIG);
 var db=firebase.firestore();
 var ALL=[],CLIS=[],PROYS=[],curId=null,curF=null,isNew=false;
 function escH(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var DEPTOS=['Asunción','Alto Paraguay','Alto Paraná','Amambay','Boquerón','Caaguazú','Caazapá','Canindeyú','Central','Concepción','Cordillera','Guairá','Itapúa','Misiones','Ñeembucú','Paraguarí','Presidente Hayes','San Pedro'];
+function normCli(s){return String(s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\b(S\.?\s?A\.?|S\.?R\.?L\.?|E\.?A\.?S\.?)\b/g,'').replace(/[^A-Z0-9]/g,'')}
+function normRuc(s){return String(s||'').toUpperCase().replace(/[^0-9A-Z]/g,'')}
+function buscarCli(nombre,ruc){
+  var n=normCli(nombre),r=normRuc(ruc);
+  return CLIS.find(function(c){
+    if(r&&normRuc(c.ruc||c.documento)===r)return true;
+    return !!n&&[c.nombre].concat(c.nombresAnteriores||[]).some(function(x){return normCli(x)===n});
+  });
+}
 function proyNombre(id){var p=PROYS.find(function(x){return x.id===id});return p?p.nombre:''}
 var SVCS=SERVICIOS.map(function(s){return{c:s.code,n:s.name}});
 
@@ -116,7 +145,7 @@ function loadAll(primera){
     var ORD={'En Curso':0,'Cotización':1,'Finalizado':2};
     PROYS=r[2].docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (ORD[a.estado]!=null?ORD[a.estado]:3)-(ORD[b.estado]!=null?ORD[b.estado]:3)||(a.nombre||'').localeCompare(b.nombre||'')});
     ALL=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())});
-    CLIS=r[1].docs.map(function(d){return Object.assign({id:d.id},d.data())});
+    CLIS=r[1].docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'')});
     if(ALL.length===0&&typeof HISTORICAL_FACTURAS!=='undefined')document.getElementById('seedBtn').style.display='block';
     renderStats();renderList();
     // Acceso rápido desde el inicio: ../facturacion/#nueva
@@ -125,6 +154,7 @@ function loadAll(primera){
       var h=location.hash,m;
       history.replaceState(null,'',location.pathname);
       if((m=h.match(/^#nueva\/p\/(.+)$/)))openNew(decodeURIComponent(m[1]));
+      else if((m=h.match(/^#nueva\/c\/(.+)$/)))openNew(null,decodeURIComponent(m[1]));
       else if(h==='#nueva')openNew();
       else if((m=h.match(/^#f\/(.+)$/)))openDetail(decodeURIComponent(m[1]));
     }
@@ -195,11 +225,13 @@ function openDetail(id){
   openPanel();
 }
 
-function openNew(proyectoId){
+function openNew(proyectoId,clienteId){
   isNew=true;curId=null;
   // Get next number
   var maxNum=ALL.reduce(function(m,f){return Math.max(m,f.numero||0)},270);
   curF={numero:maxNum+1,nroFormateado:'001-001-'+String(maxNum+1).padStart(7,'0'),fecha:new Date().toISOString().split('T')[0],cliente:'',ruc:'',direccion:'',telefono:'',condicion:'CONTADO',moneda:'DOLARES AMERICANOS',tipoIva:10,items:[{cant:1,code:'',desc:'',unit:0}],total:0,ivaAmount:0,estado:'activa',impresa:false,enviada:false,pagada:false};
+  var cl=clienteId&&CLIS.find(function(x){return x.id===clienteId});
+  if(cl){curF.cliente=cl.nombre||'';curF.ruc=cl.ruc||cl.documento||'';curF.direccion=cl.direccion||'';curF.telefono=cl.telefono||''}
   var pr=proyectoId&&PROYS.find(function(x){return x.id===proyectoId});
   if(pr){
     curF.proyectoId=pr.id;
@@ -252,13 +284,15 @@ function renderSide(){
   h+='<div class="sec">Cliente</div>';
   h+='<div class="f"><label>Razón Social</label>';
   if(isNew){
-    h+='<select id="sfCliSel" onchange="onSfCli()" style="margin-bottom:4px"><option value="">— Seleccionar o escribir abajo —</option>';
-    CLIS.forEach(function(c){h+='<option value="'+c.id+'"'+(f.cliente===c.nombre?' selected':'')+'>'+c.nombre+'</option>'});
-    h+='</select>';
+    h+='<div style="display:flex;gap:4px;margin-bottom:4px"><select id="sfCliSel" onchange="onSfCli()" style="flex:1"><option value="">— Seleccionar o escribir abajo —</option>';
+    var elegido=f.cliente?buscarCli(f.cliente,f.ruc):null;
+    CLIS.forEach(function(c){h+='<option value="'+escH(c.id)+'"'+(elegido&&elegido.id===c.id?' selected':'')+'>'+escH(c.nombre)+(c.ruc?' · '+escH(c.ruc):'')+'</option>'});
+    h+='</select><button type="button" class="btn btn-g" style="white-space:nowrap" onclick="abrirNuevoCli()" title="Agregar un cliente a la lista">+ Nuevo</button></div>';
   }
-  h+='<input id="sfCliente" value="'+(f.cliente||'')+'"></div>';
-  h+='<div class="g2"><div class="f"><label>RUC / CI</label><input id="sfRuc" value="'+(f.ruc||'')+'"></div><div class="f"><label>Teléfono</label><input id="sfTel" value="'+(f.telefono||'')+'"></div></div>';
-  h+='<div class="f"><label>Dirección</label><input id="sfDir" value="'+(f.direccion||'')+'"></div>';
+  h+='<input id="sfCliente" value="'+escH(f.cliente||'')+'"'+(isNew?' oninput="revisarCliNuevo()" placeholder="O escribí el nombre acá"':'')+'></div>';
+  h+='<div class="g2"><div class="f"><label>RUC / CI</label><input id="sfRuc" value="'+escH(f.ruc||'')+'"'+(isNew?' oninput="revisarCliNuevo()"':'')+'></div><div class="f"><label>Teléfono</label><input id="sfTel" value="'+(f.telefono||'')+'"></div></div>';
+  h+='<div class="f"><label>Dirección</label><input id="sfDir" value="'+escH(f.direccion||'')+'"></div>';
+  if(isNew)h+='<label class="guardar-cli" id="sfGuardarCliWrap" style="display:none"><input type="checkbox" id="sfGuardarCli" checked> Este cliente no está en la lista: guardarlo al crear la factura</label>';
 
   h+='<div class="sec">Ítems</div>';
   h+='<table class="itbl"><thead><tr><th style="width:35px">Cant</th><th style="width:65px">Código</th><th>Descripción</th><th style="width:80px">Precio</th><th style="width:20px"></th></tr></thead><tbody id="sfItems">';
@@ -290,6 +324,7 @@ function renderSide(){
 
   document.getElementById('sideContent').innerHTML=h;
   actualizarLinkProy();
+  if(isNew)revisarCliNuevo();
   recalcSide();
 }
 
@@ -322,7 +357,72 @@ function onSfCli(){
     document.getElementById('sfRuc').value=c.ruc||c.documento||'';
     document.getElementById('sfDir').value=c.direccion||'';
     document.getElementById('sfTel').value=c.telefono||'';
+  }else{
+    ['sfCliente','sfRuc','sfDir','sfTel'].forEach(function(id){document.getElementById(id).value=''});
   }
+  revisarCliNuevo();
+}
+function revisarCliNuevo(){
+  var w=document.getElementById('sfGuardarCliWrap');if(!w)return;
+  var n=document.getElementById('sfCliente').value.trim();
+  var r=document.getElementById('sfRuc').value.trim();
+  var c=n?buscarCli(n,r):null;
+  w.style.display=n&&!c?'':'none';
+  var sel=document.getElementById('sfCliSel');
+  if(sel&&c&&sel.value!==c.id){
+    sel.value=c.id;
+    [['sfRuc',c.ruc||c.documento],['sfDir',c.direccion],['sfTel',c.telefono]].forEach(function(x){var el=document.getElementById(x[0]);if(el&&!el.value.trim()&&x[1])el.value=x[1]});
+  }
+  if(sel&&!c&&sel.value)sel.value='';
+}
+function abrirNuevoCli(){
+  var d=document.getElementById('ncDepto');
+  if(d.options.length<2)DEPTOS.forEach(function(x){var o=document.createElement('option');o.textContent=x;d.appendChild(o)});
+  var sel=document.getElementById('sfCliSel');
+  var escrito=sel&&!sel.value;
+  document.getElementById('ncNombre').value=escrito?(document.getElementById('sfCliente').value||''):'';
+  document.getElementById('ncRuc').value=escrito?(document.getElementById('sfRuc').value||''):'';
+  document.getElementById('ncTel').value=escrito?(document.getElementById('sfTel').value||''):'';
+  document.getElementById('ncDir').value=escrito?(document.getElementById('sfDir').value||''):'';
+  document.getElementById('ncLocal').value='';document.getElementById('ncContacto').value='';d.selectedIndex=0;
+  dupNuevoCli();
+  document.getElementById('cliModal').classList.add('show');
+  setTimeout(function(){document.getElementById('ncNombre').focus()},50);
+}
+function cerrarNuevoCli(){document.getElementById('cliModal').classList.remove('show')}
+function dupNuevoCli(){
+  var c=buscarCli(document.getElementById('ncNombre').value,document.getElementById('ncRuc').value);
+  document.getElementById('ncDup').innerHTML=c?'<div class="cm-dup">Ya existe <strong>'+escH(c.nombre)+'</strong>'+(c.ruc?' (RUC '+escH(c.ruc)+')':'')+'. <a href="#" onclick="usarCliExistente(\''+escH(c.id)+'\');return false" style="color:inherit;font-weight:700">Usar ese</a></div>':'';
+  return c;
+}
+function usarCliExistente(id){
+  cerrarNuevoCli();
+  var sel=document.getElementById('sfCliSel');if(sel){sel.value=id;onSfCli();}
+}
+function datosCliente(o){
+  return {nombre:(o.nombre||'').trim().toUpperCase(),ruc:(o.ruc||'').trim(),telefono:(o.telefono||'').trim(),direccion:(o.direccion||'').trim(),
+    departamento:o.departamento||'',localidad:(o.localidad||'').trim().toUpperCase(),contacto:(o.contacto||'').trim(),fechaAlta:new Date()};
+}
+function guardarNuevoCli(){
+  var nombre=document.getElementById('ncNombre').value.trim();
+  if(!nombre){toast('❌ El nombre es obligatorio');document.getElementById('ncNombre').focus();return;}
+  var dup=dupNuevoCli();
+  if(dup&&!confirm('Ya existe «'+dup.nombre+'». ¿Crear otro cliente igual?'))return;
+  var data=datosCliente({nombre:nombre,ruc:document.getElementById('ncRuc').value,telefono:document.getElementById('ncTel').value,direccion:document.getElementById('ncDir').value,
+    departamento:document.getElementById('ncDepto').value,localidad:document.getElementById('ncLocal').value,contacto:document.getElementById('ncContacto').value});
+  var b=document.getElementById('ncGuardar');b.disabled=true;
+  db.collection('clientes').add(data).then(function(ref){
+    b.disabled=false;
+    CLIS.push(Object.assign({id:ref.id},data));
+    CLIS.sort(function(a,c){return (a.nombre||'').localeCompare(c.nombre||'')});
+    var sel=document.getElementById('sfCliSel');
+    if(sel){
+      sel.innerHTML='<option value="">— Seleccionar o escribir abajo —</option>'+CLIS.map(function(c){return '<option value="'+escH(c.id)+'">'+escH(c.nombre)+(c.ruc?' · '+escH(c.ruc):'')+'</option>'}).join('');
+      sel.value=ref.id;onSfCli();
+    }
+    cerrarNuevoCli();
+    toast('✅ Cliente agregado a la lista');
+  }).catch(function(e){b.disabled=false;toast('❌ '+e.message)});
 }
 
 function onSfSvc(sel){
@@ -376,10 +476,19 @@ function saveFactura(){
     servicio:items[0]?items[0].desc:'',
     codigoServicio:items[0]?items[0].code:'',
   };
+  // Si el nombre escrito coincide con un cliente de la lista, la factura sale con el nombre oficial
+  var selCli=document.getElementById('sfCliSel');
+  var oficial=selCli&&selCli.value?CLIS.find(function(c){return c.id===selCli.value}):null;
+  if(oficial&&normCli(oficial.nombre)===normCli(data.cliente))data.cliente=oficial.nombre;
   var pid=(document.getElementById('sfProy')||{}).value||'';
   data.proyectoId=pid||null;
   data.proyectoNombre=pid?(proyNombre(pid)||curF.proyectoNombre||'').toUpperCase():null;
   if(isNew){
+    var chk=document.getElementById('sfGuardarCli'),wrap=document.getElementById('sfGuardarCliWrap');
+    if(chk&&chk.checked&&wrap&&wrap.style.display!=='none'&&data.cliente.trim()&&!buscarCli(data.cliente,data.ruc)){
+      var nc=datosCliente({nombre:data.cliente,ruc:data.ruc,telefono:data.telefono,direccion:data.direccion});
+      db.collection('clientes').add(nc).then(function(ref){CLIS.push(Object.assign({id:ref.id},nc));toast('✅ Cliente guardado en la lista')}).catch(function(e){toast('❌ No se pudo guardar el cliente: '+e.message)});
+    }
     var maxNum=ALL.reduce(function(m,f){return Math.max(m,f.numero||0)},270);
     var num=maxNum+1;
     data.numero=num;
@@ -452,6 +561,7 @@ function printFactura(){
 
 /* ═══ Panel ═══ */
 function openPanel(){document.getElementById('sideBg').classList.add('show');document.getElementById('sidePanel').classList.add('show')}
+document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var m=document.getElementById('cliModal');if(m&&m.classList.contains('show')){cerrarNuevoCli();return}closePanel()});
 function closePanel(){document.getElementById('sideBg').classList.remove('show');document.getElementById('sidePanel').classList.remove('show')}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
 </script>
