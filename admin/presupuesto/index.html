@@ -337,7 +337,8 @@ function renderDash(){
     var actions='';
     if(p.estado==='Cotización')actions='<button class="btn btn-g" onclick="event.stopPropagation();showApprove(\''+p._id+'\')">✅ Aprobar</button><button class="btn btn-dg" onclick="event.stopPropagation();deleteCot(\''+p._id+'\')">🗑</button>';
     if(p.estado==='En Curso')actions='<button class="btn btn-info" onclick="event.stopPropagation();finishProject(\''+p._id+'\')">✔ Finalizar</button>';
-    return'<div class="cot-card" onclick="openCot(\''+p._id+'\')"><h3>'+(p.nombre||'Sin nombre')+'</h3><div class="meta">'+(p.cliente||'')+'  ·  '+(p.ubicacion||'')+'  ·  '+(p.totalMuestras||0)+' muestras</div><div class="amount">'+amt+'</div><div class="badges"><span class="badge '+bc+'">'+p.estado+'</span></div>'+(actions?'<div class="cot-actions">'+actions+'</div>':'')+'</div>';
+    var sinPres=p.presupuesto?'':' <span title="Creado desde la app o dato de prueba" style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;background:#FFF7ED;color:#B45309;vertical-align:middle">sin presupuesto</span>';
+    return'<div class="cot-card" onclick="openCot(\''+p._id+'\')"><h3>'+(p.nombre||'Sin nombre')+sinPres+'</h3><div class="meta">'+(p.cliente||'')+'  ·  '+(p.ubicacion||'')+'  ·  '+(p.totalMuestras||0)+' muestras</div><div class="amount">'+amt+'</div><div class="badges"><span class="badge '+bc+'">'+p.estado+'</span></div>'+(actions?'<div class="cot-actions">'+actions+'</div>':'')+'</div>';
   }).join('');
 }
 
