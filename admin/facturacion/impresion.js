@@ -7,6 +7,7 @@ var IMPRESION_DEF = {
   copiaAlto: 160,                // alto de cada copia
   copia2Y: 165,                  // distancia desde el borde de la hoja hasta la 2ª copia
   offX: 0, offY: 0,              // corrimiento general (ajuste fino de la impresora)
+  margen: { top: 0, left: 0 },   // borde que la impresora no imprime (se compensa moviendo todo hacia arriba)
   filas: { y: 52, alto: 10.2, max: 7 },
   campos: {
     fecha:        { x: 17,  y: 27,    size: 11, w: 40 },
@@ -152,13 +153,22 @@ function armarHoja(f, cfg) {
   cfg = cfg || IMPRESION;
   var ch = copiaHtml(f, cfg);
   var pp = document.getElementById('pp');
-  pp.style.width = cfg.papel.w + 'mm';
-  pp.style.height = cfg.papel.h + 'mm';
+  aplicarMargen(pp, cfg);
   var copia = function (top) {
     return '<div class="ic" style="top:' + top + 'mm;width:' + cfg.papel.w + 'mm;height:' + cfg.copiaAlto + 'mm">' + ch + '</div>';
   };
   pp.innerHTML = copia(0) + copia(cfg.copia2Y);
   return pp;
+}
+
+/* La impresora no imprime los primeros milímetros de la hoja: se sube todo ese tanto
+   para que cada dato caiga donde corresponde en la factura preimpresa. */
+function aplicarMargen(pp, cfg, sinMargen) {
+  var m = (sinMargen ? null : cfg.margen) || { top: 0, left: 0 };
+  pp.style.width = cfg.papel.w + 'mm';
+  pp.style.height = (cfg.papel.h - (m.top || 0)) + 'mm';
+  pp.style.marginTop = (-(m.top || 0)) + 'mm';
+  pp.style.marginLeft = (-(m.left || 0)) + 'mm';
 }
 
 /* Factura de ejemplo para calibrar */
@@ -242,6 +252,21 @@ function calRender() {
   // reglas de referencia cada 10 mm
   for (var x = 0; x <= cfg.papel.w; x += 10) h += '<div class="cal-gl v" style="left:' + (x * esc) + 'px"></div>';
   for (var y = 0; y <= cfg.copiaAlto; y += 10) h += '<div class="cal-gl h" style="top:' + (y * esc) + 'px"></div>';
+  // la misma regla que sale impresa (marcas cada 5 mm, números cada 10 mm)
+  if (CAL.regla !== false) {
+    for (var rx = 0; rx <= cfg.papel.w; rx += 5) {
+      h += '<div class="cal-tick v" style="left:' + (rx * esc) + 'px;height:' + ((rx % 10 ? 4 : 8) * esc) + 'px"></div>';
+      if (rx % 10 === 0) h += '<div class="cal-num" style="left:' + ((rx + 0.6) * esc) + 'px;top:' + (8 * esc) + 'px">' + rx + '</div>';
+    }
+    for (var ry = 0; ry <= cfg.copiaAlto; ry += 5) {
+      h += '<div class="cal-tick h" style="top:' + (ry * esc) + 'px;width:' + ((ry % 10 ? 4 : 8) * esc) + 'px"></div>';
+      if (ry % 10 === 0) h += '<div class="cal-num" style="top:' + ((ry + 0.6) * esc) + 'px;left:' + (8 * esc) + 'px">' + ry + '</div>';
+    }
+  }
+  // zona que la impresora no imprime
+  var mg = cfg.margen || {};
+  if (mg.top > 0) h += '<div class="cal-margen" style="top:0;left:0;right:0;height:' + (mg.top * esc) + 'px"><span>No imprime (' + mg.top + ' mm)</span></div>';
+  if (mg.left > 0) h += '<div class="cal-margen" style="top:0;bottom:0;left:0;width:' + (mg.left * esc) + 'px"></div>';
   // filas de ítems (líneas guía)
   for (var i = 0; i < cfg.filas.max; i++) {
     h += '<div class="cal-fila" style="top:' + ((cfg.filas.y + i * cfg.filas.alto) * esc) + 'px;width:' + (cfg.papel.w * esc) + 'px"></div>';
@@ -284,6 +309,8 @@ function calSide() {
       '<label class="cal-in"><span>Negrita</span><input type="checkbox"' + (cf.bold ? ' checked' : '') + ' onchange="calSet(\'campos.' + k + '.bold\',this.checked?1:0)"></label></div>' +
     '</div>' +
     '<div class="cal-box"><h4>Hoja e impresora</h4>' +
+      '<div class="cal-row">' + num('Margen que no imprime (arriba)', (cfg.margen || {}).top || 0, 'margen.top') + num('Margen que no imprime (izq.)', (cfg.margen || {}).left || 0, 'margen.left') + '</div>' +
+      '<div class="cal-nota" style="margin:-2px 0 8px">Imprimí la regla y medí desde el borde de la hoja hasta la marca <strong>0</strong>. Ese número va acá: todo se sube ese tanto. En el diálogo de impresión: márgenes <strong>Ninguno</strong> y escala <strong>100%</strong>.</div>' +
       '<div class="cal-row">' + num('Corrimiento X', cfg.offX, 'offX') + num('Corrimiento Y', cfg.offY, 'offY') + '</div>' +
       '<div class="cal-row">' + num('Alto de cada copia', cfg.copiaAlto, 'copiaAlto') + num('Y de la 2ª copia', cfg.copia2Y, 'copia2Y') + '</div>' +
       '<div class="cal-row">' + num('Alto de fila', cfg.filas.alto, 'filas.alto', 0.1) + num('Filas de ítems', cfg.filas.max, 'filas.max', 1) + '</div>' +
@@ -295,7 +322,9 @@ function calSide() {
       '<div class="cal-row"><button class="cal-btn" style="flex:1" onclick="calGuardarFondo()">Guardar fondo para todos</button><button class="cal-btn" onclick="calQuitarFondo()">Quitar</button></div>' +
       '<div class="cal-nota">La imagen es solo una ayuda para ubicar los campos: no se imprime.</div></div>' : '') +
     '<div class="cal-box"><h4>Campos</h4><div class="cal-lista">' + lista + '</div></div>' +
-    '<div class="cal-box"><h4>Zoom</h4><input type="range" min="2" max="6" step="0.2" value="' + CAL.esc + '" oninput="CAL.esc=+this.value;calRender()" style="width:100%"></div>';
+    '<div class="cal-box"><h4>Vista</h4>' +
+      '<label class="cal-in" style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input type="checkbox"' + (CAL.regla !== false ? ' checked' : '') + ' onchange="CAL.regla=this.checked;calRender()" style="width:auto"><span style="margin:0">Ver la regla (la misma que sale impresa)</span></label>' +
+      '<span style="font-size:10px;color:var(--tx2)">Zoom</span><input type="range" min="2" max="6" step="0.2" value="' + CAL.esc + '" oninput="CAL.esc=+this.value;calRender()" style="width:100%"></div>';
 }
 function calSel(k) { CAL.sel = k; calRender(); }
 function calSet(path, valor) {
@@ -378,7 +407,7 @@ function calImprimirRegla() {
   }
   for (var gx = 10; gx <= cfg.papel.w; gx += 10) h += '<div style="position:absolute;left:' + gx + 'mm;top:0;bottom:0;border-left:0.1mm dotted #999"></div>';
   for (var gy = 10; gy <= cfg.copiaAlto; gy += 10) h += '<div style="position:absolute;top:' + gy + 'mm;left:0;right:0;border-top:0.1mm dotted #999"></div>';
-  pp.style.width = cfg.papel.w + 'mm'; pp.style.height = cfg.papel.h + 'mm';
+  aplicarMargen(pp, cfg, true);
   pp.innerHTML = '<div class="ic" style="top:0;width:' + cfg.papel.w + 'mm;height:' + cfg.copiaAlto + 'mm">' + h + '</div>' +
                  '<div class="ic" style="top:' + cfg.copia2Y + 'mm;width:' + cfg.papel.w + 'mm;height:' + cfg.copiaAlto + 'mm">' + h + '</div>';
   pp.style.display = 'block';
