@@ -1,0 +1,267 @@
+/* SoilTech Admin — Shell (sidebar + topbar) al estilo Berry, con la paleta SoilTech.
+   Se usa junto con ui.css. Marcado esperado:
+   <div class="sh" id="shell"> <aside class="sh-side">…</aside> <div class="sh-main"><header class="sh-top">…</header><main class="sh-body">…</main></div> </div>
+   La clase .col en #shell colapsa la barra lateral a íconos. */
+
+:root{
+  --sh-side:260px; --sh-side-col:78px; --sh-top:64px;
+  --bg:#F4F0E8; --sf:#fff; --sf2:#EDE9E0;
+  --g:#34A678; --gd:#18403E; --g-soft:rgba(52,166,120,.12);
+  --tx:#1A1A1A; --tx2:#6B6B6B; --tx3:#9CA3AF; --bd:#E7E3DA;
+  --dg:#EF4444; --warn:#F59E0B; --info:#3B82F6; --vio:#8B5CF6;
+  --sh:0 2px 8px rgba(24,64,62,.05);
+}
+
+/* ── Estructura ── */
+.sh{display:flex;min-height:100vh;background:var(--bg)}
+.sh-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.sh-body{flex:1;padding:24px 28px 56px;max-width:1440px;width:100%}
+
+/* ── Barra lateral ── */
+.sh-side{width:var(--sh-side);flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;transition:width .22s ease;z-index:30}
+.sh.col .sh-side{width:var(--sh-side-col)}
+
+.sh-logo{display:flex;align-items:center;gap:11px;height:var(--sh-top);padding:0 20px;text-decoration:none;flex-shrink:0;overflow:hidden}
+.sh-logo .mk{width:34px;height:34px;border-radius:10px;background:var(--gd);display:grid;place-items:center;flex-shrink:0}
+.sh-logo .mk svg{width:20px;height:20px}
+.sh-logo .tt{font-size:16px;font-weight:700;color:var(--gd);white-space:nowrap;line-height:1.1}
+.sh-logo .tt small{display:block;font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase}
+.sh.col .sh-logo{padding:0 22px}
+.sh.col .sh-logo .tt{opacity:0;width:0}
+
+.sh-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 14px 18px}
+.sh-nav::-webkit-scrollbar{width:5px}
+.sh-nav::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+.sh-grp{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);
+  padding:16px 12px 7px;white-space:nowrap;overflow:hidden}
+.sh.col .sh-grp{font-size:0;height:1px;padding:0;margin:13px 10px;background:var(--bd)}
+
+.sh-nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:2px;border-radius:10px;
+  color:var(--tx2);text-decoration:none;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;
+  transition:background .14s,color .14s}
+.sh-nav a svg{width:19px;height:19px;flex-shrink:0;stroke-width:1.9}
+.sh-nav a .lb{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sh-nav a .pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--warn);color:#fff;flex-shrink:0}
+.sh-nav a:hover{background:var(--bg);color:var(--gd)}
+.sh-nav a.on{background:var(--g);color:#fff;box-shadow:0 4px 12px rgba(52,166,120,.28)}
+.sh-nav a.on:hover{background:var(--g);color:#fff}
+.sh.col .sh-nav a{justify-content:center;padding:11px 0}
+.sh.col .sh-nav a .lb,.sh.col .sh-nav a .pill{display:none}
+
+.sh-foot{padding:14px;border-top:1px solid var(--bd);flex-shrink:0}
+.sh-foot a{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:var(--tx2);
+  text-decoration:none;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden}
+.sh-foot a:hover{background:var(--bg);color:var(--gd)}
+.sh-foot a svg{width:18px;height:18px;flex-shrink:0}
+.sh.col .sh-foot a{justify-content:center;padding:10px 0}
+.sh.col .sh-foot .lb{display:none}
+
+/* ── Barra superior ── */
+.sh-top{height:var(--sh-top);display:flex;align-items:center;gap:14px;padding:0 28px;background:var(--sf);
+  border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:25}
+.sh-burg{width:38px;height:38px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);
+  display:grid;place-items:center;cursor:pointer;flex-shrink:0;color:var(--gd);transition:background .14s}
+.sh-burg:hover{background:var(--g-soft);border-color:var(--g)}
+.sh-burg svg{width:18px;height:18px}
+
+.sh-search{flex:1;max-width:340px;position:relative}
+.sh-search input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--bd);border-radius:12px;
+  background:var(--bg);font-family:inherit;font-size:13px;color:var(--tx);transition:border-color .14s,box-shadow .14s}
+.sh-search input::placeholder{color:var(--tx3)}
+.sh-search input:focus{outline:none;border-color:var(--g);background:#fff;box-shadow:0 0 0 3px rgba(52,166,120,.13)}
+.sh-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--tx3)}
+
+.sh-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sh-ico{width:38px;height:38px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);
+  display:grid;place-items:center;cursor:pointer;position:relative;color:var(--gd);transition:background .14s}
+.sh-ico:hover{background:var(--g-soft);border-color:var(--g)}
+.sh-ico svg{width:18px;height:18px}
+.sh-ico .bdg{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:var(--dg);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;border:2px solid var(--sf)}
+
+.sh-user{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 5px;border-radius:24px;border:1px solid var(--bd);
+  background:var(--bg);cursor:pointer;font-family:inherit;transition:background .14s}
+.sh-user:hover{background:var(--g-soft);border-color:var(--g)}
+.sh-user .av{width:30px;height:30px;border-radius:50%;background:var(--gd);color:#fff;display:grid;place-items:center;
+  font-size:12px;font-weight:700;flex-shrink:0}
+.sh-user .nm{font-size:12.5px;font-weight:700;color:var(--gd);line-height:1.15;text-align:left;white-space:nowrap}
+.sh-user .nm small{display:block;font-size:10px;font-weight:600;color:var(--tx3)}
+@media(max-width:700px){.sh-user .nm{display:none}}
+
+/* ── Menús desplegables de la barra ── */
+.sh-pop{position:absolute;top:56px;right:28px;width:300px;background:var(--sf);border:1px solid var(--bd);
+  border-radius:14px;box-shadow:0 18px 44px rgba(24,64,62,.16);z-index:40;overflow:hidden;display:none}
+.sh-pop.show{display:block}
+.sh-pop h4{font-size:12px;font-weight:700;color:var(--gd);padding:14px 16px 10px;border-bottom:1px solid var(--sf2)}
+.sh-pop .it{display:flex;align-items:center;gap:11px;padding:11px 16px;text-decoration:none;color:var(--tx);
+  font-size:13px;font-weight:600;border:none;background:none;width:100%;text-align:left;font-family:inherit;cursor:pointer}
+.sh-pop .it:hover{background:var(--bg)}
+.sh-pop .it svg{width:17px;height:17px;color:var(--tx2);flex-shrink:0}
+.sh-pop .it.dg{color:var(--dg)}.sh-pop .it.dg svg{color:var(--dg)}
+.sh-pop .sep{height:1px;background:var(--sf2)}
+.sh-pop .al{display:flex;gap:11px;padding:12px 16px;text-decoration:none;border-bottom:1px solid var(--sf2)}
+.sh-pop .al:last-child{border-bottom:none}
+.sh-pop .al:hover{background:var(--bg)}
+.sh-pop .al .dt{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.sh-pop .al .tx{display:block;font-size:12.5px;font-weight:700;color:var(--gd);line-height:1.35}
+.sh-pop .al .sb{display:block;font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.35}
+.sh-pop .none{padding:20px 16px;font-size:12px;color:var(--tx3);text-align:center}
+
+/* ── Móvil: la barra lateral se vuelve cajón ── */
+.sh-scrim{position:fixed;inset:0;background:rgba(24,64,62,.42);z-index:29;display:none}
+.sh-scrim.show{display:block}
+@media(max-width:900px){
+  .sh-side{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.2)}
+  .sh.open .sh-side{transform:none}
+  .sh.col .sh-side{width:var(--sh-side)}
+  .sh.col .sh-logo .tt,.sh.col .sh-grp{opacity:1;width:auto;height:auto}
+  .sh.col .sh-nav a{justify-content:flex-start;padding:10px 12px}
+  .sh.col .sh-nav a .lb,.sh.col .sh-nav a .pill{display:block}
+  .sh.col .sh-foot .lb{display:block}
+  .sh-body{padding:18px 16px 44px}
+  .sh-top{padding:0 16px;gap:10px}
+  .sh-search{display:none}
+  .sh-pop{right:12px;width:calc(100vw - 24px);max-width:320px}
+}
+
+/* ── Piezas de contenido ── */
+.sh-h1{font-size:22px;color:var(--gd);line-height:1.15}
+.sh-sub{font-size:13px;color:var(--tx2);margin-top:3px}
+.sh-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:20px;box-shadow:var(--sh);
+  display:flex;flex-direction:column}
+.card .fill{flex:1;display:flex;flex-direction:column;justify-content:stretch;min-height:0}
+.card h3{font-size:14px;font-weight:700;color:var(--gd)}
+.card .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.card .hint{font-size:11.5px;color:var(--tx2);margin-bottom:14px}
+.card .more{font-size:11.5px;font-weight:700;color:var(--g);text-decoration:none}
+.card .more:hover{text-decoration:underline}
+
+.grid{display:grid;gap:18px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g83{grid-template-columns:2fr 1fr}
+@media(max-width:1180px){.g4{grid-template-columns:repeat(2,1fr)}.g83{grid-template-columns:1fr}}
+@media(max-width:1180px){.g3{grid-template-columns:1fr}}
+@media(max-width:620px){.g4{grid-template-columns:1fr}}
+
+/* Tarjetas de indicador */
+.kc{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:18px 20px;box-shadow:var(--sh);
+  display:flex;flex-direction:column;gap:2px;min-width:0}
+.kc .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.kc .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0}
+.kc .ic svg{width:19px;height:19px}
+.kc .l{font-size:11.5px;font-weight:600;color:var(--tx2)}
+.kc .v{font-size:24px;font-weight:700;color:var(--gd);letter-spacing:-.02em;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc .s{font-size:11.5px;color:var(--tx2);margin-top:4px;line-height:1.4}
+.kc.hero{background:linear-gradient(145deg,#215F53 0%,var(--gd) 78%);border-color:transparent;color:#fff}
+.kc.hero .l,.kc.hero .s{color:rgba(255,255,255,.7)}
+.kc.hero .v{color:#fff}
+.kc.hero .ic{background:rgba(255,255,255,.14)}
+.kc.neg .v{color:var(--dg)}
+
+.dlt{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.dlt.up{background:rgba(52,166,120,.14);color:#1E7A55}
+.dlt.dn{background:rgba(239,68,68,.12);color:#B91C1C}
+.dlt.eq{background:var(--sf2);color:var(--tx2)}
+.kc.hero .dlt{background:rgba(255,255,255,.16);color:#fff}
+
+/* Leyendas y listas */
+.lgd{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.lgd span{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--tx2);font-weight:600}
+.lgd i{width:9px;height:9px;border-radius:3px;display:block}
+
+.tdo a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;text-decoration:none;
+  background:var(--bg);margin-bottom:8px;border:1px solid transparent;transition:border-color .14s,background .14s}
+.tdo a:hover{border-color:var(--g);background:#fff}
+.tdo a:last-child{margin-bottom:0}
+.tdo .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+.tdo .ic svg{width:16px;height:16px}
+.tdo .tx{flex:1;min-width:0}
+.tdo .tt{display:block;font-size:13px;font-weight:700;color:var(--gd);line-height:1.25}
+.tdo .sb{display:block;font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.35}
+.tdo .ct{font-size:15px;font-weight:700;color:var(--gd);flex-shrink:0}
+.tdo .ok{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--tx2);padding:16px 4px;font-weight:600}
+.tdo .ok svg{width:18px;height:18px;color:var(--g)}
+
+.rec a{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--sf2);
+  text-decoration:none;color:var(--tx)}
+.rec a:last-child{border-bottom:none}
+.rec a:hover .rn{color:var(--g)}
+.rec .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.rec .rn{font-size:13px;font-weight:700;color:var(--gd);transition:color .14s}
+.rec .rc{font-size:11px;color:var(--tx2)}
+.rec .rv{margin-left:auto;text-align:right;font-size:13px;font-weight:700;color:var(--gd);white-space:nowrap}
+.rec .rv small{display:block;font-size:10px;font-weight:500;color:var(--tx3)}
+
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.qa a{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:11px;background:var(--bg);
+  text-decoration:none;color:var(--tx);font-size:12.5px;font-weight:700;border:1px solid transparent;transition:border-color .14s,background .14s}
+.qa a:hover{border-color:var(--g);background:#fff}
+.qa a .pl{width:26px;height:26px;border-radius:8px;background:var(--g);color:#fff;display:grid;place-items:center;
+  font-size:16px;font-weight:700;flex-shrink:0;line-height:1}
+
+.empty{font-size:12px;color:var(--tx3);padding:16px 0;text-align:center}
+.skel{height:14px;border-radius:6px;background:linear-gradient(90deg,var(--sf2),#f7f4ee,var(--sf2));
+  background-size:200% 100%;animation:sk 1.2s infinite;margin:12px 0}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* ══════════════════════════════════════════════════════════════
+   Shell montado por shell.js sobre una página que ya existía.
+   Mismas piezas, pero las clases de estado viven en <body>.
+   ══════════════════════════════════════════════════════════════ */
+body.sh-page{display:flex;min-height:100vh;background:var(--bg);overflow:visible}
+body.sh-page>.sh-main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+body.sh-page>.sh-main>.app{height:100%}
+body.sh-col .sh-side{width:var(--sh-side-col)}
+body.sh-col .sh-logo .tt{opacity:0;width:0}
+body.sh-col .sh-grp{font-size:0;height:1px;padding:0;margin:13px 10px;background:var(--bd)}
+body.sh-col .sh-nav a{justify-content:center;padding:11px 0}
+body.sh-col .sh-nav a .lb,body.sh-col .sh-nav a .pill{display:none}
+body.sh-col .sh-foot a{justify-content:center;padding:10px 0}
+body.sh-col .sh-foot .lb{display:none}
+
+/* Páginas de flujo normal (Clientes): que scrollee la página, no un panel interno */
+body.sh-page.sh-flow>.sh-main{height:auto;min-height:100vh;overflow:visible}
+body.sh-page.sh-flow{height:auto;overflow:visible}
+
+/* La barra superior convertida: hereda .sh-top y suma título y botones de la página */
+.sh-top .sh-title{font-size:16px;font-weight:700;color:var(--gd);white-space:nowrap}
+.sh-top .sh-tools{margin-left:auto}
+.sh-top .st-btn{border-radius:10px;padding:9px 14px;font-size:12.5px}
+.sh-top .st-btn-g{background:var(--g);color:#fff}
+.sh-top .st-btn-g:hover{background:#2D9068}
+.sh-top .st-btn-ghost{background:var(--bg);color:var(--gd);border:1px solid var(--bd)}
+.sh-top .st-btn-ghost:hover{background:var(--g-soft);border-color:var(--g)}
+.sh-top .sh-pop{top:56px}
+.sh-pop .it[data-espejo]{font-size:12.5px}
+
+@media(max-width:900px){
+  body.sh-page{display:block}
+  body.sh-page>.sh-main{height:auto;min-height:100vh;overflow:visible}
+  body.sh-open .sh-side{transform:none}
+  body.sh-col .sh-side{width:var(--sh-side)}
+  body.sh-col .sh-logo .tt{opacity:1;width:auto}
+  body.sh-col .sh-grp{font-size:10px;height:auto;padding:16px 12px 7px;margin:0;background:none}
+  body.sh-col .sh-nav a{justify-content:flex-start;padding:10px 12px}
+  body.sh-col .sh-nav a .lb,body.sh-col .sh-nav a .pill{display:block}
+  body.sh-col .sh-foot .lb{display:block}
+  .sh-top .sh-title{display:none}
+}
+@media(max-width:620px){
+  .sh-top{padding:0 12px;gap:8px}
+  .sh-top .st-btn{padding:8px 10px;font-size:12px}
+}
+
+/* En modo ícono, la primera separación sobra: quedaría una línea arriba de todo */
+.sh.col .sh-nav .sh-grp:first-child,body.sh-col .sh-nav .sh-grp:first-child{display:none}
+
+/* Al imprimir, el marco no se imprime: solo el contenido de la página */
+@media print{
+  .sh-side,.sh-top,.sh-scrim{display:none!important}
+  .sh,body.sh-page{display:block!important}
+  .sh-main,body.sh-page>.sh-main{height:auto!important;overflow:visible!important}
+}

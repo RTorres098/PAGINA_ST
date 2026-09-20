@@ -1,0 +1,10 @@
+# Dependencias: no van al repo del sitio
+node_modules/
+
+# Planillas y respaldos con datos de clientes: NO se publican
+*.xlsm
+*.zip
+
+# Basura del sistema
+.DS_Store
+Thumbs.db

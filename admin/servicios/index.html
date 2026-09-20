@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoilTech — Servicios</title>
+<link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="../shell.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.main{max-width:1180px;margin:0 auto;padding:24px 24px 80px;width:100%}
+.hd1{font-size:24px;color:var(--gd);line-height:1.15}
+.hd2{font-size:13px;color:var(--tx2);margin-top:3px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+
+/* Aviso de origen del catálogo */
+.aviso{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;margin-bottom:16px;font-size:13px;line-height:1.45}
+.aviso.semilla{background:#FEF3C7;border:1px solid #FCD34D;color:#78350F}
+.aviso.nube{background:rgba(52,166,120,.1);border:1px solid rgba(52,166,120,.3);color:#1E7A55}
+.aviso.sucio{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E3A8A}
+.aviso b{font-weight:700}
+.aviso .acc{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:820px){.stats{grid-template-columns:1fr 1fr}}
+.st1{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.st1 .v{font-size:22px;font-weight:700;color:var(--gd);line-height:1.2}
+.st1 .l{font-size:11.5px;color:var(--tx2);margin-top:2px}
+
+.barra{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.barra input{flex:1;min-width:220px;padding:11px 14px;border:1px solid var(--bd);border-radius:11px;background:var(--sf);font-family:inherit;font-size:13px}
+.barra input:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 3px rgba(52,166,120,.13)}
+.barra select{padding:11px 12px;border:1px solid var(--bd);border-radius:11px;background:var(--sf);font-family:inherit;font-size:13px;color:var(--tx)}
+
+.fam{margin-bottom:22px}
+.fam h3{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx3);margin-bottom:9px;padding-left:2px}
+.sv{display:flex;align-items:flex-start;gap:14px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:8px;transition:border-color .14s}
+.sv:hover{border-color:var(--g)}
+.sv.off{opacity:.55;background:var(--sf2)}
+.sv .cod{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;font-weight:700;color:#fff;background:var(--gd);padding:5px 9px;border-radius:7px;flex-shrink:0;min-width:74px;text-align:center}
+.sv.off .cod{background:var(--tx3)}
+.sv .tx{flex:1;min-width:0}
+.sv .nm{font-size:13.5px;font-weight:700;color:var(--gd);line-height:1.35}
+.sv .cr{font-size:12px;color:var(--tx2);margin-top:2px}
+.sv .al{font-size:11px;color:var(--tx3);margin-top:5px;line-height:1.5}
+.sv .al code{background:var(--bg);border:1px solid var(--bd);border-radius:5px;padding:1px 6px;font-size:10.5px;margin-right:4px;display:inline-block;margin-bottom:3px}
+.sv .btns{display:flex;gap:6px;flex-shrink:0}
+.ib{width:32px;height:32px;border-radius:9px;border:1px solid var(--bd);background:var(--bg);display:grid;place-items:center;cursor:pointer;color:var(--tx2);transition:background .14s}
+.ib:hover{background:var(--g-soft);border-color:var(--g);color:var(--gd)}
+.ib svg{width:15px;height:15px}
+.ib.fac{text-decoration:none}
+.ib.fac:hover{background:rgba(59,130,246,.12);border-color:#93C5FD;color:var(--info)}
+.ib.dg:hover{background:#FEE2E2;border-color:#FCA5A5;color:var(--dg)}
+.vacio{text-align:center;padding:40px 20px;color:var(--tx3);font-size:13px}
+
+/* Modal */
+.mb{position:fixed;inset:0;background:rgba(24,64,62,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+.mb.show{display:flex}
+.md{background:var(--sf);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.md h3{font-size:16px;color:var(--gd);padding:20px 22px 0}
+.md .sub{font-size:12px;color:var(--tx2);padding:4px 22px 0}
+.md .body{padding:18px 22px}
+.md .foot{display:flex;gap:9px;justify-content:flex-end;padding:0 22px 20px}
+.cmp{margin-bottom:13px}
+.cmp label{display:block;font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:5px}
+.cmp input,.cmp select,.cmp textarea{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:9px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--tx)}
+.cmp textarea{resize:vertical;min-height:70px;line-height:1.5}
+.cmp input:focus,.cmp select:focus,.cmp textarea:focus{outline:none;border-color:var(--g);background:#fff;box-shadow:0 0 0 3px rgba(52,166,120,.13)}
+.cmp .ay{font-size:11px;color:var(--tx3);margin-top:4px;line-height:1.45}
+.cmp.mitad{display:inline-block;width:calc(50% - 6px)}
+.cmp.mitad+.cmp.mitad{margin-left:12px}
+.err{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;border-radius:9px;padding:10px 12px;font-size:12px;margin-bottom:13px;display:none}
+.err.show{display:block}
+.prev{background:var(--bg);border:1px dashed var(--bd);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--gd);line-height:1.5;word-break:break-word}
+.prev b{display:block;font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;font-weight:700}
+.md .st-btn-ghost,.aviso .st-btn-ghost{background:var(--bg);color:var(--gd);border:1px solid var(--bd)}
+.md .st-btn-ghost:hover,.aviso .st-btn-ghost:hover{background:var(--g-soft);border-color:var(--g)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--gd);color:#fff;padding:12px 20px;border-radius:11px;font-size:13px;font-weight:600;z-index:80;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body class="sh-flow">
+
+<header class="st-top">
+  <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
+  <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../facturacion/">Facturación</a><a href="../clientes/">Clientes</a><a class="on" href="./">Servicios</a></nav>
+  <div class="st-right"><button class="st-btn st-btn-g" onclick="abrir()">+ Nuevo servicio</button></div>
+</header>
+
+<main class="main">
+  <div class="head">
+    <div><h1 class="hd1">Catálogo de servicios</h1>
+      <div class="hd2">El nombre oficial de cada servicio. Se elige acá y no se vuelve a escribir a mano.</div></div>
+  </div>
+
+  <div id="aviso"></div>
+  <div class="stats" id="stats"></div>
+
+  <div class="barra">
+    <input id="q" placeholder="Buscar por código, nombre o alias…" oninput="pintar()">
+    <select id="ffam" onchange="pintar()"><option value="">Todos los tipos</option></select>
+    <select id="fact" onchange="pintar()">
+      <option value="act">Solo activos</option>
+      <option value="">Activos y retirados</option>
+      <option value="off">Solo retirados</option>
+    </select>
+  </div>
+
+  <div id="lista"></div>
+</main>
+
+<!-- Alta y edición -->
+<div class="mb" id="modal">
+  <div class="md">
+    <h3 id="mTit">Nuevo servicio</h3>
+    <div class="sub" id="mSub">El código no se puede repetir y no se debería cambiar una vez usado.</div>
+    <div class="body">
+      <div class="err" id="mErr"></div>
+      <div class="cmp"><label for="fTipo">1 · Tipo de servicio</label>
+        <select id="fTipo" onchange="cambioTipo()"></select>
+        <div class="ay">Define el prefijo del código y ordena el catálogo.</div></div>
+      <div class="cmp"><label for="fCod">2 · Código</label>
+        <input id="fCod" oninput="vistaPrevia()" autocomplete="off">
+        <div class="ay" id="ayCod">&nbsp;</div></div>
+      <div class="cmp"><label for="fNom">3 · Nombre oficial (es el que se imprime en la factura)</label>
+        <input id="fNom" oninput="vistaPrevia()" autocomplete="off">
+        <div class="ay">Solo el servicio. El inmueble y la etapa van en campos aparte al facturar.</div></div>
+      <div class="cmp"><label for="fCor">4 · Nombre corto (para listas y selectores)</label>
+        <input id="fCor" autocomplete="off"></div>
+      <div class="cmp"><label for="fAli">5 · Textos anteriores que apuntan acá (uno por línea)</label>
+        <textarea id="fAli"></textarea>
+        <div class="ay">Sirven para que las facturas viejas se reconozcan solas. Podés poner códigos viejos o el texto tal cual se escribía antes.</div></div>
+      <div class="cmp"><label><input type="checkbox" id="fAct" checked style="width:auto;margin-right:7px">Se sigue ofreciendo</label>
+        <div class="ay">Si lo destildás, el servicio deja de aparecer al facturar pero el histórico lo sigue mostrando.</div></div>
+      <div class="prev"><b>Así saldría en una factura</b><span id="mPrev">—</span></div>
+    </div>
+    <div class="foot">
+      <button class="st-btn st-btn-ghost" onclick="cerrar()">Cancelar</button>
+      <button class="st-btn st-btn-g" onclick="aceptar()">Guardar servicio</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmación -->
+<div class="mb" id="conf">
+  <div class="md" style="max-width:420px">
+    <h3 id="cTit">¿Seguro?</h3>
+    <div class="body"><div id="cTxt" style="font-size:13px;color:var(--tx2);line-height:1.5"></div></div>
+    <div class="foot">
+      <button class="st-btn st-btn-ghost" onclick="cerrarConf(false)">Cancelar</button>
+      <button class="st-btn st-btn-g" id="cOk" onclick="cerrarConf(true)">Sí</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config.js"></script>
+<script src="../auth-guard.js"></script>
+<script src="../shell.js"></script>
+<script src="../servicios.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+var db=firebase.firestore();
+var CAT=[];        // lo que se está editando
+var SUCIO=false;   // hay cambios sin guardar
+var EDITANDO=null; // código que se está editando, o null si es nuevo
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show')},2600)}
+
+initAuthGuard(function(user,data,rol){
+  STShell.usuario(data,rol,user);
+  ServiciosCat.cargar(db,true).then(function(l){
+    CAT=JSON.parse(JSON.stringify(l));
+    SUCIO=false;
+    pintarTodo();
+  });
+});
+
+function pintarTodo(){pintarAviso();pintarStats();pintarFiltros();pintar()}
+
+function pintarAviso(){
+  var h='';
+  if(SUCIO){
+    h='<div class="aviso sucio"><span>Hay cambios <b>sin guardar</b>. Nada se aplica hasta que confirmes.</span>'+
+      '<span class="acc"><button class="st-btn st-btn-ghost" onclick="descartar()">Descartar</button>'+
+      '<button class="st-btn st-btn-g" onclick="publicar()">Guardar cambios</button></span></div>';
+  }else if(!ServiciosCat.esDeFirestore()){
+    h='<div class="aviso semilla"><span>El catálogo todavía <b>no está en la base</b>. Se está mostrando la lista inicial que viene con el sistema; '+
+      'hasta que la cargues, cada página usa su propia copia.</span>'+
+      '<span class="acc"><button class="st-btn st-btn-g" onclick="publicar()">Cargar catálogo en la base</button></span></div>';
+  }else{
+    h='<div class="aviso nube"><span>Catálogo <b>guardado en la base</b>. Lo que edites acá lo ven el admin y la app.</span></div>';
+  }
+  $('aviso').innerHTML=h;
+}
+
+function pintarStats(){
+  var act=CAT.filter(function(s){return s.activo}).length;
+  var al=CAT.reduce(function(n,s){return n+(s.alias||[]).length},0);
+  var fam={};CAT.forEach(function(s){fam[s.tipo]=1});
+  $('stats').innerHTML=
+    '<div class="st1"><div class="v">'+CAT.length+'</div><div class="l">Servicios en el catálogo</div></div>'+
+    '<div class="st1"><div class="v">'+act+'</div><div class="l">Se siguen ofreciendo</div></div>'+
+    '<div class="st1"><div class="v">'+Object.keys(fam).length+'</div><div class="l">Tipos de servicio</div></div>'+
+    '<div class="st1"><div class="v">'+al+'</div><div class="l">Textos anteriores reconocidos</div></div>';
+}
+
+function pintarFiltros(){
+  var sel=$('ffam'),v=sel.value;
+  var fams=[];CAT.forEach(function(s){if(fams.indexOf(s.tipo)<0)fams.push(s.tipo)});
+  sel.innerHTML='<option value="">Todos los tipos</option>'+
+    fams.map(function(f){return '<option value="'+esc(f)+'">'+esc(f)+'</option>'}).join('');
+  sel.value=v;
+}
+
+var IC_FAC='<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/>';
+var IC_ED='<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>';
+var IC_OFF='<path d="M18.36 6.64A9 9 0 1 1 5.64 6.64"/><path d="M12 2v10"/>';
+var IC_DEL='<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>';
+
+function pintar(){
+  var q=ServiciosCat.N($('q').value), ff=$('ffam').value, fa=$('fact').value;
+  var vis=CAT.filter(function(s){
+    if(ff&&s.tipo!==ff)return false;
+    if(fa==='act'&&!s.activo)return false;
+    if(fa==='off'&&s.activo)return false;
+    if(!q)return true;
+    var heno=ServiciosCat.N(s.codigo+' '+s.nombre+' '+s.corto+' '+(s.alias||[]).join(' '));
+    return heno.indexOf(q)>=0;
+  });
+  if(!vis.length){$('lista').innerHTML='<div class="vacio">No hay servicios que coincidan.</div>';return}
+  var fams=[];vis.forEach(function(s){if(fams.indexOf(s.tipo)<0)fams.push(s.tipo)});
+  $('lista').innerHTML=fams.map(function(f){
+    var ss=vis.filter(function(s){return s.tipo===f});
+    return '<div class="fam"><h3>'+esc(f)+' · '+ss.length+'</h3>'+ss.map(fila).join('')+'</div>';
+  }).join('');
+}
+
+function fila(s){
+  var al=(s.alias||[]).length
+    ? '<div class="al">Reconoce también: '+s.alias.map(function(a){return '<code>'+esc(a)+'</code>'}).join('')+'</div>'
+    : '';
+  return '<div class="sv'+(s.activo?'':' off')+'">'+
+    '<span class="cod">'+esc(s.codigo)+'</span>'+
+    '<span class="tx"><div class="nm">'+esc(s.nombre)+'</div>'+
+      '<div class="cr">'+esc(s.corto)+(s.activo?'':' · retirado')+'</div>'+al+'</span>'+
+    '<span class="btns">'+
+      (s.activo?'<a class="ib fac" title="Facturar este servicio" href="../facturacion/#nueva/s/'+encodeURIComponent(s.codigo)+'">'+ico(IC_FAC)+'</a>':'')+
+      '<button class="ib" title="Editar" onclick="abrir(\''+esc(s.codigo)+'\')">'+ico(IC_ED)+'</button>'+
+      '<button class="ib" title="'+(s.activo?'Retirar del catálogo':'Volver a ofrecer')+'" onclick="alternarActivo(\''+esc(s.codigo)+'\')">'+ico(IC_OFF)+'</button>'+
+      '<button class="ib dg" title="Eliminar" onclick="eliminar(\''+esc(s.codigo)+'\')">'+ico(IC_DEL)+'</button>'+
+    '</span></div>';
+}
+function ico(d){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>'}
+
+/* ═══ Alta y edición ═══ */
+/* Cada tipo trae sus propios ejemplos: lo que se escribe en un muestreo
+   no se parece a lo que se escribe en una capacitación. */
+var EJEMPLOS={
+  'Muestreo':    {nom:'MUESTREO DE SUELO PARA DETERMINACIÓN DE …', cor:'Muestreo para …',  ali:'ST-01\nMUESTREO DE SUELO PARA … (como se escribía antes)'},
+  'Estudio':     {nom:'ESTUDIO DE SUELO PARA …',                   cor:'Aptitud de suelo',  ali:'ST-08\nESTUDIO DE SUELO PARA … (sin tildes)'},
+  'Capacitación':{nom:'CAPACITACIÓN EN …',                          cor:'Power BI',          ali:'STC-05\nCapacitación en …'},
+  'Laboratorio': {nom:'ANÁLISIS DE …',                              cor:'Macro + Textura',   ali:''},
+  'Otros':       {nom:'NOMBRE DEL SERVICIO',                        cor:'Nombre corto',      ali:''}
+};
+var TIPOS=['Muestreo','Estudio','Capacitación','Laboratorio','Otros'];
+
+function abrir(codigo){
+  EDITANDO=codigo||null;
+  var s=codigo?CAT.filter(function(x){return x.codigo===codigo})[0]:null;
+  $('mTit').textContent=s?'Editar servicio':'Nuevo servicio';
+  $('mSub').textContent=s
+    ? 'Si cambiás el código, acordate de dejar el anterior como texto reconocido.'
+    : 'Elegí primero el tipo: de ahí sale el código y los ejemplos de cada campo.';
+  var tips=[];CAT.forEach(function(x){if(tips.indexOf(x.tipo)<0)tips.push(x.tipo)});
+  TIPOS.forEach(function(t){if(tips.indexOf(t)<0)tips.push(t)});
+  $('fTipo').innerHTML=tips.map(function(t){return '<option'+(s&&s.tipo===t?' selected':'')+'>'+esc(t)+'</option>'}).join('');
+  $('fCod').value=s?s.codigo:'';
+  $('fNom').value=s?s.nombre:'';
+  $('fCor').value=s?s.corto:'';
+  $('fAli').value=s?(s.alias||[]).join('\n'):'';
+  $('fAct').checked=s?s.activo!==false:true;
+  $('mErr').classList.remove('show');
+  cambioTipo(!s);   // al crear, propone el código; al editar, solo los ejemplos
+  $('modal').classList.add('show');
+  setTimeout(function(){(s?$('fNom'):$('fTipo')).focus()},50);
+}
+function cerrar(){$('modal').classList.remove('show')}
+
+/* Al elegir el tipo cambian los ejemplos y, si es nuevo, el código propuesto. */
+function cambioTipo(proponerCodigo){
+  var t=$('fTipo').value, ej=EJEMPLOS[t]||EJEMPLOS['Otros'];
+  $('fNom').placeholder=ej.nom;
+  $('fCor').placeholder=ej.cor;
+  $('fAli').placeholder=ej.ali;
+  if(!EDITANDO&&proponerCodigo!==false){
+    var prox=proximoCodigo(t);
+    $('fCod').value=prox;
+    $('fCod').placeholder=prox;
+    $('ayCod').textContent='Siguiente libre para '+t+'. Podés cambiarlo, pero conviene dejarlo consecutivo.';
+  }else{
+    $('fCod').placeholder=ServiciosCat.prefijoDe(t)+'-01';
+    $('ayCod').textContent=EDITANDO
+      ? 'Ya se usó: cambiarlo puede dejar facturas viejas sin reconocer.'
+      : 'Siguiente libre para '+t+'.';
+  }
+  vistaPrevia();
+}
+
+/* El siguiente código se calcula sobre lo que hay en pantalla, no sobre lo
+   guardado: si agregaste dos servicios seguidos, el segundo ya lo tiene en cuenta. */
+function proximoCodigo(tipo){
+  var pre=ServiciosCat.prefijoDe(tipo);
+  var re=new RegExp('^'+pre+'-(\\d+)$','i'), max=0;
+  CAT.forEach(function(s){
+    var m=String(s.codigo||'').match(re);
+    if(m){var n=parseInt(m[1],10);if(n>max)max=n}
+  });
+  return pre+'-'+String(max+1).padStart(2,'0');
+}
+
+function vistaPrevia(){
+  var nom=$('fNom').value.trim(), cod=$('fCod').value.trim().toUpperCase();
+  $('mPrev').textContent=nom
+    ? (cod?cod+' · ':'')+nom+'  —  ej. con alcance: '+nom+' - SANTA ISABEL'
+    : '—';
+}
+
+function aceptar(){
+  var cod=$('fCod').value.trim().toUpperCase();
+  var nom=$('fNom').value.trim();
+  var err=$('mErr');
+  function falla(m){err.textContent=m;err.classList.add('show');return false}
+  if(!cod)return falla('Falta el código.');
+  if(!nom)return falla('Falta el nombre oficial: es el texto que sale impreso.');
+
+  var nuevo={
+    codigo:cod, nombre:nom,
+    corto:$('fCor').value.trim()||nom,
+    tipo:$('fTipo').value,
+    activo:$('fAct').checked,
+    alias:$('fAli').value.split('\n').map(function(a){return a.trim()}).filter(Boolean)
+  };
+  // aplicar sobre una copia y validar antes de tocar el catálogo real
+  var prueba=CAT.map(function(x){return x});
+  if(EDITANDO){
+    var i=-1;prueba.forEach(function(x,k){if(x.codigo===EDITANDO)i=k});
+    prueba[i]=nuevo;
+  }else prueba=prueba.concat([nuevo]);
+  var choque=ServiciosCat.duplicados(ServiciosCat.normalizar(prueba));
+  if(choque)return falla(choque);
+
+  CAT=prueba; SUCIO=true; cerrar(); pintarTodo();
+  toast(EDITANDO?'Servicio actualizado':'Servicio agregado');
+}
+
+function alternarActivo(codigo){
+  CAT.forEach(function(s){if(s.codigo===codigo)s.activo=!s.activo});
+  SUCIO=true; pintarTodo();
+}
+
+function eliminar(codigo){
+  var s=CAT.filter(function(x){return x.codigo===codigo})[0];
+  if(!s)return;
+  confirmar('Eliminar '+codigo,
+    'Las facturas y presupuestos que ya usan «'+s.nombre+'» dejan de reconocerlo y quedan sin servicio. '+
+    'Si el servicio ya no se ofrece pero se usó alguna vez, conviene retirarlo en vez de eliminarlo.',
+    'Eliminar igual').then(function(si){
+      if(!si)return;
+      CAT=CAT.filter(function(x){return x.codigo!==codigo});
+      SUCIO=true; pintarTodo(); toast('Servicio eliminado (falta guardar)');
+    });
+}
+
+/* ═══ Guardar y descartar ═══ */
+function publicar(){
+  ServiciosCat.guardar(db,CAT).then(function(){
+    SUCIO=false; pintarTodo(); toast('✅ Catálogo guardado');
+  }).catch(function(e){ toast('❌ '+e.message) });
+}
+
+function descartar(){
+  confirmar('Descartar cambios','Se vuelve al catálogo que está guardado en la base.','Descartar')
+    .then(function(si){
+      if(!si)return;
+      ServiciosCat.cargar(db,true).then(function(l){
+        CAT=JSON.parse(JSON.stringify(l)); SUCIO=false; pintarTodo(); toast('Cambios descartados');
+      });
+    });
+}
+
+/* ═══ Confirmación con la cara del sistema ═══ */
+var _conf=null;
+function confirmar(titulo,texto,botón){
+  $('cTit').textContent=titulo;
+  $('cTxt').textContent=texto;
+  $('cOk').textContent=botón||'Sí';
+  $('conf').classList.add('show');
+  return new Promise(function(r){_conf=r});
+}
+function cerrarConf(v){$('conf').classList.remove('show');if(_conf){_conf(v);_conf=null}}
+
+/* No irse con cambios sin guardar */
+window.addEventListener('beforeunload',function(e){
+  if(!SUCIO)return;
+  e.preventDefault(); e.returnValue='';
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if($('conf').classList.contains('show'))cerrarConf(false);
+    else if($('modal').classList.contains('show'))cerrar();
+  }
+});
+</script>
+</body>
+</html>

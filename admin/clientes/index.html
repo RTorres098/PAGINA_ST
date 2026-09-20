@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SoilTech — Clientes</title>
 <link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="../shell.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{--bg:#F4F0E8;--sf:#fff;--sf2:#EDE9E0;--g:#34A678;--gd:#18403E;--gl:rgba(52,166,120,0.08);--tx:#1A1A1A;--tx2:#6B6B6B;--tx3:#9CA3AF;--bd:#E0DDD5;--dg:#EF4444;--warn:#F59E0B;--info:#3B82F6}
@@ -101,7 +102,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 @media (max-width:620px){.main{padding:16px 14px 40px}.t .hide-sm{display:none}.g2{grid-template-columns:1fr}.dr-s{grid-template-columns:1fr 1fr}}
 </style>
 </head>
-<body>
+<body class="sh-flow">
 <header class="st-top">
   <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
   <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../presupuesto/#/balance">Balance</a><a class="on" href="./">Clientes</a><a href="../facturacion/">Facturación</a></nav>
@@ -136,6 +137,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
+<script src="../shell.js"></script>
 <script>
 firebase.initializeApp(FIREBASE_CONFIG);
 var db=firebase.firestore();
@@ -152,7 +154,9 @@ function fFecha(v){var ms=fechaMs(v);return ms?new Date(ms).toLocaleDateString('
 function esUsd(f){return (f.moneda||'').indexOf('DOLAR')>=0}
 function montos(u,g){return [u?'USD '+fmtUsd(u):'',g?'₲ '+fmtGs(Math.round(g)):''].filter(Boolean).join(' + ')||'—'}
 
-initAuthGuard(function(){cargar().then(function(){
+initAuthGuard(function(user,data,rol){
+  STShell.usuario(data,rol,user);
+  cargar().then(function(){
   var h=location.hash,m;
   if(h==='#nuevo'){history.replaceState(null,'',location.pathname);nuevoCliente();}
   else if((m=h.match(/^#c\/(.+)$/))){history.replaceState(null,'',location.pathname);abrir(decodeURIComponent(m[1]));}

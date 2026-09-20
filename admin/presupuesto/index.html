@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SoilTech — Presupuestos</title>
 <link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="../shell.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{--bg:#F4F0E8;--sf:#fff;--sf2:#EDE9E0;--g:#34A678;--gd:#18403E;--gl:rgba(52,166,120,0.08);--tx:#1A1A1A;--tx2:#6B6B6B;--tx3:#9CA3AF;--bd:#E0DDD5;--dg:#EF4444;--warn:#F59E0B;--info:#3B82F6;--r:10px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(--tx);height:100vh;overflow:hidden}
-.app{display:grid;grid-template-columns:1fr 400px;grid-template-rows:56px 1fr;height:100vh}
+.app{display:grid;grid-template-columns:1fr 400px;grid-template-rows:64px 1fr;height:100vh}
 .tb{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--gd);border-bottom:1px solid rgba(255,255,255,0.08)}
 .tb h1{font-size:15px;color:#fff}.tb a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:11px;margin-left:12px}.tb a:hover{color:#fff}
 .tb-r{display:flex;gap:6px}
@@ -45,8 +46,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .pill.active{background:var(--sf);color:var(--gd);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .pill.active .n{color:var(--g)}
 .sort{padding:9px 10px;border:1px solid var(--bd);border-radius:10px;font-family:inherit;font-size:12px;background:var(--sf);color:var(--tx)}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-.pcard{background:var(--sf);border:1px solid var(--bd);border-top:4px solid var(--tx3);border-radius:14px;padding:16px 18px 14px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:12px}
+.pcard{background:var(--sf);border:1px solid var(--bd);border-top:4px solid var(--tx3);border-radius:14px;padding:14px 16px 12px;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
 .pcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(24,64,62,0.10)}
 .pcard:focus-visible{outline:2px solid var(--g);outline-offset:2px}
 .pcard.s-cot{border-top-color:var(--warn)}.pcard.s-act{border-top-color:var(--g)}.pcard.s-fin{border-top-color:#9CA3AF}
@@ -58,17 +59,25 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 .pc-date{font-size:11px;color:var(--tx3);white-space:nowrap}
 .pcard h3{font-size:16px;font-weight:700;color:var(--gd);line-height:1.25;word-break:break-word}
 .pc-cli{font-size:12px;color:var(--tx2);margin-top:2px}
-.pc-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+.pc-meta{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 12px}
+.pc-meta:empty{display:none;margin:0}
 .pc-meta span{font-size:11px;color:var(--tx2);background:var(--bg);padding:3px 8px;border-radius:6px}
-.pc-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--sf2)}
-.pc-amt{font-size:19px;font-weight:700;color:var(--gd);white-space:nowrap}
+.pc-foot{margin-top:auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--sf2)}
+.pc-amt{font-size:18px;font-weight:700;color:var(--gd);white-space:nowrap}
 .pc-amt small{font-size:11px;font-weight:600;color:var(--tx3);margin-right:2px}
 .pc-amt.none{font-size:13px;font-weight:500;color:var(--tx3)}
-.pc-act{display:flex;gap:6px}
-.ibtn{border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s}
+.pc-act{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.ibtn{border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:8px;padding:5px 9px;font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s}
 .ibtn:hover{border-color:var(--g);background:var(--gl)}
 .ibtn.ok{background:var(--g);border-color:var(--g);color:#fff}.ibtn.ok:hover{background:#2D9068}
+.ibtn.ic{padding:5px 7px;font-size:12px;line-height:1}
 .ibtn.del{color:var(--dg)}.ibtn.del:hover{border-color:var(--dg);background:rgba(239,68,68,0.06)}
+.tp-op{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--bd);border-radius:12px;padding:16px 18px;cursor:pointer;margin-bottom:10px;transition:border-color .15s,background .15s}
+.tp-op:hover{border-color:var(--g);background:var(--gl)}
+.tp-ico{font-size:26px;line-height:1}
+.tp-t{font-size:15px;font-weight:700;color:var(--gd)}
+.tp-d{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.45}
+.chip-cap{background:rgba(99,102,241,0.12);color:#4338CA}.chip-cap::before{background:currentColor}
 .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--tx3);font-size:13px;background:var(--sf);border:1px dashed var(--bd);border-radius:14px}
 .empty-state strong{display:block;color:var(--tx2);font-size:15px;margin-bottom:4px}
 /* Form */
@@ -242,7 +251,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 @media (max-width:1180px){.det-grid{grid-template-columns:1fr}.app{grid-template-columns:1fr 330px}.dash-stats{grid-template-columns:repeat(2,1fr)}.det-kpis{grid-template-columns:repeat(3,1fr)}.hcols{grid-template-columns:1fr}}
 @media (max-width:860px){
   body{height:auto;overflow:auto}
-  .app,.app.no-rp{grid-template-columns:1fr;height:auto;grid-template-rows:56px auto}
+  .app,.app.no-rp{grid-template-columns:1fr;height:auto;grid-template-rows:64px auto}
   .fp{height:auto;overflow:visible}
   .rp{border-left:none}
   .g5,.g4{grid-template-columns:1fr 1fr}
@@ -373,7 +382,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
     <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
     <nav class="st-nav"><a href="../">Inicio</a><a class="on" id="navPres" href="#/">Presupuestos</a><a id="navBal" href="#/balance">Balance</a><a href="../clientes/">Clientes</a><a href="../facturacion/">Facturación</a></nav>
     <div class="st-right">
-      <button class="st-btn st-btn-g" onclick="nav('#/nuevo')">+ Nuevo presupuesto</button>
+      <button class="st-btn st-btn-g" onclick="elegirTipoProyecto()">+ Nuevo presupuesto</button>
     </div>
   </header>
   <!-- LEFT: Dashboard (default), Detalle o Formulario -->
@@ -451,6 +460,38 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 </div></div>
 
 <!-- Proposal modal -->
+<div class="modal-bg" id="inscModal"><div class="modal" style="max-width:420px;padding:22px"><button class="close" onclick="hideModal('inscModal')">×</button>
+  <h3>Agregar inscripto</h3>
+  <div class="f"><label>Nombre</label><input id="inscNombre"></div>
+  <div class="g2"><div class="f"><label>Tipo</label><select id="inscTipo" onchange="capTipoCambio()"></select></div>
+    <div class="f"><label>Pagó (<span id="inscMoneda">Gs</span>)</label><input id="inscMonto" type="number"></div></div>
+  <div class="f"><label>Empresa / institución (opcional)</label><input id="inscEmpresa"></div>
+  <label style="display:flex;gap:6px;align-items:center;font-size:12px;margin-top:8px"><input type="checkbox" id="inscCobrado" checked> Ya cobrado</label>
+  <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+    <button class="btn" style="background:var(--sf);color:var(--tx);border:1px solid var(--bd)" onclick="hideModal('inscModal')">Cancelar</button>
+    <button class="btn btn-g" onclick="capGuardarInscripto()">Agregar</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="tipoProyModal"><div class="modal" style="max-width:520px;padding:24px"><button class="close" onclick="hideModal('tipoProyModal')">×</button>
+  <h3>¿Qué vas a presupuestar?</h3>
+  <div id="tipoProyBody"></div>
+</div></div>
+
+<div class="modal-bg" id="confirmModal"><div class="modal" style="max-width:440px;padding:22px">
+  <div style="display:flex;gap:12px;align-items:flex-start">
+    <div id="cfIcon" style="font-size:22px;line-height:1">🗑</div>
+    <div style="flex:1">
+      <h3 id="cfTitulo" style="font-size:17px;font-weight:700;color:var(--gd);margin-bottom:6px"></h3>
+      <div id="cfCuerpo" style="font-size:13px;color:var(--tx2);line-height:1.55"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+    <button class="btn" id="cfNo" style="background:var(--sf);color:var(--tx);border:1px solid var(--bd)">Cancelar</button>
+    <button class="btn" id="cfSi"></button>
+  </div>
+</div></div>
+
 <div class="modal-bg" id="propModal"><div class="modal prop-modal"><button class="close" onclick="hideModal('propModal')">×</button><div id="propContent"></div><div style="margin-top:20px;text-align:center"><button class="btn btn-g" onclick="window.print()">🖨️ Imprimir</button></div></div></div>
 
 <!-- Panel lateral: facturas del proyecto -->
@@ -485,6 +526,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="https://cdn.jsdelivr.net/npm/xlsx-populate@1.21.0/browser/xlsx-populate.min.js"></script>
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
+<script src="../shell.js"></script>
+<script src="../servicios.js"></script>
 <script src="../balance-calc.js"></script>
 <script>
 /* Error handler global — muestra errores visualmente */
@@ -528,7 +571,8 @@ var LAB_PRES=[
 document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;cursor:default"><div><div class="v" style="font-size:13px">⏳ Cargando…</div><div class="l">Conectando a Firebase</div></div></div>';
 
 if(typeof initAuthGuard==='function'){
-  initAuthGuard(function(){
+  initAuthGuard(function(user,data,rol){
+    STShell.usuario(data,rol,user);
     loadAll().then(function(){route()});
   });
 }else{
@@ -536,6 +580,29 @@ if(typeof initAuthGuard==='function'){
   document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;color:var(--dg)"><div><div class="v" style="font-size:13px;color:var(--dg)">auth-guard.js no cargó</div><div class="l">Verificar ruta ../auth-guard.js</div></div></div>';
 }
 
+/* Confirmación con la cara del sistema, en vez del cartel del navegador */
+function confirmar(op){
+  return new Promise(function(resolve){
+    document.getElementById('cfIcon').textContent=op.icono||'⚠️';
+    document.getElementById('cfTitulo').textContent=op.titulo||'¿Confirmás?';
+    document.getElementById('cfCuerpo').innerHTML=op.cuerpo||'';
+    var si=document.getElementById('cfSi'),no=document.getElementById('cfNo');
+    si.textContent=op.ok||'Confirmar';
+    si.className='btn '+(op.peligro?'btn-dg':'btn-g');
+    no.textContent=op.cancelar||'Cancelar';
+    function cerrar(v){
+      hideModal('confirmModal');
+      si.onclick=null;no.onclick=null;document.removeEventListener('keydown',tecla);
+      resolve(v);
+    }
+    function tecla(e){if(e.key==='Escape')cerrar(false);if(e.key==='Enter')cerrar(true)}
+    si.onclick=function(){cerrar(true)};
+    no.onclick=function(){cerrar(false)};
+    document.addEventListener('keydown',tecla);
+    showModal('confirmModal');
+    setTimeout(function(){si.focus()},50);
+  });
+}
 function showModal(id){document.getElementById(id).classList.add('show')}
 function hideModal(id){document.getElementById(id).classList.remove('show')}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},3500)}
@@ -566,10 +633,19 @@ window.addEventListener('hashchange',function(){
   if(skipHash){skipHash=false;return;}
   var nh=location.hash||'#/';
   if(formDirty&&isFormRoute(curRoute)&&nh!==curRoute){
-    if(!confirm('Tenés cambios sin guardar en este presupuesto.\n¿Salir y descartarlos?')){
-      skipHash=true;location.hash=curRoute;return;
-    }
-    formDirty=false;
+    // Se vuelve al formulario y se pregunta con el modal del sistema, no con el del navegador
+    var destino=nh,volver=curRoute;
+    skipHash=true;location.hash=volver;
+    confirmar({
+      icono:'💾',titulo:'Cambios sin guardar',
+      cuerpo:'<p>Tenés cambios sin guardar en este presupuesto.</p><p style="margin-top:6px;color:var(--tx3);font-size:12px">Si salís ahora se pierden.</p>',
+      ok:'Salir sin guardar',cancelar:'Seguir editando',peligro:true
+    }).then(function(salir){
+      if(!salir)return;
+      formDirty=false;
+      location.hash=destino;
+    });
+    return;
   }
   route();
 });
@@ -592,7 +668,9 @@ function route(){
   setNavActivo(h==='#/balance'?'bal':'pres');
   if(h==='#/balance'){showBalanceGeneral();return;}
   if((m=h.match(/^#\/p\/([^\/]+)\/balance$/))){openBalance(decodeURIComponent(m[1]));return;}
-  if(h==='#/nuevo'){renderNewForm();return;}
+  if(h==='#/nuevo'){hideModal('tipoProyModal');renderNewForm();return;}
+  if(h==='#/nuevo/cap'){hideModal('tipoProyModal');renderCapForm(null);return;}
+  if((m=h.match(/^#\/nuevo\/cap\/c\/([^\/]+)$/))){hideModal('tipoProyModal');renderCapForm(null,decodeURIComponent(m[1]));return;}
   if((m=h.match(/^#\/nuevo\/c\/([^\/]+)$/))){renderNewForm(decodeURIComponent(m[1]));return;}
   if((m=h.match(/^#\/p\/([^\/]+)\/editar$/))){openEdit(decodeURIComponent(m[1]));return;}
   if((m=h.match(/^#\/p\/([^\/]+)$/))){openCot(decodeURIComponent(m[1]));return;}
@@ -607,12 +685,13 @@ function backToDash(){nav('#/')}
 function backToDetail(){nav(editingId?'#/p/'+encodeURIComponent(editingId):'#/')}
 function backFromForm(){backToDetail()}
 function goToEdit(){if(editingId)nav('#/p/'+encodeURIComponent(editingId)+'/editar')}
-function newPresupuesto(){nav('#/nuevo')}
+function newPresupuesto(){elegirTipoProyecto()}
+function esCap(p){return !!p&&p.tipoProyecto==='capacitacion'}
 function findProj(id){return ALL.find(function(x){return x._id===id})}
 function noEncontrado(){toast('❌ No se encontró ese proyecto');curRoute='#/';history.replaceState(null,'','#/');showDashView();}
 
 function loadAll(){
-  return Promise.all([db.collection('proyectos').get(),db.collection('clientes').get()]).then(function(r){
+  return Promise.all([db.collection('proyectos').get(),db.collection('clientes').get(),ServiciosCat.cargar(db)]).then(function(r){
     // Sin orderBy en la consulta: Firestore excluye docs sin el campo (ej. proyectos creados en la app).
     ALL=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())})
       .sort(function(a,b){return tsMs(b.fechaCreacion||b.fechaRegistro)-tsMs(a.fechaCreacion||a.fechaRegistro)});
@@ -687,17 +766,21 @@ function renderDash(){
     var st=EST[p.estado]||{cls:'fin',label:p.estado||'Sin estado'};
     var id=esc(p._id).replace(/'/g,'');
     var meta=[];
-    if(p.tipoServicio)meta.push('<span title="'+esc((SERVICIOS.find(function(s){return s.code===p.tipoServicio})||{}).name||'')+'">'+esc(p.tipoServicio)+'</span>');
+    if(p.tipoServicio){
+      var svP=ServiciosCat.resolver(p.tipoServicio);
+      meta.push('<span title="'+esc(svP?svP.nombre:'Servicio fuera del catálogo')+'">'+esc(svP?svP.codigo:p.tipoServicio)+'</span>');
+    }
     if(p.ubicacion)meta.push('<span>'+esc(p.ubicacion)+'</span>');
     if(p.totalMuestras)meta.push('<span>'+p.totalMuestras+' muestras</span>');
     if(p.superficie)meta.push('<span>'+fmtGs(p.superficie)+' ha</span>');
     var acts='';
-    if(p.estado==='Cotización')acts='<button class="ibtn ok" onclick="event.stopPropagation();showApprove(\''+id+'\')">Aprobar</button><button class="ibtn del" title="Eliminar cotización" onclick="event.stopPropagation();deleteCot(\''+id+'\')">Eliminar</button>';
-    else if(p.estado==='En Curso')acts='<button class="ibtn" onclick="event.stopPropagation();nav(\'#/p/'+encodeURIComponent(p._id)+'/balance\')">Balance</button><button class="ibtn" onclick="event.stopPropagation();finishProject(\''+id+'\')">Finalizar</button>';
-    else if(p.estado==='Finalizado')acts='<button class="ibtn" onclick="event.stopPropagation();nav(\'#/p/'+encodeURIComponent(p._id)+'/balance\')">Balance</button>';
+    if(p.estado==='Cotización')acts='<button class="ibtn ok" onclick="event.stopPropagation();'+(esCap(p)?'capAprobar':'showApprove')+'(\''+id+'\')">Aprobar</button><button class="ibtn del ic" title="Eliminar cotización" onclick="event.stopPropagation();eliminarProyecto(\''+id+'\')">🗑</button>';
+    else if(p.estado==='En Curso')acts='<button class="ibtn" onclick="event.stopPropagation();nav(\'#/p/'+encodeURIComponent(p._id)+'/balance\')">Balance</button><button class="ibtn" onclick="event.stopPropagation();finishProject(\''+id+'\')">Finalizar</button><button class="ibtn del ic" title="Eliminar proyecto" onclick="event.stopPropagation();eliminarProyecto(\''+id+'\')">🗑</button>';
+    else if(p.estado==='Finalizado')acts='<button class="ibtn" onclick="event.stopPropagation();nav(\'#/p/'+encodeURIComponent(p._id)+'/balance\')">Balance</button><button class="ibtn del ic" title="Eliminar proyecto" onclick="event.stopPropagation();eliminarProyecto(\''+id+'\')">🗑</button>';
     return '<div class="pcard s-'+st.cls+'" tabindex="0" onclick="nav(\'#/p/'+encodeURIComponent(p._id)+'\')" onkeydown="if(event.key===\'Enter\')this.click()">'+
       '<div class="pc-top"><span class="chip chip-'+st.cls+'">'+esc(st.label)+'</span>'+
-        (p.presupuesto?'':'<span class="chip chip-warn" title="Creado desde la app o dato de prueba">Sin presupuesto</span>')+
+        (esCap(p)?'<span class="chip chip-cap">Capacitación</span>':'')+
+        ((p.presupuesto||esCap(p))?'':'<span class="chip chip-warn" title="Creado desde la app o dato de prueba">Sin presupuesto</span>')+
         '<span class="pc-date" style="margin-left:auto">'+fechaTxt(fechaProy(p))+'</span></div>'+
       '<h3>'+esc(p.nombre||'Sin nombre')+'</h3>'+
       '<div class="pc-cli">'+esc(p.cliente||'Sin cliente')+'</div>'+
@@ -725,8 +808,9 @@ function openCot(id){
       '<button class="btn btn-g" onclick="goToEdit()">✏️ '+(p.presupuesto?'Editar presupuesto':'Cargar presupuesto')+'</button>'+
       (p.presupuesto?'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="showPropFromDetail()">📄 Propuesta</button>'+
       '<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="exportXlsx()">📥 Excel</button>':'')+
-      (p.estado==='Cotización'?'<button class="btn btn-info" onclick="showApprove(\''+sid+'\')">✅ Aprobar</button>':'')+
+      (p.estado==='Cotización'?'<button class="btn btn-info" onclick="'+(esCap(p)?'capAprobar':'showApprove')+'(\''+sid+'\')">✅ Aprobar</button>':'')+
       (p.estado==='En Curso'?'<button class="btn btn-w" style="color:var(--tx);background:var(--sf);border:1px solid var(--bd)" onclick="finishProject(\''+sid+'\')">✔ Finalizar</button>':'')+
+      '<button class="btn" style="background:#FEE2E2;color:#B91C1C;border:1px solid #FCA5A5" onclick="eliminarProyecto(\''+sid+'\')" title="Eliminar el proyecto y todo lo que cuelga de él">🗑 Eliminar</button>'+
     '</span>';
   showPanel('panelDetail');
   renderDetail(p);
@@ -737,6 +821,7 @@ function openCot(id){
 /*  DETAIL DASHBOARD — Vista analítica     */
 /* ═══════════════════════════════════════ */
 function renderDetail(p){
+  if(esCap(p)){document.getElementById('detailContent').innerHTML=renderCapDetalle(p);return;}
   var pr=p.presupuesto||{};
   var cot=pr.cot||p.cotizacion||6500;
   var usd=function(gs){return cot>0?fmtUsd(gs/cot):'—'};
@@ -1065,6 +1150,7 @@ function renderNewForm(clienteId){
 function openEdit(id){
   var p=findProj(id);
   if(!p){noEncontrado();return;}
+  if(esCap(p)){renderCapForm(id);return;}
   editingId=id;
   document.title='Editar '+(p.nombre||'')+' — SoilTech';
   document.getElementById('rpTitle').textContent='Editando: '+(p.nombre||'');
@@ -1074,8 +1160,15 @@ function openEdit(id){
   formDirty=false;
 }
 
-function renderFormCrumbs(nombre,esEdicion){
+function renderFormCrumbs(nombre,esEdicion,esCurso){
   var id=editingId?encodeURIComponent(editingId):'';
+  if(esCurso){
+    document.getElementById('formCrumbs').innerHTML=
+      '<button class="back-btn" onclick="backFromForm()" title="Volver (Esc)">← '+(esEdicion?'Volver al curso':'Proyectos')+'</button>'+
+      '<span class="path"><a href="#/">Proyectos</a> / '+(esEdicion?'<a href="#/p/'+id+'">'+esc(nombre)+'</a> / <strong>Editar</strong>':'<strong>'+esc(nombre)+'</strong>')+'</span>'+
+      '<span class="acts"><button class="btn btn-g" onclick="guardarCap()">💾 Guardar</button></span>';
+    return;
+  }
   document.getElementById('formCrumbs').innerHTML=
     '<button class="back-btn" onclick="backFromForm()" title="Volver (Esc)">← '+(esEdicion?'Volver al proyecto':'Proyectos')+'</button>'+
     '<span class="path"><a href="#/">Proyectos</a> / '+(esEdicion?'<a href="#/p/'+id+'">'+esc(nombre)+'</a> / <strong>Editar</strong>':'<strong>'+esc(nombre)+'</strong>')+'</span>'+
@@ -1225,11 +1318,38 @@ function buildFormHTML(){
   fc.onchange=function(e){if(e.target.tagName==='SELECT'||e.target.type==='checkbox'){marcarCambio();calc()}};
 }
 
+/* El selector de servicio sale del catálogo, agrupado por tipo. */
+function llenarServicios(){
+  var ts=document.getElementById('tipoServicio');
+  if(!ts)return;
+  var h='<option value="">— Seleccionar —</option>';
+  ServiciosCat.tipos().forEach(function(t){
+    var ss=ServiciosCat.activos().filter(function(x){return x.tipo===t});
+    if(!ss.length)return;
+    h+='<optgroup label="'+esc(t)+'">';
+    ss.forEach(function(x){h+='<option value="'+esc(x.codigo)+'">'+esc(x.codigo+' — '+x.nombre)+'</option>'});
+    h+='</optgroup>';
+  });
+  ts.innerHTML=h;
+}
+
+/* Carga el servicio de un proyecto. Si quedó con un código viejo lo reconoce;
+   si no lo reconoce, lo agrega como opción suelta en vez de perderlo. */
+function setServicio(codigo){
+  var ts=document.getElementById('tipoServicio');
+  if(!ts)return;
+  if(!ts.options.length)llenarServicios();
+  if(!codigo){ts.value='';return}
+  var sv=ServiciosCat.resolver(codigo);
+  if(sv){ts.value=sv.codigo;return}
+  var o=document.createElement('option');
+  o.value=codigo;o.textContent=codigo+' — (fuera del catálogo)';
+  ts.appendChild(o);ts.value=codigo;
+}
+
 function initFormWidgets(labPrecios,equipVals,equipFijo){
   llenarClientes();
-  var ts=document.getElementById('tipoServicio');
-  ts.innerHTML='<option value="">— Seleccionar —</option>';
-  SERVICIOS.forEach(function(s){var o=document.createElement('option');o.value=s.code;o.textContent=s.code+' — '+s.name;ts.appendChild(o)});
+  llenarServicios();
   buildEquipTable(equipVals,equipFijo);
   buildLabTable(labPrecios);
 }
@@ -1317,7 +1437,7 @@ function populateForm(p){
   /* Los datos generales siempre salen del proyecto (pueden haber cambiado al aprobar) */
   setCampo('proyNombre',p.nombre||'');
   setCampo('proyUbi',p.ubicacion||'');
-  setCampo('tipoServicio',p.tipoServicio||'');
+  setServicio(p.tipoServicio||'');
   var cs=document.getElementById('cliSel');
   var guardado=f&&f.campos?f.campos.cliSel:'';
   var cli=CLIS.find(function(c){return c.id===guardado});
@@ -1979,6 +2099,7 @@ function buildCatSummary(pr,cot){
 function getHonorarios(){return Array.from(document.querySelectorAll('#honBody tr')).map(function(r){var inp=r.querySelectorAll('input');var sels=r.querySelectorAll('select');return{categoria:sels[0]?sels[0].value:'',nombre:inp.length>0?inp[0].value:'',cantidad:parseFloat(inp[1]&&inp[1].value)||0,unidad:sels[1]?sels[1].value:'',dias:parseFloat(inp[2]&&inp[2].value)||0,costoUnit:parseFloat(inp[3]&&inp[3].value)||0}})}
 
 function guardar(forzar){
+  if(document.getElementById('cpNombre')){guardarCap();return;}
   calc();
   var pend=marcarPendientes();
   var cotV=parseFloat(document.getElementById('cotizacion').value);
@@ -2548,7 +2669,7 @@ function confirmApprove(){
     return db.collection('facturas').orderBy('numero','desc').limit(1).get();
   }).then(function(s){
     var fNum=s.empty?271:s.docs[0].data().numero+1;
-    var svc=SERVICIOS.find(function(sv){return sv.code===p.tipoServicio})||SERVICIOS[0];
+    var svc=ServiciosCat.resolver(p.tipoServicio);
     // Monto de la factura en la moneda elegida (antes se usaba el monto USD aunque se eligiera GUARANIES)
     var cotF=p.cotizacion||6500;
     var esUsd=moneda.indexOf('DOLAR')>=0;
@@ -2560,7 +2681,8 @@ function confirmApprove(){
       numero:fNum,nroFormateado:'001-001-'+String(fNum).padStart(7,'0'),
       fecha:new Date().toISOString().split('T')[0],condicion:'CONTADO',moneda:moneda,tipoIva:10,
       cliente:p.cliente,ruc:cli.ruc||'',direccion:cli.direccion||'',telefono:cli.telefono||'',
-      items:[{cant:1,code:p.tipoServicio||'ST-07',desc:'ANTICIPO '+pct+'% - '+svc.name,unit:montoFact}],
+      items:[{cant:1,code:svc?svc.codigo:(p.tipoServicio||''),
+              desc:'ANTICIPO '+pct+'%'+(svc?' - '+svc.nombre:''),unit:montoFact}],
       total:montoFact,ivaAmount:montoFact/11,
       estado:'activa',impresa:false,enviada:false,pagada:false,
       proyectoId:p.id,tipo:'anticipo',createdAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -2608,9 +2730,64 @@ function deleteCot(id){
     if(editingId===id){editingId=null;nav('#/')}else loadAll();
   }).catch(function(e){toast('❌ '+e.message)});
 }
+/* Borra el proyecto y lo que cuelga de él. Las facturas NO se borran: se desvinculan,
+   porque son documentos legales que existen aunque el proyecto no. */
+function eliminarProyecto(id){
+  var p=findProj(id);
+  var nombre=(p&&p.nombre)||'este proyecto';
+  Promise.all([
+    db.collection('gastos').where('proyectoId','==',id).get(),
+    db.collection('pagos_recibidos').where('proyectoId','==',id).get(),
+    db.collection('pagos_colaboradores').where('proyectoId','==',id).get(),
+    db.collection('facturas').where('proyectoId','==',id).get(),
+    db.collection('proyectos').doc(id).collection('asignaciones').get()
+  ]).then(function(r){
+    var ng=r[0].size,npr=r[1].size,npc=r[2].size,nf=r[3].size,na=r[4].size;
+    var mov=ng+npr+npc;
+    var li=[];
+    if(ng)li.push(ng+' gasto'+(ng===1?'':'s'));
+    if(npr)li.push(npr+' cobro'+(npr===1?'':'s')+' recibido'+(npr===1?'':'s'));
+    if(npc)li.push(npc+' pago'+(npc===1?'':'s')+' a colaboradores');
+    if(na)li.push(na+' asignación'+(na===1?'':'es')+' de presupuesto');
+    var cuerpo='<p style="margin-bottom:10px">Vas a eliminar <strong style="color:var(--gd)">'+esc(nombre)+'</strong>.</p>';
+    cuerpo+=li.length
+      ? '<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:10px 12px;margin-bottom:10px"><div style="font-weight:700;color:#B91C1C;font-size:12px;margin-bottom:4px">También se borran</div><ul style="margin:0 0 0 16px;padding:0;color:#991B1B;font-size:12.5px">'+li.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'
+      : '<div style="background:var(--sf2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12.5px">No tiene movimientos cargados.</div>';
+    if(nf)cuerpo+='<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12.5px;color:#92400E">Tiene <strong>'+nf+' factura'+(nf===1?'':'s')+'</strong>: no se borran, quedan desvinculadas del proyecto.</div>';
+    cuerpo+='<p style="font-size:12px;color:var(--tx3)">Esto no se puede deshacer.</p>';
+
+    return confirmar({icono:'🗑',titulo:'Eliminar proyecto',cuerpo:cuerpo,ok:'Sí, eliminar',peligro:true}).then(function(ok){
+      if(!ok)return;
+      if(mov===0)return borrar();
+      return confirmar({
+        icono:'⚠️',titulo:'Última confirmación',
+        cuerpo:'<p>Se van a borrar <strong>'+mov+' movimientos</strong> de «'+esc(nombre)+'». Los gastos y cobros cargados desde la app también desaparecen.</p>',
+        ok:'Borrar todo',peligro:true
+      }).then(function(ok2){if(ok2)return borrar()});
+
+      function borrar(){
+        var batch=db.batch();
+        [r[0],r[1],r[2],r[4]].forEach(function(snap){snap.forEach(function(d){batch.delete(d.ref)})});
+        r[3].forEach(function(d){batch.update(d.ref,{proyectoId:null,proyectoNombre:null})});
+        batch.delete(db.collection('proyectos').doc(id));
+        return batch.commit().then(function(){
+          toast('🗑 «'+nombre+'» eliminado'+(nf?' · '+nf+' factura'+(nf===1?'':'s')+' desvinculada'+(nf===1?'':'s'):''));
+          BalanceData.invalidar();
+          if(editingId===id)editingId=null;
+          nav('#/');loadAll();
+        });
+      }
+    });
+  }).catch(function(e){toast('❌ '+e.message)});
+}
 function finishProject(id){
   var p=findProj(id);
-  if(!confirm('¿Marcar «'+((p&&p.nombre)||'')+'» como finalizado?'))return;
+  confirmar({icono:'✔',titulo:'Finalizar proyecto',cuerpo:'<p>«'+esc((p&&p.nombre)||'')+'» pasa a <strong>Finalizado</strong>. Vas a poder seguir viendo su balance.</p>',ok:'Finalizar'}).then(function(ok){
+    if(!ok)return;
+    finishProjectOk(id);
+  });
+}
+function finishProjectOk(id){
   db.collection('proyectos').doc(id).update({estado:'Finalizado',fechaModificacion:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){toast('✔ Proyecto finalizado');refrescarVista()}).catch(function(e){toast('❌ '+e.message)});
 }
 
@@ -2722,5 +2899,6 @@ function fillTemplate(wb,p){
   }
 }
 </script>
+<script src="capacitacion.js"></script>
 </body>
 </html>

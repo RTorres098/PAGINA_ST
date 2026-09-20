@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SoilTech — Admin</title>
 <link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="shell.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-  :root{--bg:#F4F0E8;--sf:#fff;--sf2:#EDE9E0;--g:#34A678;--gd:#18403E;--tx:#1A1A1A;--tx2:#6B6B6B;--tx3:#9CA3AF;--bd:#E0DDD5;--dg:#EF4444;--warn:#F59E0B;--info:#3B82F6}
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(--tx);min-height:100vh}
   .hidden{display:none!important}
@@ -38,57 +38,10 @@
   .btn-login{width:100%;padding:13px;border-radius:10px;border:none;background:var(--g);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;transition:background .15s}
   .btn-login:hover{background:#2D9068}.btn-login:disabled{opacity:.55;cursor:not-allowed}
   .error{color:var(--dg);font-size:12px;margin-top:10px;min-height:18px}
-
-  /* ── Hub ── */
-  .hub{min-height:100vh;background:var(--bg)}
-  .hub-main{max-width:1080px;margin:0 auto;padding:36px 24px 60px}
-  .greet{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
-  .greet h1{font-size:28px;color:var(--gd);line-height:1.15}
-  .greet .date{font-size:13px;color:var(--tx2);margin-top:4px}
-  .role{font-size:11px;font-weight:700;color:var(--g);background:rgba(52,166,120,0.1);padding:5px 10px;border-radius:20px}
-
-  .modules{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px}
-  .module .ms .v.sm{font-size:16px;white-space:nowrap}
-  .module .ms.neg .v{color:#DC2626}
-  @media (max-width:1060px){.modules{grid-template-columns:1fr 1fr}}
-  .module{display:flex;flex-direction:column;background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:24px;text-decoration:none;color:var(--tx);transition:transform .15s,box-shadow .15s,border-color .15s;position:relative;overflow:hidden}
-  .module:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(24,64,62,0.12);border-color:var(--g)}
-  .module .ico{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px}
-  .module .ico svg{width:26px;height:26px}
-  .module h2{font-size:19px;color:var(--gd);margin-bottom:4px}
-  .module p{font-size:13px;color:var(--tx2);line-height:1.5;margin-bottom:18px}
-  .module .mstats{display:flex;gap:18px;margin-top:auto;padding-top:16px;border-top:1px solid var(--sf2)}
-  .module .ms .v{font-size:22px;font-weight:700;color:var(--gd)}
-  .module .ms .l{font-size:11px;color:var(--tx2)}
-  .module .ms.warn .v{color:#B45309}
-  .module .go{position:absolute;top:24px;right:24px;color:var(--tx3);font-size:20px;transition:transform .15s,color .15s}
-  .module:hover .go{transform:translateX(4px);color:var(--g)}
-
-  .row2{display:grid;grid-template-columns:1fr 1.6fr;gap:18px}
-  .panel{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:20px}
-  .panel h3{font-size:13px;font-weight:700;color:var(--gd);margin-bottom:12px}
-  .qa{display:flex;flex-direction:column;gap:8px}
-  .qa a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;background:var(--bg);text-decoration:none;color:var(--tx);font-size:13px;font-weight:600;border:1px solid transparent;transition:border-color .15s,background .15s}
-  .qa a:hover{border-color:var(--g);background:#fff}
-  .qa a .plus{width:26px;height:26px;border-radius:8px;background:var(--g);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:700;flex-shrink:0}
-  .qa a .plus.alt{background:var(--info)}
-  .recent a{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--sf2);text-decoration:none;color:var(--tx)}
-  .recent a:last-child{border-bottom:none}
-  .recent a:hover .rn{color:var(--g)}
-  .recent .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-  .recent .rn{font-size:13px;font-weight:700;color:var(--gd);transition:color .15s}
-  .recent .rc{font-size:11px;color:var(--tx2)}
-  .recent .rv{margin-left:auto;text-align:right;font-size:13px;font-weight:700;color:var(--gd);white-space:nowrap}
-  .recent .rv small{display:block;font-size:10px;font-weight:500;color:var(--tx3)}
-  .empty{font-size:12px;color:var(--tx3);padding:14px 0}
-  .skel{height:14px;border-radius:6px;background:linear-gradient(90deg,var(--sf2),#f7f4ee,var(--sf2));background-size:200% 100%;animation:sk 1.2s infinite;margin:12px 0}
-  @keyframes sk{to{background-position:-200% 0}}
-
   @media (max-width:820px){
     .login-card{grid-template-columns:1fr}
     .login-side{padding:28px}.login-side .strata,.login-side p{display:none}.login-side h1{margin-top:14px;font-size:24px}
     .login-form{padding:28px}
-    .modules,.row2{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -135,73 +88,149 @@
   </div>
 </div>
 
-<!-- ═══ HUB ═══ -->
-<div class="hub hidden" id="hubPanel">
-  <header class="st-top">
-    <a class="st-brand" href="./"><span class="st-logo" id="logoB"></span><span>SoilTech <b>Admin</b></span></a>
-    <nav class="st-nav"><a class="on" href="./">Inicio</a><a href="presupuesto/">Presupuestos</a><a href="presupuesto/#/balance">Balance</a><a href="clientes/">Clientes</a><a href="facturacion/">Facturación</a></nav>
-    <div class="st-right">
-      <a class="st-btn st-btn-ghost" href="/">Ver sitio</a>
-      <button class="st-btn st-btn-ghost" onclick="logout()">Cerrar sesión</button>
-    </div>
-  </header>
+<!-- ═══ PANEL ═══ -->
+<div class="sh hidden" id="shell">
+  <div class="sh-scrim" id="scrim" onclick="cerrarCajon()"></div>
 
-  <main class="hub-main">
-    <div class="greet">
-      <div><h1 id="greetTitle">Hola</h1><div class="date" id="greetDate"></div></div>
-      <span class="role" id="roleTag"></span>
-    </div>
+  <!-- Barra lateral -->
+  <aside class="sh-side">
+    <a class="sh-logo" href="./"><span class="mk" id="logoB"></span><span class="tt">SoilTech<small>Admin</small></span></a>
+    <nav class="sh-nav">
+      <div class="sh-grp">Panel</div>
+      <a class="on" href="./" title="Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span class="lb">Inicio</span></a>
+      <a href="presupuesto/#/balance" title="Balance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="lb">Balance</span></a>
 
-    <div class="modules">
-      <a class="module" href="presupuesto/">
-        <span class="go">→</span>
-        <div class="ico" style="background:rgba(52,166,120,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#2D9068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
-        <h2>Presupuestos y proyectos</h2>
-        <p>Armar cotizaciones, generar propuestas y aprobar proyectos.</p>
-        <div class="mstats">
-          <div class="ms warn"><div class="v" id="sCot">–</div><div class="l">Cotizaciones abiertas</div></div>
-          <div class="ms"><div class="v" id="sAct">–</div><div class="l">En curso</div></div>
-          <div class="ms"><div class="v" id="sFin">–</div><div class="l">Finalizados</div></div>
-        </div>
-      </a>
-      <a class="module" href="presupuesto/#/balance">
-        <span class="go">→</span>
-        <div class="ico" style="background:rgba(139,92,246,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
-        <h2>Balance</h2>
-        <p>Cobros, gastos de la app y resultado de cada proyecto en un solo lugar.</p>
-        <div class="mstats">
-          <div class="ms" id="sDispBox"><div class="v sm" id="sDisp">–</div><div class="l">Disponible</div></div>
-          <div class="ms warn"><div class="v sm" id="sPorCobrar">–</div><div class="l">Por cobrar</div></div>
-        </div>
-      </a>
-      <a class="module" href="facturacion/">
-        <span class="go">→</span>
-        <div class="ico" style="background:rgba(59,130,246,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></div>
-        <h2>Facturación</h2>
-        <p>Emitir facturas, gestionar clientes e imprimir sobre hojas preimpresas.</p>
-        <div class="mstats">
-          <div class="ms warn"><div class="v" id="sPend">–</div><div class="l">Sin cobrar</div></div>
-          <div class="ms"><div class="v" id="sFact">–</div><div class="l">Facturas activas</div></div>
-        </div>
-      </a>
-    </div>
+      <div class="sh-grp">Operación</div>
+      <a href="presupuesto/" title="Presupuestos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span class="lb">Presupuestos</span><span class="pill hidden" id="navCot">0</span></a>
+      <a href="facturacion/" title="Facturación"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span class="lb">Facturación</span><span class="pill hidden" id="navFac">0</span></a>
+      <a href="clientes/" title="Clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg><span class="lb">Clientes</span></a>
 
-    <div class="row2">
-      <div class="panel">
-        <h3>Accesos rápidos</h3>
+      <div class="sh-grp">Ajustes</div>
+      <a href="servicios/" title="Servicios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.63.67 1.1 1.31 1.1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="lb">Servicios</span></a>
+
+      <div class="sh-grp">Crear</div>
+      <a href="presupuesto/#/nuevo" title="Nuevo presupuesto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span class="lb">Nuevo presupuesto</span></a>
+      <a href="facturacion/#nueva" title="Nueva factura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span class="lb">Nueva factura</span></a>
+      <a href="clientes/#nuevo" title="Nuevo cliente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span class="lb">Nuevo cliente</span></a>
+    </nav>
+    <div class="sh-foot">
+      <a href="/" title="Ver el sitio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg><span class="lb">Ver el sitio</span></a>
+    </div>
+  </aside>
+
+  <!-- Contenido -->
+  <div class="sh-main">
+    <header class="sh-top">
+      <button class="sh-burg" onclick="alternarBarra()" title="Contraer o expandir el menú" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      </button>
+      <div class="sh-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="buscador" type="search" placeholder="Buscar proyecto o cliente…" autocomplete="off"
+               oninput="buscar()" onfocus="buscar()" onkeydown="if(event.key==='Escape'){this.value='';buscar()}">
+        <div class="sh-pop" id="popBuscar" style="top:52px;left:0;right:auto;width:100%"></div>
+      </div>
+      <div class="sh-tools">
+        <button class="sh-ico" onclick="abrirPop('popAlertas')" title="Avisos" aria-label="Avisos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="bdg hidden" id="badgeAl">0</span>
+        </button>
+        <button class="sh-user" onclick="abrirPop('popUser')">
+          <span class="av" id="userAv">··</span>
+          <span class="nm" id="userNm">—<small id="userRol"></small></span>
+        </button>
+        <div class="sh-pop" id="popAlertas"><h4>Avisos</h4><div id="listaAlertas"><div class="none">Cargando…</div></div></div>
+        <div class="sh-pop" id="popUser">
+          <h4 id="userMail">—</h4>
+          <a class="it" href="presupuesto/#/balance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Ver el balance</a>
+          <a class="it" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>Ver el sitio</a>
+          <div class="sep"></div>
+          <button class="it dg" onclick="logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="sh-body">
+      <div class="sh-head">
+        <div><h1 class="sh-h1" id="greetTitle">Hola</h1><div class="sh-sub" id="greetDate"></div></div>
+        <div style="font-size:11.5px;color:var(--tx2)">Valores en guaraníes; el USD se convierte a la cotización de cada factura.</div>
+      </div>
+
+      <!-- Indicadores -->
+      <div class="grid g4" style="margin-bottom:18px">
+        <div class="kc hero">
+          <div class="top">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></div>
+            <span id="kFacDlt"></span>
+          </div>
+          <div class="l">Facturado del mes</div><div class="v" id="kFac">—</div><div class="s" id="kFacS">&nbsp;</div>
+        </div>
+        <div class="kc">
+          <div class="top">
+            <div class="ic" style="background:rgba(52,166,120,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#2D9068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <span id="kCobDlt"></span>
+          </div>
+          <div class="l">Cobrado del mes</div><div class="v" id="kCob">—</div><div class="s" id="kCobS">&nbsp;</div>
+        </div>
+        <div class="kc">
+          <div class="top">
+            <div class="ic" style="background:rgba(245,158,11,.14)"><svg viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          </div>
+          <div class="l">Por cobrar</div><div class="v" id="kPc">—</div><div class="s" id="kPcS">&nbsp;</div>
+        </div>
+        <div class="kc" id="kDispBox">
+          <div class="top">
+            <div class="ic" style="background:rgba(139,92,246,.13)"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
+          </div>
+          <div class="l">Disponible en caja</div><div class="v" id="kDisp">—</div><div class="s" id="kDispS">&nbsp;</div>
+        </div>
+      </div>
+
+      <!-- Facturado por mes + pendientes -->
+      <div class="grid g83" style="margin-bottom:18px">
+        <div class="card">
+          <div class="hd"><h3>Facturado por mes</h3><a class="more" href="facturacion/">Ver facturación →</a></div>
+          <div class="hint">Últimos 6 meses, sin contar anuladas ni las de compensación.</div>
+          <div class="fill" id="chFac"><div class="skel" style="height:180px"></div></div>
+        </div>
+        <div class="card">
+          <div class="hd"><h3>Te falta hacer</h3></div>
+          <div class="hint">Lo que está esperando una acción tuya.</div>
+          <div class="tdo" id="chTodo"><div class="skel"></div><div class="skel" style="width:70%"></div></div>
+        </div>
+      </div>
+
+      <!-- Cobranza + proyectos + recientes -->
+      <div class="grid g3" style="margin-bottom:18px">
+        <div class="card">
+          <div class="hd"><h3>Estado de cobranza</h3></div>
+          <div class="hint">Sobre todo lo facturado y vigente.</div>
+          <div id="chCob"><div class="skel" style="height:150px"></div></div>
+        </div>
+        <div class="card">
+          <div class="hd"><h3>Proyectos por estado</h3><a class="more" href="presupuesto/">Ver todos →</a></div>
+          <div class="hint">Cantidad y valor contratado en USD.</div>
+          <div id="chProy"><div class="skel"></div><div class="skel" style="width:60%"></div></div>
+        </div>
+        <div class="card">
+          <div class="hd"><h3>Proyectos recientes</h3></div>
+          <div class="hint">Lo último que se movió.</div>
+          <div class="rec" id="recentList"><div class="skel"></div><div class="skel" style="width:70%"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd"><h3>Accesos rápidos</h3></div>
+        <div class="hint">&nbsp;</div>
         <div class="qa">
-          <a href="presupuesto/#/nuevo"><span class="plus">+</span>Nuevo presupuesto</a>
-          <a href="facturacion/#nueva"><span class="plus alt">+</span>Nueva factura</a>
-          <a href="clientes/#nuevo"><span class="plus" style="background:#8B5CF6">+</span>Nuevo cliente</a>
-          <a href="clientes/"><span class="plus" style="background:var(--gd)">☰</span>Ver clientes</a>
+          <a href="presupuesto/#/nuevo"><span class="pl">+</span>Nuevo presupuesto</a>
+          <a href="facturacion/#nueva"><span class="pl" style="background:var(--info)">+</span>Nueva factura</a>
+          <a href="clientes/#nuevo"><span class="pl" style="background:var(--vio)">+</span>Nuevo cliente</a>
+          <a href="presupuesto/#/balance"><span class="pl" style="background:var(--gd)">₲</span>Ver el balance</a>
         </div>
       </div>
-      <div class="panel">
-        <h3>Proyectos recientes</h3>
-        <div class="recent" id="recentList"><div class="skel"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:85%"></div></div>
-      </div>
-    </div>
-  </main>
+    </main>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -209,6 +238,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="config.js"></script>
 <script src="balance-calc.js"></script>
+<script src="charts.js"></script>
 <script>
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth=firebase.auth(), db=firebase.firestore();
@@ -219,7 +249,35 @@ document.getElementById('logoB').innerHTML=LOGO;
 
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const show=(id,on)=>document.getElementById(id).classList.toggle('hidden',!on);
+const $=id=>document.getElementById(id);
 
+/* ═══ Barra lateral: colapsar y recordar ═══ */
+const SHELL=$('shell');
+if(localStorage.getItem('stSideCol')==='1')SHELL.classList.add('col');
+function alternarBarra(){
+  if(window.matchMedia('(max-width:900px)').matches){
+    SHELL.classList.toggle('open');
+    $('scrim').classList.toggle('show',SHELL.classList.contains('open'));
+    return;
+  }
+  SHELL.classList.toggle('col');
+  localStorage.setItem('stSideCol',SHELL.classList.contains('col')?'1':'0');
+}
+function cerrarCajon(){SHELL.classList.remove('open');$('scrim').classList.remove('show')}
+
+/* ═══ Menús de la barra superior ═══ */
+function abrirPop(id){
+  const el=$(id), abierto=el.classList.contains('show');
+  document.querySelectorAll('.sh-pop').forEach(p=>p.classList.remove('show'));
+  if(!abierto)el.classList.add('show');
+  event.stopPropagation();
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.sh-pop')&&!e.target.closest('.sh-search')&&!e.target.closest('.sh-tools'))
+    document.querySelectorAll('.sh-pop').forEach(p=>p.classList.remove('show'));
+});
+
+/* ═══ Acceso ═══ */
 auth.onAuthStateChanged(async(user)=>{
   show('loadingState',false);
   if(!user){showLogin();return;}
@@ -228,55 +286,244 @@ auth.onAuthStateChanged(async(user)=>{
     if(!doc.exists){showError('Tu cuenta no tiene perfil en la app.');auth.signOut();showLogin();return;}
     const data=doc.data(), rol=data.rol||'operativo';
     if(rol!=='super_admin'&&rol!=='admin'){showError('Acceso restringido. Solo administradores.');auth.signOut();showLogin();return;}
-    showHub(data,rol);
+    showPanel(data,rol,user);
   }catch(e){showError('Error: '+e.message);showLogin();}
 });
 
-function showLogin(){show('loginBox',true);show('hubPanel',false);}
-function showHub(d,rol){
-  show('loginBox',false);show('hubPanel',true);
+function showLogin(){show('loginBox',true);show('shell',false);}
+function showPanel(d,rol,user){
+  show('loginBox',false);show('shell',true);
   const h=new Date().getHours();
   const saludo=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
-  document.getElementById('greetTitle').textContent=saludo+(d.nombre?', '+d.nombre:'');
+  const nombre=d.nombre||'';
+  $('greetTitle').textContent=saludo+(nombre?', '+nombre:'');
   const fecha=new Date().toLocaleDateString('es-PY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('greetDate').textContent=fecha.charAt(0).toUpperCase()+fecha.slice(1);
-  document.getElementById('roleTag').textContent=rol==='super_admin'?'Super Admin':'Administrador';
-  loadResumen();
+  $('greetDate').textContent=fecha.charAt(0).toUpperCase()+fecha.slice(1);
+  $('userNm').innerHTML=esc(nombre.split(' ')[0]||'Usuario')+'<small>'+(rol==='super_admin'?'Super Admin':'Administrador')+'</small>';
+  $('userAv').textContent=(nombre||user.email||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+  $('userMail').textContent=user.email||'';
+  cargarPanel();
 }
 
+/* ═══ Datos ═══ */
 const tsMs=v=>v&&v.toMillis?v.toMillis():(v instanceof Date?v.getTime():0);
 const COLOR={'Cotización':'#F59E0B','En Curso':'#34A678','Finalizado':'#9CA3AF'};
+let PROY=[], FACT=[], COT_REF=7300;
 
-async function loadResumen(){
+function fdate(v){
+  if(!v)return null;
+  if(v.toDate)return v.toDate();
+  const p=String(v).slice(0,10).split('-');
+  if(p.length!==3)return null;
+  const d=new Date(+p[0],+p[1]-1,+p[2]);
+  return isNaN(d.getTime())?null:d;
+}
+const mesClave=d=>d?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'):'';
+const esUsd=f=>(f.moneda||'').indexOf('DOLAR')>=0;
+function cotDe(f){
+  if(f.cotizacion>0)return f.cotizacion;
+  const p=PROY.find(x=>x._id===f.proyectoId);
+  if(p&&p.cotizacion>0)return p.cotizacion;
+  return COT_REF;
+}
+const gsDe=f=>esUsd(f)?(f.total||0)*cotDe(f):(f.total||0);
+function diasDe(f){
+  const d=fdate(f.fecha); if(!d)return 0;
+  const h=new Date(); h.setHours(0,0,0,0);
+  return Math.floor((h-d)/86400000);
+}
+
+async function cargarPanel(){
   try{
     const [ps,bd]=await Promise.all([db.collection('proyectos').get(),BalanceData.cargar(db)]);
-    const P=ps.docs.map(d=>Object.assign({_id:d.id},d.data()));
-    const F=bd.facturas;
-    const g=BalanceCalc.general(P,bd.gastos,bd.ingresos,bd.colabs);
-    document.getElementById('sDisp').textContent='₲ '+fmtGs(Math.round(g.disponible));
-    document.getElementById('sDispBox').classList.toggle('neg',g.disponible<0);
-    document.getElementById('sPorCobrar').textContent='USD '+fmtUsd(g.porCobrarUsd);
-    const n=e=>P.filter(p=>p.estado===e).length;
-    document.getElementById('sCot').textContent=n('Cotización');
-    document.getElementById('sAct').textContent=n('En Curso');
-    document.getElementById('sFin').textContent=n('Finalizado');
-    const act=F.filter(f=>f.estado==='activa');
-    document.getElementById('sFact').textContent=act.length;
-    document.getElementById('sPend').textContent=act.filter(f=>!f.pagada).length;
+    PROY=ps.docs.map(d=>Object.assign({_id:d.id},d.data()));
+    FACT=bd.facturas;
+    const conCot=FACT.slice().sort((a,b)=>(b.numero||0)-(a.numero||0)).find(x=>x.cotizacion>0);
+    if(conCot)COT_REF=conCot.cotizacion;
+    else{const pc=PROY.find(x=>x.cotizacion>0);if(pc)COT_REF=pc.cotizacion}
 
-    const rec=P.slice().sort((a,b)=>tsMs(b.fechaModificacion||b.fechaCreacion||b.fechaRegistro)-tsMs(a.fechaModificacion||a.fechaCreacion||a.fechaRegistro)).slice(0,5);
-    document.getElementById('recentList').innerHTML=rec.length?rec.map(p=>{
-      const monto=p.valorUsd?'USD '+fmtUsd(p.valorUsd):'—';
-      return `<a href="presupuesto/#/p/${encodeURIComponent(p._id)}"><span class="dot" style="background:${COLOR[p.estado]||'#9CA3AF'}"></span><span><div class="rn">${esc(p.nombre||'Sin nombre')}</div><div class="rc">${esc(p.cliente||'Sin cliente')}</div></span><span class="rv">${monto}<small>${esc(p.estado||'')}</small></span></a>`;
-    }).join(''):'<div class="empty">Todavía no hay proyectos.</div>';
+    const g=BalanceCalc.general(PROY,bd.gastos,bd.ingresos,bd.colabs);
+    pintarKpis(g);
+    pintarFacturadoPorMes();
+    pintarCobranza();
+    pintarProyectos();
+    pintarPendientes();
+    pintarRecientes();
   }catch(e){
-    document.getElementById('recentList').innerHTML='<div class="empty">No se pudo cargar el resumen: '+esc(e.message)+'</div>';
+    $('chTodo').innerHTML='<div class="empty">No se pudo cargar: '+esc(e.message)+'</div>';
+    $('recentList').innerHTML='<div class="empty">Sin datos.</div>';
   }
 }
 
-function showError(m){document.getElementById('errorMsg').textContent=m;}
+function delta(a,b){
+  if(!(b>0))return '';
+  const p=Math.round((a-b)/b*100);
+  if(p===0)return '<span class="dlt eq">=</span>';
+  return '<span class="dlt '+(p>0?'up':'dn')+'">'+(p>0?'▲':'▼')+Math.abs(p)+'%</span>';
+}
+
+function pintarKpis(g){
+  const hoy=new Date(), mAct=mesClave(hoy), mPrev=mesClave(new Date(hoy.getFullYear(),hoy.getMonth()-1,1));
+  const act=FACT.filter(f=>f.estado!=='anulada');
+  let fac=0,facP=0,cant=0,comp=0,cob=0,cobP=0,cobC=0,pc=0,pcC=0,venc=0;
+  act.forEach(f=>{
+    const m=mesClave(fdate(f.fecha)), suma=!f.noSuma;
+    if(m===mAct){cant++; if(suma)fac+=gsDe(f); else comp++;}
+    else if(m===mPrev&&suma)facP+=gsDe(f);
+    if(f.pagada&&f.fechaPago){
+      const mp=mesClave(fdate(f.fechaPago));
+      if(mp===mAct){cobC++; if(suma)cob+=gsDe(f);}
+      else if(mp===mPrev&&suma)cobP+=gsDe(f);
+    }
+    if(!f.pagada){
+      const v=f.noSuma?0:gsDe(f);
+      pc+=v; pcC++;
+      if(diasDe(f)>60)venc+=v;
+    }
+  });
+  $('kFac').textContent='₲ '+fmtGs(Math.round(fac));
+  $('kFacDlt').innerHTML=delta(fac,facP);
+  $('kFacS').textContent=cant+' factura'+(cant===1?'':'s')+(comp?' ('+comp+' de compensación)':'')+' este mes';
+  $('kCob').textContent='₲ '+fmtGs(Math.round(cob));
+  $('kCobDlt').innerHTML=delta(cob,cobP);
+  $('kCobS').textContent=cobC+' cobrada'+(cobC===1?'':'s')+(fac>0?' · '+Math.round(cob/fac*100)+'% de lo facturado':'');
+  $('kPc').textContent='₲ '+fmtGs(Math.round(pc));
+  $('kPcS').textContent=pcC+' sin cobrar'+(venc>0?' · ₲ '+fmtGs(Math.round(venc))+' con +60 días':'');
+  $('kDisp').textContent='₲ '+fmtGs(Math.round(g.disponible));
+  $('kDispBox').classList.toggle('neg',g.disponible<0);
+  $('kDispS').textContent='Cobrado menos gastos y pagos a colaboradores';
+}
+
+function pintarFacturadoPorMes(){
+  const hoy=new Date(), meses=[], mapa={};
+  for(let i=5;i>=0;i--){
+    const d=new Date(hoy.getFullYear(),hoy.getMonth()-i,1);
+    const k=mesClave(d);
+    mapa[k]=0;
+    meses.push({k:k,etiqueta:d.toLocaleDateString('es-PY',{month:'short'}).replace('.','').toUpperCase()});
+  }
+  FACT.forEach(f=>{
+    if(f.estado==='anulada'||f.noSuma)return;
+    const k=mesClave(fdate(f.fecha));
+    if(k in mapa)mapa[k]+=gsDe(f);
+  });
+  $('chFac').innerHTML=STChart.barras(meses.map(m=>({
+    etiqueta:m.etiqueta, valor:Math.round(mapa[m.k]),
+    titulo:'₲ '+fmtGs(Math.round(mapa[m.k]))
+  })),{alto:200});
+}
+
+function pintarCobranza(){
+  const act=FACT.filter(f=>f.estado!=='anulada'&&!f.noSuma);
+  let cobrado=0,alDia=0,vencido=0;
+  act.forEach(f=>{
+    const v=gsDe(f);
+    if(f.pagada)cobrado+=v;
+    else if(diasDe(f)>60)vencido+=v;
+    else alDia+=v;
+  });
+  const partes=[
+    {etiqueta:'Cobrado',valor:cobrado,color:'#34A678'},
+    {etiqueta:'Por cobrar al día',valor:alDia,color:'#F59E0B'},
+    {etiqueta:'Vencido +60 días',valor:vencido,color:'#EF4444'}
+  ];
+  const total=cobrado+alDia+vencido;
+  const pct=total>0?Math.round(cobrado/total*100)+'%':'—';
+  $('chCob').innerHTML='<div style="display:flex;justify-content:center">'+
+    STChart.dona(partes,{centro:pct,sub:'cobrado'})+'</div>'+
+    STChart.leyenda(partes,v=>'₲ '+STChart.corto(v));
+}
+
+function pintarProyectos(){
+  const estados=['Cotización','En Curso','Finalizado'];
+  const datos=estados.map(e=>{
+    const lista=PROY.filter(p=>p.estado===e);
+    const usd=lista.reduce((s,p)=>s+(+p.valorUsd||0),0);
+    return {etiqueta:e==='En Curso'?'En curso':e,valor:lista.length,color:COLOR[e],
+            texto:lista.length+(usd>0?'  ·  USD '+fmtUsd(usd):'')};
+  });
+  const otros=PROY.filter(p=>estados.indexOf(p.estado)<0).length;
+  if(otros)datos.push({etiqueta:'Otros',valor:otros,color:'#9CA3AF',texto:String(otros)});
+  $('chProy').innerHTML=STChart.barrasH(datos)+
+    '<div style="font-size:11.5px;color:var(--tx2);margin-top:4px">'+PROY.length+' proyecto'+(PROY.length===1?'':'s')+' en total.</div>';
+}
+
+/* Pendientes: lo que espera una acción. También alimenta los avisos y las cápsulas del menú. */
+function pintarPendientes(){
+  const act=FACT.filter(f=>f.estado!=='anulada');
+  const sinEnviar=act.filter(f=>!f.enviada&&!f.noSuma).length;
+  const sinImprimir=act.filter(f=>!f.impresa).length;
+  const porAprobar=PROY.filter(p=>p.estado==='Cotización').length;
+  const vencidas=act.filter(f=>!f.pagada&&diasDe(f)>60&&!f.noSuma).length;
+  // Proyectos ya aprobados que todavía no tienen ninguna factura impresa
+  const sinFactura=PROY.filter(p=>p.estado==='En Curso'&&!act.some(f=>f.proyectoId===p._id&&f.impresa)).length;
+
+  const items=[
+    {n:sinEnviar,  tt:'Facturas sin enviar',      sb:'Emitidas, todavía sin llegar al cliente', href:'facturacion/', c:'#3B82F6', ic:'M22 2 11 13M22 2l-7 20-4-9-9-4z'},
+    {n:sinImprimir,tt:'Facturas sin imprimir',    sb:'Falta pasarlas por la hoja preimpresa',   href:'facturacion/', c:'#8B5CF6', ic:'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z'},
+    {n:porAprobar, tt:'Cotizaciones por aprobar', sb:'Presupuestos esperando respuesta',        href:'presupuesto/', c:'#F59E0B', ic:'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'},
+    {n:sinFactura, tt:'Aprobados sin facturar',   sb:'En curso y todavía sin factura impresa',  href:'presupuesto/', c:'#EF4444', ic:'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'},
+    {n:vencidas,   tt:'Cobros vencidos',          sb:'Más de 60 días sin cobrar',               href:'facturacion/', c:'#B91C1C', ic:'M12 7v5l3 2M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18z'}
+  ].filter(x=>x.n>0);
+
+  $('chTodo').innerHTML=items.length?items.map(x=>
+    '<a href="'+x.href+'"><span class="ic" style="background:'+x.c+'1F"><svg viewBox="0 0 24 24" fill="none" stroke="'+x.c+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+x.ic+'"/></svg></span>'+
+    '<span class="tx"><span class="tt">'+esc(x.tt)+'</span><span class="sb">'+esc(x.sb)+'</span></span>'+
+    '<span class="ct">'+x.n+'</span></a>').join('')
+    :'<div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Todo al día, no hay nada pendiente.</div>';
+
+  // Cápsulas del menú lateral
+  const cap=(id,n)=>{const el=$(id);el.textContent=n;el.classList.toggle('hidden',!n)};
+  cap('navCot',porAprobar);
+  cap('navFac',sinEnviar);
+
+  // Avisos de la campana
+  $('badgeAl').textContent=items.length;
+  $('badgeAl').classList.toggle('hidden',!items.length);
+  $('listaAlertas').innerHTML=items.length?items.map(x=>
+    '<a class="al" href="'+x.href+'"><span class="dt" style="background:'+x.c+'"></span>'+
+    '<span><span class="tx">'+esc(x.tt)+'</span><span class="sb">'+x.n+' · '+esc(x.sb)+'</span></span></a>').join('')
+    :'<div class="none">Nada pendiente.</div>';
+}
+
+function pintarRecientes(){
+  const rec=PROY.slice().sort((a,b)=>
+    tsMs(b.fechaModificacion||b.fechaCreacion||b.fechaRegistro)-tsMs(a.fechaModificacion||a.fechaCreacion||a.fechaRegistro)
+  ).slice(0,5);
+  $('recentList').innerHTML=rec.length?rec.map(p=>{
+    const monto=p.valorUsd?'USD '+fmtUsd(p.valorUsd):'—';
+    return '<a href="presupuesto/#/p/'+encodeURIComponent(p._id)+'"><span class="dot" style="background:'+(COLOR[p.estado]||'#9CA3AF')+'"></span>'+
+      '<span><div class="rn">'+esc(p.nombre||'Sin nombre')+'</div><div class="rc">'+esc(p.cliente||'Sin cliente')+'</div></span>'+
+      '<span class="rv">'+monto+'<small>'+esc(p.estado||'')+'</small></span></a>';
+  }).join(''):'<div class="empty">Todavía no hay proyectos.</div>';
+}
+
+/* ═══ Buscador ═══ */
+function buscar(){
+  const q=$('buscador').value.trim().toLowerCase(), pop=$('popBuscar');
+  if(q.length<2){pop.classList.remove('show');return;}
+  const norm=s=>String(s||'').toLowerCase();
+  const res=[];
+  PROY.forEach(p=>{
+    if(norm(p.nombre).indexOf(q)>=0||norm(p.cliente).indexOf(q)>=0)
+      res.push({tt:p.nombre||'Sin nombre',sb:(p.cliente||'Sin cliente')+' · '+(p.estado||''),href:'presupuesto/#/p/'+encodeURIComponent(p._id),c:COLOR[p.estado]||'#9CA3AF'});
+  });
+  FACT.forEach(f=>{
+    if(String(f.numero||'').indexOf(q)>=0||norm(f.clienteNombre||f.cliente).indexOf(q)>=0)
+      res.push({tt:'Factura '+(f.numeroFormateado||f.numero||''),sb:(f.clienteNombre||f.cliente||'Sin cliente'),href:'facturacion/#f/'+encodeURIComponent(f._id),c:'#3B82F6'});
+  });
+  const lista=res.slice(0,7);
+  pop.innerHTML=lista.length?'<h4>'+res.length+' resultado'+(res.length===1?'':'s')+'</h4>'+lista.map(r=>
+    '<a class="al" href="'+r.href+'"><span class="dt" style="background:'+r.c+'"></span>'+
+    '<span><span class="tx">'+esc(r.tt)+'</span><span class="sb">'+esc(r.sb)+'</span></span></a>').join('')
+    :'<div class="none">Nada con «'+esc(q)+'».</div>';
+  pop.classList.add('show');
+}
+
+/* ═══ Sesión ═══ */
+function showError(m){$('errorMsg').textContent=m;}
 async function login(){
-  const e=document.getElementById('email').value.trim(),p=document.getElementById('password').value,b=document.getElementById('loginBtn');
+  const e=$('email').value.trim(),p=$('password').value,b=$('loginBtn');
   if(!e||!p){showError('Completá email y contraseña');return;}
   b.disabled=true;b.textContent='Verificando...';showError('');
   try{await auth.signInWithEmailAndPassword(e,p);}
