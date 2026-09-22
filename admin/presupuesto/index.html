@@ -2139,8 +2139,31 @@ function guardar(forzar){
     tipoServicio:document.getElementById('tipoServicio').value,
     presupuesto:pres,honorarios:getHonorarios()
   };
-  /* Un proyecto ya aprobado conserva su estado y su valor facturado */
-  if(!aprobado)data.valorUsd=R.montoSolicitar||R.totU||0;
+  /* Valor del contrato. En una cotización sigue al presupuesto. En un proyecto ya
+     aprobado se protege el precio acordado, pero si el presupuesto da otro total
+     se pregunta: un proyecto creado en la app como "En Curso" nunca pasó por
+     Aprobar y quedaba para siempre con el valor estimado de la app. */
+  var nuevoValor=R.montoSolicitar||R.totU||0;
+  var valorActual=previo?(+previo.valorUsd||0):0;
+  if(aprobado&&nuevoValor>0&&Math.abs(nuevoValor-valorActual)>=0.5&&guardar._valor===undefined){
+    confirmar({
+      icono:'💵',titulo:'¿Actualizar el valor del contrato?',
+      cuerpo:'El presupuesto da <b>USD '+fmtUsd(nuevoValor)+'</b>, pero el contrato registrado es <b>USD '+fmtUsd(valorActual)+'</b>.'+
+        '<br><br>El Balance, el por cobrar y el resultado estimado se calculan con el valor del contrato. '+
+        'Si lo que acordaste con el cliente es el total del presupuesto, actualizalo.',
+      ok:'Sí, usar USD '+fmtUsd(nuevoValor),
+      cancelar:'No, mantener USD '+fmtUsd(valorActual)
+    }).then(function(si){guardar._valor=si;guardar(true)});
+    return;
+  }
+  var actualizarValor=guardar._valor===true;
+  guardar._valor=undefined;
+  if(!aprobado)data.valorUsd=nuevoValor;
+  else if(actualizarValor){
+    var dIva=(R.pRet!=null&&R.pRet!==''?+R.pRet:7)/100;
+    data.valorUsd=nuevoValor;data.descuentoIva=dIva;
+    data.valorIva=Math.round(nuevoValor*dIva*100)/100;data.valorTotal=Math.round((nuevoValor-nuevoValor*dIva)*100)/100;
+  }
   var btns=document.querySelectorAll('#formCrumbs .btn-g');btns.forEach(function(b){b.disabled=true;b.textContent='Guardando…'});
   var fin=function(){btns.forEach(function(b){b.disabled=false;b.textContent='💾 Guardar'})};
   var op;
