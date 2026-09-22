@@ -124,7 +124,10 @@ var BalanceCalc = (function () {
   var COLORES = {
     'Consumición': '#F97316', 'Combustible': '#EF4444', 'Colaboradores': '#8B5CF6', 'Peaje': '#6366F1',
     'Hospedaje': '#14B8A6', 'Implementos de trabajo': '#3B82F6', 'Maquinaria': '#F59E0B', 'Varios': '#6B7280',
-    'Farmacia': '#10B981', 'Laboratorio': '#06B6D4', 'Camioneta': '#EC4899'
+    'Farmacia': '#10B981', 'Laboratorio': '#06B6D4', 'Camioneta': '#EC4899',
+    // Cursos (iguales a la app: CategoriaGasto.curso)
+    'Disertante': '#7C3AED', 'Salón': '#0EA5E9', 'Publicidad': '#E11D48', 'Plataformas': '#2563EB',
+    'Materiales': '#65A30D', 'Catering': '#D97706', 'Viáticos': '#0D9488'
   };
   function color(cat) { return COLORES[cat] || '#6B7280'; }
 
