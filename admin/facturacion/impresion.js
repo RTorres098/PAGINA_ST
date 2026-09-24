@@ -108,6 +108,47 @@ function datosImpresion(f) {
   return { isU: isU, iva: iva, mon: mon, total: total, ivaAmt: ivaAmt, items: items, letras: letras };
 }
 
+/* ── Descripciones largas ──────────────────────────────────────────────
+   La columna de descripción tiene un ancho fijo (mm) en la hoja preimpresa.
+   Lo que no entra baja a la línea siguiente, cortando SIEMPRE por espacios.
+   Se mide con el mismo tipo y tamaño con que se imprime, no por cantidad de
+   caracteres: "MI" y "WW" no ocupan lo mismo.                              */
+var _lienzo = null;
+function anchoTexto(txt, fontPx) {
+  if (!_lienzo) {
+    var cv = document.createElement('canvas');
+    _lienzo = cv.getContext ? cv.getContext('2d') : null;
+  }
+  if (!_lienzo) return String(txt).length * fontPx * 0.55; // sin canvas: estimación
+  _lienzo.font = fontPx + "px 'DM Sans', system-ui, sans-serif";
+  return _lienzo.measureText(String(txt)).width;
+}
+
+/* Parte el texto en las líneas que entran en anchoMm. */
+function partirEnLineas(texto, anchoMm, fontPx, maxLineas) {
+  var txt = String(texto == null ? '' : texto).trim();
+  if (!txt) return [];
+  var maxPx = anchoMm * 96 / 25.4 * 0.98; // 2% de aire para no rozar el borde
+  if (anchoTexto(txt, fontPx) <= maxPx) return [txt];
+
+  var lineas = [], actual = '';
+  txt.split(/\s+/).forEach(function (palabra) {
+    var prueba = actual ? actual + ' ' + palabra : palabra;
+    if (anchoTexto(prueba, fontPx) <= maxPx) { actual = prueba; return; }
+    if (actual) { lineas.push(actual); actual = ''; }
+    // Una palabra sola más larga que la columna: recién ahí se parte.
+    while (anchoTexto(palabra, fontPx) > maxPx && palabra.length > 1) {
+      var n = palabra.length;
+      while (n > 1 && anchoTexto(palabra.slice(0, n), fontPx) > maxPx) n--;
+      lineas.push(palabra.slice(0, n));
+      palabra = palabra.slice(n);
+    }
+    actual = palabra;
+  });
+  if (actual) lineas.push(actual);
+  return (maxLineas && lineas.length > maxLineas) ? lineas.slice(0, maxLineas) : lineas;
+}
+
 /* Devuelve el HTML de UNA copia (los campos posicionados) */
 function copiaHtml(f, cfg) {
   cfg = cfg || IMPRESION;
@@ -131,13 +172,24 @@ function copiaHtml(f, cfg) {
   put('direccion', esc(f.direccion || ''));
   put('telefono', esc(f.telefono || ''));
   var colMonto = d.iva === 10 ? 'item10' : (d.iva === 5 ? 'item5' : 'itemExentas');
-  d.items.slice(0, cfg.filas.max).forEach(function (it, i) {
-    var y = cfg.filas.y + i * cfg.filas.alto;
+  /* Cada ítem ocupa una fila de la hoja, o varias si su descripción no entra
+     en una sola. Las líneas siguientes caen sobre los renglones impresos. */
+  var cDesc = C.itemDesc || {};
+  var fila = 0;
+  copiaHtml.recortado = false;
+  d.items.forEach(function (it) {
+    if (fila >= cfg.filas.max) { copiaHtml.recortado = true; return; }
+    var lineas = partirEnLineas(it.desc, cDesc.w || 80, cDesc.size || 10, cfg.filas.max - fila);
+    if (!lineas.length) lineas = [''];
+    var y = cfg.filas.y + fila * cfg.filas.alto;
     put('itemCant', esc(it.cant), { y: y });
     put('itemCodigo', esc(it.code), { y: y });
-    put('itemDesc', esc(it.desc), { y: y });
     put('itemUnit', d.mon(it.unit), { y: y });
     put(colMonto, d.mon(it.total), { y: y });
+    lineas.forEach(function (ln, k) {
+      put('itemDesc', esc(ln), { y: cfg.filas.y + (fila + k) * cfg.filas.alto });
+    });
+    fila += lineas.length;
   });
   put(d.iva === 10 ? 'sub10' : (d.iva === 5 ? 'sub5' : 'subExentas'), d.mon(d.total));
   put('totalGeneral', d.mon(d.total));
@@ -158,6 +210,11 @@ function armarHoja(f, cfg) {
     return '<div class="ic" style="top:' + top + 'mm;width:' + cfg.papel.w + 'mm;height:' + cfg.copiaAlto + 'mm">' + ch + '</div>';
   };
   pp.innerHTML = copia(0) + copia(cfg.copia2Y);
+  /* La hoja tiene un número fijo de renglones. Si las descripciones ocupan más
+     de los que hay, algo quedaría afuera: mejor avisar que imprimir de menos. */
+  if (copiaHtml.recortado && typeof toast === 'function') {
+    toast('⚠️ La factura no entra en ' + cfg.filas.max + ' renglones: acortá las descripciones o dividí en dos facturas');
+  }
   return pp;
 }
 
