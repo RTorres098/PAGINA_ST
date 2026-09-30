@@ -222,6 +222,31 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 
 <div class="toast" id="toast"></div>
 
+
+<!-- Facturaste un curso y esa persona no está inscripta -->
+<div class="cm-bg" id="insModal"><div class="cm" style="max-width:440px">
+  <h3 style="font-size:17px;color:var(--gd);margin-bottom:4px">¿Lo agregamos como inscripto?</h3>
+  <div style="font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:14px">
+    <strong id="insNom"></strong> no figura entre los inscriptos de
+    <strong id="insCurso"></strong>. Completá lo que sepas y queda en la lista del curso
+    y en el directorio de personas.
+  </div>
+  <div class="f"><label>Ocupación</label><input id="insOcup" placeholder="Ej.: Ing. Agrónomo"></div>
+  <div class="g2">
+    <div class="f"><label>Teléfono</label><input id="insTel"></div>
+    <div class="f"><label>Correo</label><input id="insMail" type="email"></div>
+  </div>
+  <div class="f"><label>Empresa que paga (si la factura es a una empresa)</label><input id="insEmp"></div>
+  <div style="font-size:11px;color:var(--tx3);margin-top:6px">
+    ¿La factura cubre a varias personas? Agregá al resto desde
+    <a id="insLink" href="#" style="color:var(--g);font-weight:600">la pantalla del curso</a>.
+  </div>
+  <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+    <button class="btn" style="background:var(--sf2);color:var(--tx)" onclick="cerrarInsModal()">Ahora no</button>
+    <button class="btn btn-g" id="insBtn" onclick="inscribirDesdeFactura()">Inscribir</button>
+  </div>
+</div></div>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -229,6 +254,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="../auth-guard.js"></script>
 <script src="../shell.js"></script>
 <script src="../servicios.js"></script>
+<script src="../personas.js"></script>
 <script src="impresion.js"></script>
 <script src="../facturas_seed.js"></script>
 <script src="planilla.js"></script>
@@ -910,11 +936,15 @@ function saveFactura(imprimir){
     db.collection('facturas').add(data).then(function(ref){
       toast('✅ Factura #'+num+' creada');
       closePanel();loadAll();
+      var recien=Object.assign({_id:ref.id},data);
       if(imprimir){
-        var copia=Object.assign({_id:ref.id},data);
-        var pp=armarHoja(copia);
+        var pp=armarHoja(recien);
         pp.style.display='block';
-        setTimeout(function(){window.print();pp.style.display='none'},250);
+        /* El ofrecimiento espera a que termine la impresión, si no queda tapado */
+        setTimeout(function(){window.print();pp.style.display='none';
+          setTimeout(function(){ofrecerInscribir(recien)},400)},250);
+      }else{
+        ofrecerInscribir(recien);
       }
     }).catch(function(e){toast('❌ '+e.message)});
   }else{
@@ -956,6 +986,62 @@ function saveFactura(imprimir){
       if(!antes.pagoRecibidoId&&antes.pagada&&data.proyectoId)setTimeout(function(){toast('Esta factura está pagada: abrila y tocá «Registrar cobro» para sumarla al balance')},3600);
     }).catch(function(e){toast('❌ '+e.message)});
   }
+}
+
+/* Facturaste un curso: si quien figura en la factura todavía no está en la
+   lista de inscriptos, se ofrece cargarlo con los datos que ya tiene la
+   factura. Nunca se crea solo: primero pregunta. */
+function ofrecerInscribir(f){
+  if(!f||!f.proyectoId||f.inscriptoId)return;
+  var pr=PROYS.find(function(x){return x.id===f.proyectoId});
+  if(!pr||pr.tipoProyecto!=='capacitacion')return;
+  var nombre=(f.cliente||'').trim();
+  if(!nombre)return;
+  db.collection('proyectos').doc(f.proyectoId).collection('inscriptos').get().then(function(sn){
+    var ya=sn.docs.map(function(d){return d.data()}).some(function(x){
+      return Personas.N(x.nombre||'')===Personas.N(nombre);
+    });
+    if(ya)return;
+    ['insOcup','insTel','insMail','insEmp'].forEach(function(id){document.getElementById(id).value=''});
+    document.getElementById('insTel').value=f.telefono||'';
+    document.getElementById('insNom').textContent=nombre;
+    document.getElementById('insCurso').textContent=pr.nombre||'';
+    document.getElementById('insLink').href='../presupuesto/#/p/'+encodeURIComponent(f.proyectoId);
+    INS_PEND={proyectoId:f.proyectoId,nombre:nombre,facturaId:f._id,
+              monto:f.total||0,ruc:f.ruc||'',telefono:f.telefono||''};
+    document.getElementById('insModal').classList.add('show');
+  }).catch(function(){});
+}
+var INS_PEND=null;
+function cerrarInsModal(){document.getElementById('insModal').classList.remove('show');INS_PEND=null}
+/* Da de alta a la persona en el directorio y la inscribe al curso. */
+function inscribirDesdeFactura(){
+  if(!INS_PEND)return;
+  var d=INS_PEND,v=function(id){return (document.getElementById(id).value||'').trim()};
+  var btn=document.getElementById('insBtn');btn.disabled=true;btn.textContent='Guardando…';
+  Personas.cargar(db).catch(function(){return []}).then(function(){
+    return Personas.crearOUsar(db,{nombre:d.nombre,ocupacion:v('insOcup'),
+      telefono:v('insTel')||d.telefono,correo:v('insMail'),empresa:v('insEmp')});
+  }).then(function(p){
+    return db.collection('proyectos').doc(d.proyectoId).collection('inscriptos').get().then(function(sn){
+      var ya=sn.docs.some(function(x){return x.data().personaId===p._id});
+      if(ya)throw new Error(p.nombre+' ya está inscripta en este curso');
+      return p;
+    });
+  }).then(function(p){
+    return db.collection('proyectos').doc(d.proyectoId).collection('inscriptos').add({
+      personaId:p._id,nombre:p.nombre,
+      tipo:v('insEmp')?'Empresa':'Particular',
+      empresa:v('insEmp')||null,pagador:!!v('insEmp'),
+      monto:d.monto||0,cobrado:false,facturaId:d.facturaId,
+      fecha:new Date().toISOString().split('T')[0]
+    });
+  }).then(function(){
+    btn.disabled=false;btn.textContent='Inscribir';
+    cerrarInsModal();toast('✅ Inscripto agregado al curso');
+  }).catch(function(e){
+    btn.disabled=false;btn.textContent='Inscribir';toast('❌ '+e.message);
+  });
 }
 
 function anularFactura(){

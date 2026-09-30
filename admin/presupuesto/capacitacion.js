@@ -318,17 +318,27 @@ function renderCapDetalle(p){
 /* Lo presupuestado es una estimación; acá se anota lo que realmente pagó cada uno,
    que no siempre es el precio de lista (socios, acuerdos con empresas, becas). */
 var CAP_TIPOS=['Particular','Socio / aliado','Empresa','Beca / cortesía'];
-var INSC=[],INSC_PROY=null;
+var INSC=[],INSC_PROY=null,INSC_PERSONA=null;
+
+/* Los datos de la persona viven en el directorio (colección personas) y la
+   inscripción solo guarda personaId + lo del curso. Las inscripciones viejas
+   guardaban el nombre suelto: para esas se usa lo que tengan. */
+function inscPersona(x){ return (x.personaId&&Personas.porId(x.personaId))||null }
+function inscDato(x,campo){
+  var p=inscPersona(x);
+  return (p&&p[campo])||x[campo]||'';
+}
 
 var INSC_FACT={};
 function capCargarInscriptos(id){
   INSC_PROY=id;
   Promise.all([
     db.collection('proyectos').doc(id).collection('inscriptos').get(),
-    capCargarFacturasInsc(id)
+    capCargarFacturasInsc(id),
+    Personas.cargar(db).catch(function(){return []}) // si falla, se sigue sin directorio
   ]).then(function(r){
     INSC=r[0].docs.map(function(d){return Object.assign({_id:d.id},d.data())})
-      .sort(function(a,b){return String(a.nombre||'').localeCompare(String(b.nombre||''))});
+      .sort(function(a,b){return String(inscDato(a,'nombre')).localeCompare(String(inscDato(b,'nombre')))});
     INSC_FACT=r[1]||{};
     pintarInscriptos();
   }).catch(function(e){
@@ -359,11 +369,18 @@ function pintarInscriptos(){
   if(!INSC.length){
     h+='<div style="font-size:12px;color:var(--tx3);padding:8px 0">Todavía no cargaste inscriptos.</div>';
   }else{
-    h+='<table class="ht" style="width:100%"><thead><tr><th>Nombre</th><th style="width:130px">Tipo</th><th style="width:120px">Pagó</th><th style="width:90px">Estado</th><th style="width:30px"></th></tr></thead><tbody>';
+    h+='<table class="ht" style="width:100%"><thead><tr><th>Nombre y apellido</th><th style="width:130px">Ocupación</th><th style="width:150px">Contacto</th><th style="width:120px">Tipo</th><th style="width:110px">Pagó</th><th style="width:90px">Estado</th><th style="width:30px"></th></tr></thead><tbody>';
     INSC.forEach(function(x){
       var fac=INSC_FACT[x._id];
-      h+='<tr><td>'+esc(x.nombre||'')+(x.empresa?'<div style="font-size:10px;color:var(--tx3)">'+esc(x.empresa)+'</div>':'')+
+      var tel=inscDato(x,'telefono'),cor=inscDato(x,'correo'),emp=inscDato(x,'empresa');
+      var contacto=[];
+      if(tel)contacto.push(esc(tel));
+      if(cor)contacto.push('<a href="mailto:'+esc(cor)+'" style="color:var(--g)">'+esc(cor)+'</a>');
+      h+='<tr><td>'+esc(inscDato(x,'nombre'))+
+         (emp?'<div style="font-size:10px;color:var(--tx3)">'+esc(emp)+(x.pagador?' · paga':'')+'</div>':'')+
          (fac?'<div style="font-size:10px;color:var(--g);font-weight:600">🧾 '+esc(fac.nroFormateado||'')+'</div>':'<div style="font-size:10px;color:var(--tx3)">sin factura</div>')+'</td>'+
+         '<td style="font-size:11.5px">'+esc(inscDato(x,'ocupacion'))+'</td>'+
+         '<td style="font-size:11px;line-height:1.5">'+(contacto.join('<br>')||'<span style="color:var(--tx3)">—</span>')+'</td>'+
          '<td>'+esc(x.tipo||'')+'</td>'+
          '<td style="text-align:right">'+capFmt(c,x.monto)+'</td>'+
          '<td><button class="ab" style="margin:0" onclick="capToggleCobro(\''+x._id+'\')">'+(x.cobrado?'✔ Cobrado':'Pendiente')+'</button></td>'+
@@ -376,16 +393,65 @@ function pintarInscriptos(){
   function miniKpi(v,l){return '<div style="flex:1;min-width:110px;background:var(--sf2);border-radius:8px;padding:8px 10px"><div style="font-size:15px;font-weight:700;color:var(--gd)">'+v+'</div><div style="font-size:9px;color:var(--tx2);text-transform:uppercase">'+l+'</div></div>'}
 }
 
-function capAbrirInscripto(){
+function capAbrirInscripto(pre){
   var p=findProj(INSC_PROY),c=capDe(p);
+  pre=pre||{};
+  INSC_PERSONA=null;
   document.getElementById('inscTipo').innerHTML=CAP_TIPOS.map(function(t){return '<option>'+t+'</option>'}).join('');
-  document.getElementById('inscNombre').value='';
-  document.getElementById('inscEmpresa').value='';
-  document.getElementById('inscMonto').value=c.precioCupo||'';
-  document.getElementById('inscCobrado').checked=true;
+  ['inscBuscar','inscNombre','inscOcupacion','inscTelefono','inscCorreo','inscEmpresa'].forEach(function(id){
+    document.getElementById(id).value=pre[id.replace('insc','').toLowerCase()]||'';
+  });
+  document.getElementById('inscMonto').value=(pre.monto!=null?pre.monto:(c.precioCupo||''));
+  document.getElementById('inscCobrado').checked=pre.cobrado!==false;
   document.getElementById('inscMoneda').textContent=c.moneda==='USD'?'USD':'Gs';
+  capMostrarVinculo(null);
+  document.getElementById('inscSug').style.display='none';
   showModal('inscModal');
-  setTimeout(function(){document.getElementById('inscNombre').focus()},60);
+  setTimeout(function(){document.getElementById(pre.nombre?'inscMonto':'inscBuscar').focus()},60);
+}
+
+/* Buscador del directorio: al elegir una persona se completan sus datos y la
+   inscripción queda apuntando a ella en vez de duplicarla. */
+function capBuscarPersona(){
+  var q=document.getElementById('inscBuscar').value.trim();
+  var caja=document.getElementById('inscSug');
+  if(q.length<2){caja.style.display='none';return}
+  var res=Personas.buscar(q,8);
+  if(!res.length){
+    caja.innerHTML='<div style="padding:9px 11px;font-size:11.5px;color:var(--tx3)">Nadie con ese dato. Completá los campos de abajo y se crea.</div>';
+    caja.style.display='block';return;
+  }
+  caja.innerHTML=res.map(function(p){
+    var sub=[p.ocupacion,p.telefono,p.correo].filter(Boolean).join(' · ');
+    return '<div style="padding:8px 11px;cursor:pointer;border-bottom:1px solid var(--sf2)" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'\'" onclick="capElegirPersona(\''+p._id+'\')">'+
+      '<div style="font-size:12.5px;font-weight:700;color:var(--gd)">'+esc(p.nombre)+'</div>'+
+      (sub?'<div style="font-size:10.5px;color:var(--tx2)">'+esc(sub)+'</div>':'')+'</div>';
+  }).join('');
+  caja.style.display='block';
+}
+
+function capElegirPersona(id){
+  var p=Personas.porId(id);if(!p)return;
+  INSC_PERSONA=p;
+  document.getElementById('inscNombre').value=p.nombre||'';
+  document.getElementById('inscOcupacion').value=p.ocupacion||'';
+  document.getElementById('inscTelefono').value=p.telefono||'';
+  document.getElementById('inscCorreo').value=p.correo||'';
+  if(p.empresa&&!document.getElementById('inscEmpresa').value)document.getElementById('inscEmpresa').value=p.empresa;
+  document.getElementById('inscSug').style.display='none';
+  document.getElementById('inscBuscar').value='';
+  capMostrarVinculo(p);
+  document.getElementById('inscMonto').focus();
+}
+
+function capMostrarVinculo(p){
+  var el=document.getElementById('inscVinculo');
+  if(!p){el.style.display='none';el.innerHTML='';return}
+  var otros=INSC.filter(function(x){return x.personaId===p._id}).length;
+  el.innerHTML='Usando a <strong>'+esc(p.nombre)+'</strong> del directorio.'+
+    (otros?' <strong>Ya está inscripta en este curso.</strong>':'')+
+    ' <span style="cursor:pointer;text-decoration:underline" onclick="capMostrarVinculo(null);INSC_PERSONA=null">desvincular</span>';
+  el.style.display='block';
 }
 /* Al cambiar el tipo se sugiere el precio que corresponde */
 function capTipoCambio(){
@@ -397,16 +463,38 @@ function capTipoCambio(){
   else if(t==='Beca / cortesía')m.value=0;
 }
 function capGuardarInscripto(){
-  var nombre=document.getElementById('inscNombre').value.trim();
+  var v=function(id){return document.getElementById(id).value.trim()};
+  var nombre=v('inscNombre');
   if(!nombre){toast('❌ Falta el nombre');return}
-  var d={nombre:nombre,tipo:document.getElementById('inscTipo').value,
-    empresa:document.getElementById('inscEmpresa').value.trim()||null,
-    monto:parseFloat(document.getElementById('inscMonto').value)||0,
-    cobrado:document.getElementById('inscCobrado').checked,
-    fecha:new Date().toISOString().split('T')[0]};
-  db.collection('proyectos').doc(INSC_PROY).collection('inscriptos').add(d).then(function(){
-    hideModal('inscModal');toast('✅ Inscripto agregado');capCargarInscriptos(INSC_PROY);
-  }).catch(function(e){toast('❌ '+e.message)});
+  var datos={nombre:nombre,ocupacion:v('inscOcupacion'),telefono:v('inscTelefono'),
+             correo:v('inscCorreo'),empresa:v('inscEmpresa')};
+  var btn=document.getElementById('inscBtn');
+  btn.disabled=true;btn.textContent='Guardando…';
+  var fin=function(){btn.disabled=false;btn.textContent='Agregar'};
+
+  /* La persona va al directorio (o se reutiliza la que ya estaba); la
+     inscripción guarda solo el vínculo y lo que corresponde a este curso. */
+  var persona=INSC_PERSONA
+    ? Personas.actualizar(db,INSC_PERSONA._id,Object.assign({},INSC_PERSONA,datos)).then(function(p){return p||INSC_PERSONA})
+    : Personas.crearOUsar(db,datos);
+
+  persona.then(function(p){
+    var repetido=INSC.filter(function(x){return x.personaId===p._id})[0];
+    if(repetido)return Promise.reject(new Error(p.nombre+' ya está inscripta en este curso'));
+    return db.collection('proyectos').doc(INSC_PROY).collection('inscriptos').add({
+      personaId:p._id,
+      nombre:p.nombre,               // copia para poder listar sin leer el directorio
+      tipo:document.getElementById('inscTipo').value,
+      empresa:datos.empresa||null,
+      pagador:!!datos.empresa,       // si hay empresa, es quien paga
+      monto:parseFloat(document.getElementById('inscMonto').value)||0,
+      cobrado:document.getElementById('inscCobrado').checked,
+      fecha:new Date().toISOString().split('T')[0]
+    });
+  }).then(function(){
+    fin();hideModal('inscModal');toast('✅ Inscripto agregado');
+    Personas.invalidar();capCargarInscriptos(INSC_PROY);
+  }).catch(function(e){fin();toast('❌ '+e.message)});
 }
 function capToggleCobro(id){
   var x=INSC.find(function(y){return y._id===id});if(!x)return;
