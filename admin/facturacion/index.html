@@ -285,10 +285,13 @@ function faltantes(){
   return out;
 }
 /* La DNIT no admite que una factura tenga fecha anterior a la del número previo. */
+/* Referencia de fecha: la última factura ACTIVA de número menor (y la siguiente
+   activa, solo para avisar). Una factura anulada no manda: si anulás la 357 del
+   29-09 y emitís la 358 corregida, podés ponerle esa misma fecha o una posterior. */
 function limitesFecha(num,idActual){
   var ant=null,sig=null;
   ALL.forEach(function(x){
-    if(!x.numero||x._id===idActual||!x.fecha)return;
+    if(!x.numero||x._id===idActual||!x.fecha||x.estado==='anulada')return;
     if(x.numero<num&&(!ant||x.numero>ant.numero))ant=x;
     if(x.numero>num&&(!sig||x.numero<sig.numero))sig=x;
   });
@@ -299,13 +302,15 @@ function limitesFecha(num,idActual){
 function fechaOk(num,fecha,idActual){
   var l=limitesFecha(num,idActual),f=String(fecha||'').slice(0,10);
   if(!f)return{ok:false,msg:'Falta la fecha'};
-  if(l.min&&f<l.min)return{ok:false,msg:'La factura '+l.ant.numero+' es del '+l.min+': ésta no puede ser anterior a esa fecha.'};
-  if(l.max&&f>l.max)return{ok:false,msg:'La factura '+l.sig.numero+' es del '+l.max+': ésta no puede ser posterior a esa fecha.'};
+  if(l.min&&f<l.min)return{ok:false,msg:'La última factura activa anterior es la '+l.ant.numero+', del '+l.min+': ésta no puede tener fecha anterior. La misma fecha o posterior sí.'};
+  /* Quedar por delante de una factura de número mayor no se bloquea: se avisa,
+     porque la que queda mal fechada es esa otra, no ésta. */
+  if(l.max&&f>l.max)return{ok:true,msg:'',aviso:'La factura '+l.sig.numero+' es del '+l.max+': con esta fecha, esa queda anterior a la suya.'};
   return {ok:true,msg:''};
 }
 /* Facturas cuya fecha rompe el orden respecto del número anterior */
 function desordenadas(){
-  var l=ALL.filter(function(f){return f.numero&&f.fecha}).slice().sort(function(a,b){return a.numero-b.numero});
+  var l=ALL.filter(function(f){return f.numero&&f.fecha&&f.estado!=='anulada'}).slice().sort(function(a,b){return a.numero-b.numero});
   var out=[];
   for(var i=1;i<l.length;i++){
     var a=String(l[i-1].fecha).slice(0,10),b=String(l[i].fecha).slice(0,10);
@@ -1288,13 +1293,14 @@ function avisoFecha(){
   if(!(num>0)){av.innerHTML='';return}
   var l=limitesFecha(num,curId);
   if(l.min)elF.setAttribute('min',l.min);else elF.removeAttribute('min');
-  if(l.max)elF.setAttribute('max',l.max);else elF.removeAttribute('max');
+  elF.removeAttribute('max'); // hacia adelante no hay tope
   var partes=[];
-  if(l.ant)partes.push('la '+l.ant.numero+' es del '+l.min);
+  if(l.ant)partes.push('la '+l.ant.numero+' (activa) es del '+l.min);
   if(l.sig)partes.push('la '+l.sig.numero+' es del '+l.max);
   var r=fechaOk(num,elF.value,curId);
-  av.innerHTML=(r.ok?'<span>'+(partes.length?'Referencia: '+partes.join(' · '):'Sin facturas vecinas cargadas')+'</span>'
-                   :'<span style="color:#B91C1C;font-weight:700">'+escH(r.msg)+'</span>');
+  av.innerHTML=!r.ok ? '<span style="color:#B91C1C;font-weight:700">'+escH(r.msg)+'</span>'
+    : r.aviso ? '<span style="color:#B45309;font-weight:600">⚠ '+escH(r.aviso)+'</span>'
+    : '<span>'+(partes.length?'Referencia: '+partes.join(' · '):'Sin facturas vecinas cargadas')+'</span>';
 }
 function abrirDesorden(){
   var des=desordenadas();
