@@ -374,6 +374,24 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 @media (max-width:1180px){.bal-kpis{grid-template-columns:repeat(3,1fr)}.bal-kpis.k4{grid-template-columns:repeat(2,1fr)}.hbars .hb{grid-template-columns:110px 1fr 100px}}
 @media (max-width:860px){.bal-kpis,.bal-kpis.k4{grid-template-columns:1fr 1fr}.cat-t td.bar{display:none}.cat-t th.bar{display:none}}
 @media (max-width:560px){.bal-kpis,.bal-kpis.k4{grid-template-columns:1fr}.hbars .hb{grid-template-columns:96px 1fr 96px;gap:6px}.drawer-sum{grid-template-columns:1fr 1fr}.mov-tabs .search{min-width:100%}}
+
+/* Cantidad de laboratorio: automática por defecto, con aviso cuando se escribe a mano */
+.lab-cant{display:flex;align-items:center;gap:3px}
+.lab-cant .lab-qty{flex:1;min-width:0}
+.lab-auto{display:none;flex:0 0 auto;width:20px;height:22px;padding:0;border:1px solid var(--bd);
+  background:var(--sf);color:var(--tx2);border-radius:5px;cursor:pointer;font-size:12px;line-height:1}
+.lab-auto:hover{background:var(--sf2);color:var(--gd)}
+tr.lab-man .lab-auto{display:block}
+tr.lab-man .lab-qty{border-color:var(--g);background:rgba(52,166,120,.08);font-weight:600}
+
+/* Gastos: de dónde vino cada uno y el botón para editarlo */
+.ori{display:inline-block;margin-left:6px;padding:1px 5px;border-radius:4px;font-size:8.5px;
+  font-weight:700;text-transform:uppercase;letter-spacing:.3px;vertical-align:middle}
+.ori-app{background:rgba(99,102,241,.14);color:#4F46E5}
+.ori-web{background:rgba(52,166,120,.16);color:#1E7A55}
+.gbtn{width:22px;height:22px;padding:0;border:1px solid var(--bd);background:var(--sf);
+  color:var(--tx2);border-radius:5px;cursor:pointer;font-size:11px;line-height:1}
+.gbtn:hover{background:var(--sf2);color:var(--gd);border-color:var(--g)}
 </style>
 </head>
 <body>
@@ -485,6 +503,55 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
   </div>
 </div></div>
 
+<!-- Carga y edición de gastos del proyecto desde la web -->
+<div class="modal-bg" id="gastoModal"><div class="modal" style="max-width:560px;padding:22px"><button class="close" onclick="hideModal('gastoModal')">×</button>
+  <h3 id="gastoTitulo">Cargar gasto</h3>
+  <div id="gastoOrigen" style="display:none;font-size:11.5px;background:var(--sf2);border-radius:8px;padding:7px 10px;margin-bottom:10px;color:var(--tx2)"></div>
+
+  <div class="f" id="gastoProyWrap"><label>Proyecto</label>
+    <select id="gastoProy" onchange="gastoProyCambio()"></select></div>
+
+  <div class="g2">
+    <div class="f"><label>Categoría</label><select id="gastoTipo"></select></div>
+    <div class="f"><label>Fecha</label><input id="gastoFecha" type="date"></div>
+  </div>
+  <div class="f"><label>Concepto</label><input id="gastoConcepto" placeholder="Ej.: Almuerzo del equipo en Santa Isabel" autocomplete="off"></div>
+  <div class="f"><label>Descripción (opcional)</label><input id="gastoDesc" autocomplete="off"></div>
+  <div class="g2">
+    <div class="f"><label>Monto (Gs)</label><input id="gastoMonto" type="number" min="0" oninput="gastoIvaResumen()"></div>
+    <div class="f"><label>Medio de pago</label><select id="gastoMedio" onchange="gastoMedioCambio()"></select></div>
+  </div>
+  <div class="f" id="gastoTarjWrap" style="display:none"><label>Tarjeta</label><select id="gastoTarjeta"></select></div>
+  <div class="f"><label>Proveedor (opcional)</label><input id="gastoProveedor" autocomplete="off"></div>
+
+  <label style="display:flex;gap:6px;align-items:center;font-size:12px;margin:10px 0 0"><input type="checkbox" id="gastoFactura" onchange="gastoFacturaCambio()"> Tiene factura</label>
+
+  <div id="gastoFacturaBox" style="display:none;border-top:1px solid var(--bd);margin-top:10px;padding-top:10px">
+    <div class="g2">
+      <div class="f"><label>Nº de factura</label><input id="gastoNroFac" autocomplete="off"></div>
+      <div class="f"><label>Tipo de IVA</label><select id="gastoIva" onchange="gastoIvaCambio()"></select></div>
+    </div>
+    <div class="g2">
+      <div class="f" id="gastoV10Wrap"><label>Base gravada 10% (Gs)</label><input id="gastoV10" type="number" min="0" oninput="gastoIvaResumen()"></div>
+      <div class="f" id="gastoV5Wrap"><label>Base gravada 5% (Gs)</label><input id="gastoV5" type="number" min="0" oninput="gastoIvaResumen()"></div>
+    </div>
+    <div id="gastoIvaResumen" style="font-size:11.5px;color:var(--tx2);margin-bottom:8px"></div>
+    <div class="g2">
+      <div class="f"><label>RUC del proveedor</label><input id="gastoRucProv" autocomplete="off"></div>
+      <div class="f"><label>RUC del cliente</label><input id="gastoRucCli" autocomplete="off"></div>
+    </div>
+    <div class="f"><label>Timbrado</label><input id="gastoTimbrado" autocomplete="off"></div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-top:16px;justify-content:space-between;align-items:center">
+    <button class="btn" id="gastoBorrar" style="display:none;background:var(--sf);color:var(--dg);border:1px solid var(--dg)" onclick="borrarGasto()">Borrar</button>
+    <div style="display:flex;gap:8px;margin-left:auto">
+      <button class="btn" style="background:var(--sf);color:var(--tx);border:1px solid var(--bd)" onclick="hideModal('gastoModal')">Cancelar</button>
+      <button class="btn btn-g" id="gastoGuardar" onclick="guardarGasto()">Guardar</button>
+    </div>
+  </div>
+</div></div>
+
 <div class="modal-bg" id="tipoProyModal"><div class="modal" style="max-width:520px;padding:24px"><button class="close" onclick="hideModal('tipoProyModal')">×</button>
   <h3>¿Qué vas a presupuestar?</h3>
   <div id="tipoProyBody"></div>
@@ -542,6 +609,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="../servicios.js"></script>
 <script src="../personas.js"></script>
 <script src="../balance-calc.js"></script>
+<script src="../gastos.js"></script>
 <script>
 /* Error handler global — muestra errores visualmente */
 window.onerror=function(msg,url,line,col,err){
@@ -580,12 +648,18 @@ var LAB_PRES=[
   {id:'densidad',name:'Densidad aparente',price:75000,defaultOn:true,appliesTo:'todas'}
 ];
 
+/* Quién está usando el panel: firma los gastos cargados desde la web */
+var YO=null;
+
 /* Loading indicator */
 document.getElementById('dashStats').innerHTML='<div class="ds" style="grid-column:1/-1;cursor:default"><div><div class="v" style="font-size:13px">⏳ Cargando…</div><div class="l">Conectando a Firebase</div></div></div>';
 
 if(typeof initAuthGuard==='function'){
   initAuthGuard(function(user,data,rol){
     STShell.usuario(data,rol,user);
+    YO={uid:user.uid,email:user.email||'',rol:rol,
+        nombre:[data.nombre,data.apellido].filter(Boolean).join(' ').trim()
+               ||(user.email||'').split('@')[0]||'Desconocido'};
     loadAll().then(function(){route()});
   });
 }else{
@@ -1120,7 +1194,20 @@ function leerEquipos(){
 }
 function leerLab(){
   var o={};
-  document.querySelectorAll('#labBody tr[data-lab]').forEach(function(r){var i=r.querySelectorAll('input:not([readonly])');o[r.dataset.lab]=numOrNull(i[0].value)});
+  document.querySelectorAll('#labBody tr[data-lab]').forEach(function(r){
+    var pre=r.querySelector('td:nth-child(5) input');
+    o[r.dataset.lab]=numOrNull(pre&&pre.value);
+  });
+  return o;
+}
+/* Solo las cantidades escritas a mano. Las automáticas no se guardan: se
+   vuelven a calcular con las muestras al abrir el presupuesto. */
+function leerLabCant(){
+  var o={};
+  document.querySelectorAll('#labBody tr[data-lab]').forEach(function(r){
+    var q=r.querySelector('.lab-qty');
+    if(q&&q.dataset.auto==='0')o[r.dataset.lab]=numOrNull(q.value);
+  });
   return o;
 }
 function setCampo(id,v){var el=document.getElementById(id);if(el)el.value=(v==null?'':v)}
@@ -1134,7 +1221,7 @@ function getFormState(){
   var man=function(id){var e=document.getElementById(id);return !!(e&&e.dataset.manual)};
   return {
     v:2,campos:campos,
-    tablas:{maq:leerTabla('maq'),hon:leerTabla('hon'),otros:leerTabla('otros'),peaje:leerTabla('peaje'),inf:leerTabla('inf'),equip:leerEquipos(),lab:leerLab(),equipFijo:fijo?parseFloat(fijo.dataset.fixed)||0:null},
+    tablas:{maq:leerTabla('maq'),hon:leerTabla('hon'),otros:leerTabla('otros'),peaje:leerTabla('peaje'),inf:leerTabla('inf'),equip:leerEquipos(),lab:leerLab(),labCant:leerLabCant(),equipFijo:fijo?parseFloat(fijo.dataset.fixed)||0:null},
     chk:{prep:chk('chkImpPrep'),lab:chk('chkImpLab'),inf:chk('chkImpInf')},
     pesoManual:{prep:man('pesoPrep'),lab:man('pesoLab'),inf:man('pesoInf')},
     montoManual:man('montoSolicitar')
@@ -1360,11 +1447,11 @@ function setServicio(codigo){
   ts.appendChild(o);ts.value=codigo;
 }
 
-function initFormWidgets(labPrecios,equipVals,equipFijo){
+function initFormWidgets(labPrecios,equipVals,equipFijo,labCant){
   llenarClientes();
   llenarServicios();
   buildEquipTable(equipVals,equipFijo);
-  buildLabTable(labPrecios);
+  buildLabTable(labPrecios,labCant);
 }
 function llenarClientes(seleccion){
   var sel=document.getElementById('cliSel');if(!sel)return;
@@ -1390,13 +1477,43 @@ function buildEquipTable(vals,fijo){
 }
 function quitarEquipoFijo(b){b.closest('tr').remove();marcarCambio();calc()}
 
-function buildLabTable(precios){
-  precios=precios||{};
+function buildLabTable(precios,cantidades){
+  precios=precios||{};cantidades=cantidades||{};
   var tb=document.getElementById('labBody');
+  var deDonde={calicatas:'calicatas',barrenadas:'barrenadas',todas:'todas las muestras'};
   tb.innerHTML=LAB_PRES.map(function(a,i){
     var pr=precios[a.id]!=null?precios[a.id]:a.price;
-    return '<tr data-lab="'+a.id+'"><td>'+(i+1)+'</td><td>'+a.name+'</td><td><input type="number" readonly tabindex="-1" style="width:100%;background:var(--sf2)" id="labQty_'+a.id+'" title="Se calcula con las muestras"></td><td>Muestra</td><td>'+numIn(pr)+'</td>'+RO+'<td><input readonly tabindex="-1" style="width:100%;background:var(--sf2)"></td></tr>';
+    var cant=cantidades[a.id];
+    var manual=(cant!=null&&cant!=='');
+    return '<tr data-lab="'+a.id+'"><td>'+(i+1)+'</td><td>'+a.name+'</td>'+
+      '<td><div class="lab-cant">'+
+        '<input type="number" class="lab-qty" style="width:100%" id="labQty_'+a.id+'" data-auto="'+(manual?'0':'1')+'" value="'+(manual?vOf(cant):'')+'" min="0" oninput="labCantManual(this)" title="Se completa con las '+(deDonde[a.appliesTo]||'muestras')+'. Podés escribir otra cantidad.">'+
+        '<button type="button" class="lab-auto" onclick="labCantAuto(\''+a.id+'\')" title="Volver a calcularla con las muestras">↺</button>'+
+      '</div></td>'+
+      '<td>Muestra</td><td>'+numIn(pr)+'</td>'+RO+'<td><input readonly tabindex="-1" style="width:100%;background:var(--sf2)"></td></tr>';
   }).join('');
+  pintarLabAuto();
+}
+
+/* El usuario escribió una cantidad: desde ahora esa fila no se recalcula sola. */
+function labCantManual(inp){
+  inp.dataset.auto=String(inp.value).trim()===''?'1':'0';
+  pintarLabAuto();marcarCambio();calc();
+}
+/* Volver al cálculo automático de esa fila. */
+function labCantAuto(id){
+  var inp=document.getElementById('labQty_'+id);
+  if(!inp)return;
+  inp.dataset.auto='1';inp.value='';
+  pintarLabAuto();marcarCambio();calc();
+}
+/* Deja a la vista qué filas están en manual, para que no sorprenda después. */
+function pintarLabAuto(){
+  LAB_PRES.forEach(function(a){
+    var inp=document.getElementById('labQty_'+a.id);if(!inp)return;
+    var fila=inp.closest('tr'),man=inp.dataset.auto==='0';
+    if(fila)fila.classList.toggle('lab-man',man);
+  });
 }
 
 function populateForm(p){
@@ -1405,7 +1522,7 @@ function populateForm(p){
   buildFormHTML();
   if(f){
     var t=f.tablas||{};
-    initFormWidgets(t.lab,t.equip,t.equipFijo);
+    initFormWidgets(t.lab,t.equip,t.equipFijo,t.labCant);
     CAMPOS.forEach(function(id){if(f.campos&&f.campos[id]!=null)setCampo(id,f.campos[id])});
     ['maq','hon','otros','peaje','inf'].forEach(function(k){setTabla(k,t[k]||[])});
     var c=f.chk||{};
@@ -1754,27 +1871,29 @@ function calc(){
 
   /* — Laboratorio — */
   // Auto-set quantities based on analysis type
+  var labManual=0;
   LAB_PRES.forEach(function(a){
     var el=document.getElementById('labQty_'+a.id);
-    if(el){
-      if(a.appliesTo==='calicatas')el.value=tmCal;
-      else if(a.appliesTo==='barrenadas')el.value=tmBar;
-      else el.value=tm;
-    }
+    if(!el)return;
+    if(el.dataset.auto==='0'){labManual++;return}   // cantidad escrita a mano
+    if(a.appliesTo==='calicatas')el.value=tmCal;
+    else if(a.appliesTo==='barrenadas')el.value=tmBar;
+    else el.value=tm;
   });
   var sLab=0;
   Array.from(document.querySelectorAll('#labBody tr')).forEach(function(r){
-    var inp=r.querySelectorAll('input');
-    var qty=parseFloat(inp[0]&&inp[0].value)||0;
-    var price=parseFloat(inp[1]&&inp[1].value)||0;
+    var qInp=r.querySelector('.lab-qty'),pInp=r.querySelector('td:nth-child(5) input');
+    var qty=parseFloat(qInp&&qInp.value)||0;
+    var price=parseFloat(pInp&&pInp.value)||0;
     var total=qty*price;
-    var roInputs=r.querySelectorAll('input[readonly]:not([id^="labQty_"])');
+    var roInputs=r.querySelectorAll('input[readonly]');
     if(roInputs[0])roInputs[0].value=fmtGs(total);
     if(roInputs[1])roInputs[1].value=cot>0?fmtUsd(total/cot):'—';
     sLab+=total;
   });
   var labH=document.getElementById('labHeader');
-  if(labH)labH.textContent='Calicatas: '+cal+' × '+mpc+' = '+tmCal+' | Barrenadas: '+bar+' × '+mpb+' = '+tmBar+' | Total: '+tm;
+  if(labH)labH.textContent='Calicatas: '+cal+' × '+mpc+' = '+tmCal+' | Barrenadas: '+bar+' × '+mpb+' = '+tmBar+' | Total: '+tm+
+    (labManual?' · '+labManual+(labManual===1?' cantidad a mano':' cantidades a mano'):'');
 
   /* — Informe — */
   var sInf=0;
@@ -2307,7 +2426,8 @@ function renderBalanceGeneral(d){
   var sumL=function(f){return lista.reduce(function(s,b){return s+f(b)},0)};
   var html=
     '<div class="bal-head"><div><h2>Balance</h2><div class="sub">Todos los proyectos · mismos cálculos que la app</div></div>'+
-      '<button class="ibtn" onclick="actualizarBalance()">↻ Actualizar</button></div>'+
+      '<div style="display:flex;gap:8px"><button class="ibtn" onclick="abrirGasto()">+ Cargar gasto</button>'+
+      '<button class="ibtn" onclick="actualizarBalance()">↻ Actualizar</button></div></div>'+
     '<div class="bal-kpis k4">'+
       '<div class="bk hero'+(g.disponible<0?' neg':'')+'"><div class="l">Disponible</div><div class="v">'+gs(g.disponible)+'</div><div class="s">Cobrado − egresos · usado '+pct(g.usoDeIngresos)+'</div></div>'+
       '<div class="bk"><div class="l">Cobrado</div><div class="v">'+gs(g.ingresoGs)+'</div><div class="s">'+usd(g.ingresoUsd)+' netos de retención</div></div>'+
@@ -2478,6 +2598,166 @@ function renderBalanceProyecto(p,d,asig){
   document.getElementById('balPContent').innerHTML=html;
   renderMovimientos();
 }
+
+/* ═══ Gastos del proyecto: carga, edición y baja desde la web ═══
+   El mismo documento que escribe la app, así los dos lados ven lo mismo.
+   Quién cargó cada gasto y de dónde vino se conserva al editar. */
+var GASTO_ED=null;   // gasto que se está editando, o null si es nuevo
+
+function opts(lista,sel){
+  return lista.map(function(x){return '<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>'}).join('');
+}
+function esCursoProy(p){
+  return !!(p&&(p.tipoProyecto==='capacitacion'||p.tipoProyecto==='curso'));
+}
+/* Las categorías dependen del tipo de proyecto: un curso no tiene peaje ni
+   maquinaria, y un muestreo no tiene disertante ni salón. */
+function gastoLlenarCategorias(proyId,sel){
+  var p=findProj(proyId);
+  document.getElementById('gastoTipo').innerHTML='<option value="">— Elegir —</option>'+
+    opts(Gastos.categorias(esCursoProy(p)),sel);
+}
+function gastoProyCambio(){
+  gastoLlenarCategorias(document.getElementById('gastoProy').value,'');
+}
+function gastoMedioCambio(){
+  var cred=document.getElementById('gastoMedio').value==='Tarj. Crédito';
+  document.getElementById('gastoTarjWrap').style.display=cred?'block':'none';
+}
+function gastoFacturaCambio(){
+  var con=document.getElementById('gastoFactura').checked;
+  document.getElementById('gastoFacturaBox').style.display=con?'block':'none';
+  if(con)gastoIvaCambio();
+}
+function gastoIvaCambio(){
+  var t=document.getElementById('gastoIva').value;
+  document.getElementById('gastoV10Wrap').style.display=(t==='SOLO 10%'||t==='5% y 10%')?'block':'none';
+  document.getElementById('gastoV5Wrap').style.display=(t==='SOLO 5%'||t==='5% y 10%')?'block':'none';
+  gastoIvaResumen();
+}
+/* Muestra el IVA que se va a guardar y avisa si las bases del mixto no suman. */
+function gastoIvaResumen(){
+  var el=document.getElementById('gastoIvaResumen');if(!el)return;
+  var v=function(id){return document.getElementById(id).value};
+  var tipo=v('gastoIva'),monto=v('gastoMonto');
+  var r=Gastos.calcIva(tipo,monto,v('gastoV10'),v('gastoV5'));
+  var partes=[];
+  if(r.iva10>0)partes.push('IVA 10%: ₲ '+fmtGs(Math.round(r.iva10)));
+  if(r.iva5>0)partes.push('IVA 5%: ₲ '+fmtGs(Math.round(r.iva5)));
+  if(tipo==='Exento')partes.push('Sin IVA');
+  var aviso=Gastos.descuadre(tipo,monto,v('gastoV10'),v('gastoV5'))
+    ? ' <span style="color:var(--dg)">Las bases no suman el monto total.</span>' : '';
+  el.innerHTML=(partes.join(' · ')||'—')+aviso;
+}
+
+/* proyId fijo (desde el balance del proyecto) o vacío (desde el general). */
+function abrirGasto(proyId,gastoId){
+  var d=BalanceData.actual();
+  GASTO_ED=gastoId&&d?(d.gastos.filter(function(g){return g._id===gastoId})[0]||null):null;
+  var g=GASTO_ED||{};
+  var pid=g.proyectoId||proyId||'';
+
+  var sel=document.getElementById('gastoProy');
+  sel.innerHTML='<option value="">— Elegir proyecto —</option>'+ALL.filter(function(p){
+    return p.estado!=='Cotización';   // a una cotización todavía no se le cargan gastos
+  }).map(function(p){
+    return '<option value="'+esc(p._id)+'"'+(p._id===pid?' selected':'')+'>'+esc(p.nombre||'')+'</option>';
+  }).join('');
+  /* Si vino con proyecto fijo no se deja cambiar: evita cargarle el gasto al proyecto equivocado. */
+  var fijo=!!proyId&&!gastoId;
+  sel.disabled=fijo;
+  document.getElementById('gastoProyWrap').style.opacity=fijo?'.65':'1';
+
+  document.getElementById('gastoMedio').innerHTML=opts(Gastos.MEDIOS,g.medioPago||'Efectivo');
+  document.getElementById('gastoTarjeta').innerHTML='<option value="">— Elegir —</option>'+opts(Gastos.TARJETAS,g.tarjetaCredito||'');
+  document.getElementById('gastoIva').innerHTML='<option value="">— Elegir —</option>'+opts(Gastos.IVA,g.tipoIva||'');
+  gastoLlenarCategorias(pid,g.tipo||'');
+
+  var set=function(id,val){document.getElementById(id).value=(val==null?'':val)};
+  set('gastoFecha',GASTO_ED?Gastos.aInput(g.fecha):Gastos.hoy());
+  set('gastoConcepto',g.concepto);
+  set('gastoDesc',g.descripcion);
+  set('gastoMonto',g.monto);
+  set('gastoProveedor',g.proveedor);
+  set('gastoNroFac',g.numeroFactura);
+  set('gastoV10',g.valor10||'');
+  set('gastoV5',g.valor5||'');
+  set('gastoRucProv',g.rucProveedor);
+  set('gastoRucCli',g.rucCliente);
+  set('gastoTimbrado',g.timbrado);
+  document.getElementById('gastoFactura').checked=!!g.factura;
+
+  document.getElementById('gastoTitulo').textContent=GASTO_ED?'Editar gasto':'Cargar gasto';
+  document.getElementById('gastoGuardar').textContent=GASTO_ED?'Guardar cambios':'Guardar';
+  document.getElementById('gastoBorrar').style.display=GASTO_ED?'block':'none';
+
+  /* Al editar se deja claro quién lo cargó y desde dónde, para no confundirse. */
+  var ori=document.getElementById('gastoOrigen');
+  if(GASTO_ED){
+    ori.innerHTML='Cargado por <strong>'+esc(g.cargadoPorNombre||'—')+'</strong> desde '+
+      (Gastos.origen(g)==='web'?'la web':'la app')+
+      (g.fecha?' · '+fFecha(g.fecha):'')+
+      (g.fotoUrl?' · tiene foto del comprobante (se conserva)':'');
+    ori.style.display='block';
+  }else ori.style.display='none';
+
+  gastoMedioCambio();gastoFacturaCambio();gastoIvaCambio();
+  showModal('gastoModal');
+  setTimeout(function(){document.getElementById(pid?'gastoConcepto':'gastoProy').focus()},60);
+}
+
+function leerGasto(){
+  var v=function(id){return document.getElementById(id).value};
+  return {
+    proyectoId:v('gastoProy'),tipo:v('gastoTipo'),concepto:v('gastoConcepto'),
+    descripcion:v('gastoDesc'),fecha:v('gastoFecha'),monto:v('gastoMonto'),
+    medioPago:v('gastoMedio'),tarjetaCredito:v('gastoTarjeta'),proveedor:v('gastoProveedor'),
+    factura:document.getElementById('gastoFactura').checked,
+    numeroFactura:v('gastoNroFac'),tipoIva:v('gastoIva'),
+    valor10:v('gastoV10'),valor5:v('gastoV5'),
+    rucProveedor:v('gastoRucProv'),rucCliente:v('gastoRucCli'),timbrado:v('gastoTimbrado')
+  };
+}
+
+function guardarGasto(){
+  var d=leerGasto(),proy=findProj(d.proyectoId);
+  var btn=document.getElementById('gastoGuardar'),txt=btn.textContent;
+  btn.disabled=true;btn.textContent='Guardando…';
+  var fin=function(){btn.disabled=false;btn.textContent=txt};
+  var op=GASTO_ED
+    ? Gastos.actualizar(db,GASTO_ED._id,d,proy,GASTO_ED)
+    : Gastos.crear(db,d,proy,YO);
+  op.then(function(){
+    fin();hideModal('gastoModal');
+    toast(GASTO_ED?'✅ Gasto actualizado':'✅ Gasto cargado');
+    GASTO_ED=null;refrescarGastos();
+  }).catch(function(e){fin();toast('❌ '+e.message)});
+}
+
+function borrarGasto(){
+  if(!GASTO_ED)return;
+  var g=GASTO_ED;
+  confirmar({icono:'🗑',titulo:'Borrar gasto',
+    cuerpo:'<p>Se borra <strong>'+esc(g.concepto||'')+'</strong> por <strong>'+gs(g.monto)+'</strong> y el balance se recalcula.</p>'+
+           '<p style="color:var(--tx2)">Esto no se puede deshacer.</p>',
+    ok:'Borrar',peligro:true}).then(function(ok){
+    if(!ok)return;
+    Gastos.borrar(db,g._id).then(function(){
+      hideModal('gastoModal');toast('🗑 Gasto borrado');
+      GASTO_ED=null;refrescarGastos();
+    }).catch(function(e){toast('❌ '+e.message)});
+  });
+}
+
+/* Después de tocar un gasto hay que releer: el balance sale de esos datos. */
+function refrescarGastos(){
+  BalanceData.invalidar();
+  return BalanceData.cargar(db).then(function(d){
+    if(balPActual){balPActual.d=d;renderBalanceProyecto(balPActual.p,d,balPActual.asig)}
+    else renderBalanceGeneral(d);
+  }).catch(function(e){toast('❌ No se pudo refrescar el balance: '+e.message)});
+}
+
 function setMovTab(t){movTab=t;movCat='';renderMovimientos()}
 function renderMovimientos(){
   var st=balPActual;if(!st)return;
@@ -2497,7 +2777,7 @@ function renderMovimientos(){
   if(movTab==='gastos'){
     var L=G.filter(function(g){return (!movCat||(g.tipo||'Sin categoría')===movCat)&&has(g.concepto,g.descripcion,g.proveedor,g.tipo,g.numeroFactura,g.cargadoPorNombre,g.medioPago)}).sort(porFecha);
     var tot=L.reduce(function(s,g){return s+BalanceCalc.num(g.monto)},0);
-    body=L.length?'<div class="mov-wrap"><table class="mov-t"><thead><tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th>Factura</th><th>Pago</th><th>Cargado por</th><th class="r">Monto</th></tr></thead><tbody>'+
+    body=L.length?'<div class="mov-wrap"><table class="mov-t"><thead><tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th>Factura</th><th>Pago</th><th>Cargado por</th><th class="r">Monto</th><th style="width:28px"></th></tr></thead><tbody>'+
       L.map(function(g){
         var det=[g.proveedor,g.rucProveedor?'RUC '+g.rucProveedor:'',g.descripcion].filter(Boolean).join(' · ');
         return '<tr><td style="white-space:nowrap">'+fFecha(g.fecha)+(g.hora?'<span class="sub">'+esc(g.hora)+'</span>':'')+'</td>'+
@@ -2505,10 +2785,13 @@ function renderMovimientos(){
           '<td>'+esc(g.concepto||'—')+(det?'<span class="sub">'+esc(det)+'</span>':'')+'</td>'+
           '<td>'+(g.factura?'<span class="tag-fac">'+esc(g.numeroFactura||'Con factura')+'</span>'+(g.tipoIva?'<span class="sub">IVA '+esc(g.tipoIva)+'</span>':''):'<span class="sub" style="display:inline">—</span>')+'</td>'+
           '<td>'+esc(g.medioPago||'—')+(g.tarjetaCredito?'<span class="sub">'+esc(g.tarjetaCredito)+'</span>':'')+'</td>'+
-          '<td>'+esc(g.cargadoPorNombre||'—')+'</td>'+
-          '<td class="r m">'+gs(g.monto)+'</td></tr>';
-      }).join('')+'</tbody><tfoot><tr><td colspan="6">'+L.length+' gasto'+(L.length===1?'':'s')+(movCat||q?' (filtrado)':'')+'</td><td class="r">'+gs(tot)+'</td></tr></tfoot></table></div>'
-      :'<div class="mov-empty">'+(G.length?'Ningún gasto coincide con el filtro.':'Todavía no hay gastos cargados desde la app para este proyecto.')+'</div>';
+          '<td>'+esc(g.cargadoPorNombre||'—')+'<span class="ori ori-'+Gastos.origen(g)+'">'+
+            (Gastos.origen(g)==='web'?'web':'app')+'</span></td>'+
+          '<td class="r m">'+gs(g.monto)+'</td>'+
+          '<td class="r"><button class="gbtn" title="Editar o borrar" onclick="abrirGasto(null,\''+g._id+'\')">✎</button></td></tr>';
+      }).join('')+'</tbody><tfoot><tr><td colspan="6">'+L.length+' gasto'+(L.length===1?'':'s')+(movCat||q?' (filtrado)':'')+'</td><td class="r">'+gs(tot)+'</td><td></td></tr></tfoot></table></div>'
+      :'<div class="mov-empty">'+(G.length?'Ningún gasto coincide con el filtro.':'Todavía no hay gastos en este proyecto. Cargalos acá o desde la app.')+'</div>';
+    body+='<button class="ibtn" style="margin-top:10px" onclick="abrirGasto(\''+id+'\')">+ Cargar gasto</button>';
   }else if(movTab==='colab'){
     var LC=C.filter(function(c){return has(c.colaboradorNombre,c.concepto,c.medioPago)}).sort(porFecha);
     var tc=LC.reduce(function(s,c){return s+BalanceCalc.num(c.monto)},0);
