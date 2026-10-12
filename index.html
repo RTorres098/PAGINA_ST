@@ -130,6 +130,19 @@
             transition: background 0.25s, transform 0.2s !important;
         }
         .nav-cta::after { display: none !important; }
+        /* Campus: destacado, pero en contorno para no competir con Contactar */
+        .nav-campus {
+            display: inline-flex !important; align-items: center; gap: 7px;
+            background: rgba(52,166,120,0.14) !important;
+            border: 1px solid rgba(52,166,120,0.42);
+            color: var(--brand) !important;
+            padding: 9px 20px; border-radius: 100px;
+            transition: background 0.25s, color 0.25s, transform 0.2s !important;
+        }
+        .nav-campus::after { display: none !important; }
+        .nav-campus:hover { background: var(--brand) !important; color: var(--white) !important; transform: translateY(-1px); }
+        .nav-campus i { font-size: 12px; }
+        .mm-campus { display: inline-flex !important; align-items: center; gap: 10px; color: var(--brand) !important; }
         .nav-cta:hover { background: var(--white) !important; color: var(--dark) !important; transform: translateY(-1px); }
 
         /* Hamburger */
@@ -436,82 +449,89 @@
         .service-card h4 { font-size: 20px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
         .service-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; }
 
-        /* ─── CAPACITACIONES ──────────────────────── */
+        /* ─── CAPACITACIONES · CAMPUS ─────────────── */
         #capacitaciones { padding: 120px 0; background: var(--dark); }
-        .training-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; }
+        .training-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; }
         .training-header .section-title { color: white; }
-        .training-header p { color: rgba(255,255,255,0.4); max-width: 300px; font-style: italic; font-size: 15px; text-align: right; }
-        .training-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 20px; }
+        .training-header p { color: rgba(255,255,255,0.4); max-width: 320px; font-style: italic; font-size: 15px; text-align: right; }
 
-        .training-featured {
-            background: linear-gradient(135deg, rgba(52,166,120,0.12) 0%, rgba(36,90,80,0.2) 100%);
-            border: 2px solid rgba(239,191,4,0.5); border-radius: 28px; padding: 40px;
-            position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 0; transition: all 0.4s;
-        }
-        .training-featured:hover { transform: translateY(-6px); box-shadow: 0 40px 80px rgba(0,0,0,0.4); }
-        .featured-badge {
-            position: absolute; top: 24px; right: 24px; background: var(--golden);
-            color: white; font-size: 9px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase;
-            padding: 6px 14px; border-radius: 100px; animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
-        .featured-date {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(52,166,120,0.15); border: 1px solid rgba(52,166,120,0.3);
-            border-radius: 100px; padding: 8px 16px; margin-bottom: 24px; width: fit-content;
-        }
-        .featured-date span { font-size: 11px; font-weight: 700; color: var(--brand); letter-spacing: 0.1em; text-transform: uppercase; }
-        .featured-date i { font-size: 11px; color: var(--brand); }
-        .training-featured h4 { font-family: 'Inter', system-ui, sans-serif; font-size: 30px; color: white; line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.02em; }
-        .training-featured h4 span { color: var(--brand); font-style: italic; }
-        .sw-logos { display: flex; gap: 12px; margin: 20px 0; }
-        .sw-logo-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 14px; }
-        .sw-logo-box img { height: 32px; object-fit: contain; filter: brightness(1.1); }
-        .training-featured p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 24px; flex: 1; }
-        .training-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
-        .training-pill {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(52,166,120,0.1); border: 1px solid rgba(52,166,120,0.2);
-            padding: 6px 12px; border-radius: 100px; font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 600;
-        }
-        .training-pill i { color: var(--brand); font-size: 11px; }
-        .training-featured .btn-primary { width: 100%; justify-content: center; padding: 16px; font-size: 12px; border-radius: 14px; }
-
-        .training-col { display: flex; flex-direction: column; gap: 16px; }
-        .training-card {
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px; padding: 28px; flex: 1; display: flex; flex-direction: column;
-            justify-content: space-between; transition: all 0.35s cubic-bezier(.25,.46,.45,.94);
+        /* Banda del campus: el bloque principal de la sección */
+        .campus-band {
             position: relative; overflow: hidden;
+            display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; align-items: center;
+            background: linear-gradient(135deg, rgba(52,166,120,0.14) 0%, rgba(36,90,80,0.22) 100%);
+            border: 1px solid rgba(52,166,120,0.28);
+            border-radius: 28px; padding: 56px;
         }
-        .training-card::before {
-            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
-            background: var(--brand); transform: scaleY(0); transform-origin: top; transition: transform 0.35s;
+        .campus-glow {
+            position: absolute; top: -40%; right: -10%; width: 520px; height: 520px;
+            background: radial-gradient(circle, rgba(52,166,120,0.22) 0%, transparent 68%);
+            pointer-events: none;
         }
-        .training-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(52,166,120,0.2); transform: translateX(4px); }
-        .training-card:hover::before { transform: scaleY(1); }
-        .training-card h4 { font-size: 15px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-        .training-card p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 16px; }
-        .training-link {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-            text-decoration: none; color: rgba(255,255,255,0.6); transition: color 0.2s, gap 0.2s;
+        .campus-main { position: relative; z-index: 1; }
+        .campus-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(52,166,120,0.15); border: 1px solid rgba(52,166,120,0.35);
+            border-radius: 100px; padding: 7px 16px; margin-bottom: 22px;
+            font-size: 10.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand);
         }
-        .training-link:hover { color: var(--brand); gap: 10px; }
-        .training-link i { font-size: 10px; }
-        .soon-ribbon {
-            position: absolute; top: 12px; right: -8px; background: var(--golden); color: white;
-            font-size: 8px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase;
-            padding: 4px 20px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 8px 50%);
+        .campus-tag i { font-size: 12px; }
+        .campus-main h3 {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: clamp(28px, 3vw, 40px); line-height: 1.12; letter-spacing: -0.025em;
+            color: var(--white); margin-bottom: 16px;
         }
-        .download-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: rgba(52,166,120,0.15); border: 1px solid rgba(52,166,120,0.3);
-            color: var(--brand); padding: 10px 16px; border-radius: 10px;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+        .campus-main h3 span { color: var(--brand); font-style: italic; }
+        .campus-main > p { font-size: 15.5px; line-height: 1.7; color: rgba(255,255,255,0.58); max-width: 520px; margin-bottom: 26px; }
+        .campus-feats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+        .campus-feat {
+            display: flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+            padding: 7px 14px; border-radius: 100px;
+            font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.72);
+        }
+        .campus-feat i { color: var(--brand); font-size: 12px; }
+        .campus-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .campus-actions .btn-ghost { border: 1px solid rgba(255,255,255,0.22); }
+
+        /* Números del campus, en dos columnas */
+        .campus-stats {
+            position: relative; z-index: 1;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden;
+        }
+        .campus-stat { background: rgba(14,30,27,0.55); padding: 26px 20px; text-align: center; }
+        .cs-num { font-size: 32px; font-weight: 800; color: var(--brand); line-height: 1; margin-bottom: 7px; letter-spacing: -0.02em; }
+        .cs-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.45); line-height: 1.4; }
+        .campus-url {
+            grid-column: 1 / -1; background: rgba(14,30,27,0.55);
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            padding: 15px; text-decoration: none;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: rgba(255,255,255,0.5);
+            transition: color 0.25s, background 0.25s;
+        }
+        .campus-url:hover { color: var(--brand); background: rgba(52,166,120,0.1); }
+        .campus-url i { font-size: 11px; color: var(--brand); }
+
+        /* Capacitaciones a medida: lo que no está en el catálogo del campus */
+        .campus-medida {
+            display: flex; justify-content: space-between; align-items: center; gap: 32px;
+            margin-top: 20px; padding: 28px 40px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+        }
+        .campus-medida h4 { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; letter-spacing: -0.01em; }
+        .campus-medida p { font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.45); max-width: 720px; }
+        .campus-medida strong { color: rgba(255,255,255,0.75); font-weight: 600; }
+        .medida-btn {
+            display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0;
+            background: rgba(52,166,120,0.14); border: 1px solid rgba(52,166,120,0.32);
+            color: var(--brand); padding: 13px 26px; border-radius: 12px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
             text-decoration: none; transition: all 0.25s;
         }
-        .download-btn:hover { background: var(--brand); color: white; }
+        .medida-btn:hover { background: var(--brand); color: var(--white); transform: translateY(-2px); }
+        .medida-btn i { font-size: 15px; }
 
         /* ─── CONTACTO ────────────────────────────── */
         #contacto { padding: 80px 0 120px; background: white; }
@@ -567,9 +587,8 @@
 
         /* ─── RESPONSIVE ──────────────────────────── */
         @media (max-width: 1024px) {
-            .training-grid { grid-template-columns: 1fr; }
-            .training-featured { order: -1; }
-            .training-col { display: grid; grid-template-columns: 1fr 1fr; }
+            .campus-band { grid-template-columns: 1fr; gap: 40px; padding: 44px; }
+            .campus-medida { flex-direction: column; align-items: flex-start; gap: 20px; padding: 28px; }
             .about-grid { grid-template-columns: 1fr; gap: 48px; }
             .about-visual-wrap { height: 380px; }
             .av-back { width: 75%; height: 82%; }
@@ -591,8 +610,14 @@
             .hamburger { display: flex; }
             #nosotros, #servicios, #capacitaciones, #contacto { padding: 80px 0; }
             .training-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .training-header p { text-align: left; }
-            .training-col { grid-template-columns: 1fr; }
+            .training-header p { text-align: left; max-width: none; }
+            .campus-band { padding: 32px 24px; border-radius: 22px; }
+            .campus-main h3 { font-size: 26px; }
+            .campus-actions { flex-direction: column; align-items: stretch; }
+            .campus-actions .btn-primary, .campus-actions .btn-ghost { justify-content: center; }
+            .cs-num { font-size: 26px; }
+            .campus-stat { padding: 20px 12px; }
+            .medida-btn { width: 100%; justify-content: center; }
             .footer-grid { grid-template-columns: 1fr; }
             .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
             .contact-card { padding: 36px 28px; border-radius: 24px; }
@@ -724,6 +749,7 @@
         <a href="#nosotros" onclick="closeMobileMenu()">Nosotros</a>
         <a href="#servicios" onclick="closeMobileMenu()">Servicios</a>
         <a href="#capacitaciones" onclick="closeMobileMenu()">Capacitaciones</a>
+        <a href="https://academy.soiltechpy.com" target="_blank" rel="noopener" onclick="closeMobileMenu()" class="mm-campus"><i class="fa-solid fa-graduation-cap"></i> Campus</a>
         <a href="#contacto" onclick="closeMobileMenu()" style="color:var(--brand)">Contactar</a>
     </div>
 
@@ -738,6 +764,7 @@
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="#servicios">Servicios</a></li>
                 <li><a href="#capacitaciones">Capacitaciones</a></li>
+                <li><a href="https://academy.soiltechpy.com" target="_blank" rel="noopener" class="nav-campus"><i class="fa-solid fa-graduation-cap"></i> Campus</a></li>
                 <li><a href="#contacto" class="nav-cta">Contactar</a></li>
             </ul>
             <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menú">
@@ -866,7 +893,7 @@
         </div>
     </section>
 
-    <!-- ═══ CAPACITACIONES ══════════════════════════ -->
+    <!-- ═══ CAPACITACIONES · CAMPUS ═════════════════ -->
     <section id="capacitaciones">
         <div class="container">
             <div class="training-header">
@@ -874,76 +901,48 @@
                     <span class="section-label reveal">Oferta Educativa</span>
                     <h2 class="section-title light reveal reveal-delay-1">Capacitación Técnica<br>de Alto Nivel</h2>
                 </div>
-                <p class="reveal">Clases grupales o personalizadas adaptadas a tus necesidades profesionales.</p>
+                <p class="reveal">Formación en SIG, teledetección y datos para el sector agrícola, forestal y ganadero.</p>
             </div>
-            <div class="training-grid">
-                <div class="training-featured reveal">
-                    <span class="featured-badge">Más Solicitado</span>
-                    <div class="featured-date">
-                        <i class="fa-solid fa-calendar-check"></i>
-                        <span>Inicia 18 de Mayo · Modalidad Híbrida</span>
+
+            <div class="campus-band reveal">
+                <div class="campus-glow"></div>
+                <div class="campus-main">
+                    <span class="campus-tag"><i class="fa-solid fa-graduation-cap"></i> SoilTech Academy</span>
+                    <h3>Todas las capacitaciones,<br>ahora en el <span>campus</span></h3>
+                    <p>Cursos en video a tu ritmo, materiales descargables, acompañamiento directo y certificado verificable al terminar. Entrás una vez y el contenido queda disponible.</p>
+                    <div class="campus-feats">
+                        <div class="campus-feat"><i class="fa-solid fa-circle-play"></i> Clases grabadas, a tu ritmo</div>
+                        <div class="campus-feat"><i class="fa-solid fa-folder-open"></i> Materiales y datos reales</div>
+                        <div class="campus-feat"><i class="fa-solid fa-certificate"></i> Certificado verificable</div>
                     </div>
-                    <h4>Capacitación en SIG <span>ArcGIS Pro & Online</span></h4>
-                    <div class="sw-logos">
-                        <div class="sw-logo-box"><img src="arcgis_pro.png" alt="ArcGIS Pro"></div>
-                        <div class="sw-logo-box"><img src="arcgis_online.png" alt="ArcGIS Online"></div>
+                    <div class="campus-actions">
+                        <a href="https://academy.soiltechpy.com" target="_blank" rel="noopener" class="btn-primary">
+                            Entrar al campus <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="https://academy.soiltechpy.com/verificar.html" target="_blank" rel="noopener" class="btn-ghost">
+                            Verificar certificado <i class="fa-solid fa-circle-check"></i>
+                        </a>
                     </div>
-                    <p>Domina el ecosistema líder de Esri. Un enfoque 100% práctico diseñado para gestión territorial, análisis avanzado y toma de decisiones con datos en tiempo real.</p>
-                    <div class="training-pills">
-                        <div class="training-pill"><i class="fa-solid fa-certificate"></i> 25 Horas Certificadas</div>
-                        <div class="training-pill"><i class="fa-solid fa-key"></i> Licencia Full x 3 Meses</div>
-                    </div>
-                    <a href="https://www.soiltechpy.com/curso_arcgis/" target="_blank" class="btn-primary">
-                        Ver detalles del curso <i class="fa-solid fa-arrow-right"></i>
+                </div>
+                <div class="campus-stats">
+                    <div class="campus-stat"><div class="cs-num">240+</div><div class="cs-label">Profesionales formados</div></div>
+                    <div class="campus-stat"><div class="cs-num">100+</div><div class="cs-label">Horas de contenido</div></div>
+                    <div class="campus-stat"><div class="cs-num">100%</div><div class="cs-label">Online</div></div>
+                    <div class="campus-stat"><div class="cs-num">SIG</div><div class="cs-label">ArcGIS · QGIS · Power BI</div></div>
+                    <a class="campus-url" href="https://academy.soiltechpy.com" target="_blank" rel="noopener">
+                        <i class="fa-solid fa-link"></i> academy.soiltechpy.com
                     </a>
                 </div>
-                <div class="training-col reveal reveal-delay-1">
-                    <div class="training-card">
-                        <div class="soon-ribbon">Próximamente</div>
-                        <div>
-                            <h4>Manejo de la Fertilidad</h4>
-                            <p>Interpretación de análisis de suelos y recomendaciones precisas para optimizar rendimientos.</p>
-                        </div>
-                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Manejo%20de%20la%20Fertilidad" target="_blank" class="training-link">Consultar <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="training-card">
-                        <div>
-                            <h4>Muestreo y Mapas de Fertilidad</h4>
-                            <p>Habilidades para muestreos eficientes y cartografía de fertilidad sostenible.</p>
-                        </div>
-                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Muestreo%20y%20Mapas%20de%20Fertilidad" target="_blank" class="training-link">Consultar <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="training-card">
-                        <div>
-                            <h4>Manejo de Suelos Sostenibles</h4>
-                            <p>Estrategias de conservación y manejo integral para garantizar la salud del suelo.</p>
-                        </div>
-                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Manejo%20de%20Suelos%20Sostenibles" target="_blank" class="training-link">Consultar <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
+            </div>
+
+            <div class="campus-medida reveal reveal-delay-1">
+                <div>
+                    <h4>¿Buscás algo que no está en el catálogo?</h4>
+                    <p>Dictamos capacitaciones a medida, presenciales o híbridas, en <strong>Manejo de la Fertilidad</strong>, <strong>Muestreo y Mapas de Fertilidad</strong>, <strong>Manejo de Suelos Sostenibles</strong> y <strong>Manejo y Uso de Drones</strong>.</p>
                 </div>
-                <div class="training-col reveal reveal-delay-2">
-                    <div class="training-card">
-                        <div>
-                            <h4>Power BI Transformación Digital</h4>
-                            <p>Evolucioná del manejo de datos en Excel a la toma de decisiones dinámicas con dashboards interactivos.</p>
-                        </div>
-                        <a href="docs/P0126_POWERBI_SOILTECH.pdf" download class="download-btn">Descargar programa <i class="fa-solid fa-download"></i></a>
-                    </div>
-                    <div class="training-card">
-                        <div>
-                            <h4>Sistemas SIG con QGIS</h4>
-                            <p>Recopilación y visualización de datos geoespaciales aplicados al sector agropecuario con software libre.</p>
-                        </div>
-                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20QGIS" target="_blank" class="training-link">Consultar <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="training-card">
-                        <div>
-                            <h4>Manejo y Uso de Drones</h4>
-                            <p>Captura de imágenes aéreas e inspecciones técnicas para mejorar la productividad del campo.</p>
-                        </div>
-                        <a href="https://wa.me/595982369083?text=Hola%20Soiltech%20quisiera%20consultar%20por%20Drones" target="_blank" class="training-link">Consultar <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
+                <a href="https://wa.me/595982369083?text=Hola%20SoilTech%2C%20quisiera%20consultar%20por%20una%20capacitaci%C3%B3n%20a%20medida" target="_blank" rel="noopener" class="medida-btn">
+                    <i class="fa-brands fa-whatsapp"></i> Consultar
+                </a>
             </div>
         </div>
     </section>
@@ -1069,7 +1068,7 @@
                 requestAnimationFrame(animateRing);
             }
             animateRing();
-            document.querySelectorAll('a, button, .service-card, .training-card, .training-featured').forEach(el => {
+            document.querySelectorAll('a, button, .service-card, .campus-band, .campus-medida').forEach(el => {
                 el.addEventListener('mouseenter', () => {
                     cursor.style.width = '16px'; cursor.style.height = '16px';
                     ring.style.width = '56px'; ring.style.height = '56px';
