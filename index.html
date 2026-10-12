@@ -450,7 +450,26 @@
         .service-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; }
 
         /* ─── CAPACITACIONES · CAMPUS ─────────────── */
-        #capacitaciones { padding: 120px 0; background: var(--dark); }
+        #capacitaciones {
+            position: relative; padding: 120px 0;
+            background: var(--dark) url('campus_fondo.webp') center/cover no-repeat;
+            background-attachment: fixed;
+        }
+        /* Dos capas sobre la foto: un velo parejo que apaga el contraste de la
+           sala, y un degradé que oscurece arriba y abajo para que el título y
+           el borde con las secciones vecinas no queden cortados. */
+        #capacitaciones::before {
+            content: ''; position: absolute; inset: 0; z-index: 0;
+            background: rgba(14,30,27,0.62);
+        }
+        #capacitaciones::after {
+            content: ''; position: absolute; inset: 0; z-index: 0;
+            background: linear-gradient(170deg,
+                rgba(14,30,27,0.92) 0%,
+                rgba(14,30,27,0.30) 45%,
+                rgba(14,30,27,0.90) 100%);
+        }
+        #capacitaciones > .container { position: relative; z-index: 1; }
         .training-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; }
         .training-header .section-title { color: white; }
         .training-header p { color: rgba(255,255,255,0.4); max-width: 320px; font-style: italic; font-size: 15px; text-align: right; }
@@ -459,8 +478,10 @@
         .campus-band {
             position: relative; overflow: hidden;
             display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; align-items: center;
-            background: linear-gradient(135deg, rgba(52,166,120,0.14) 0%, rgba(36,90,80,0.22) 100%);
-            border: 1px solid rgba(52,166,120,0.28);
+            background: linear-gradient(135deg, rgba(18,46,41,0.90) 0%, rgba(14,34,31,0.93) 100%);
+            border: 1px solid rgba(52,166,120,0.32);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.38);
+            backdrop-filter: blur(3px);
             border-radius: 28px; padding: 56px;
         }
         .campus-glow {
@@ -518,7 +539,8 @@
         .campus-medida {
             display: flex; justify-content: space-between; align-items: center; gap: 32px;
             margin-top: 20px; padding: 28px 40px;
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+            background: rgba(14,30,27,0.86); border: 1px solid rgba(255,255,255,0.10); border-radius: 20px;
+            backdrop-filter: blur(3px);
         }
         .campus-medida h4 { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; letter-spacing: -0.01em; }
         .campus-medida p { font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.45); max-width: 720px; }
@@ -585,6 +607,10 @@
         .reveal-delay-2 { transition-delay: 0.2s; }
         .reveal-delay-3 { transition-delay: 0.3s; }
 
+        @media (prefers-reduced-motion: reduce) {
+            #capacitaciones { background-attachment: scroll; }
+        }
+
         /* ─── RESPONSIVE ──────────────────────────── */
         @media (max-width: 1024px) {
             .campus-band { grid-template-columns: 1fr; gap: 40px; padding: 44px; }
@@ -611,6 +637,10 @@
             #nosotros, #servicios, #capacitaciones, #contacto { padding: 80px 0; }
             .training-header { flex-direction: column; align-items: flex-start; gap: 12px; }
             .training-header p { text-align: left; max-width: none; }
+            #capacitaciones {
+                background-image: url('campus_fondo_sm.webp');
+                background-attachment: scroll;   /* fixed se rompe en iOS */
+            }
             .campus-band { padding: 32px 24px; border-radius: 22px; }
             .campus-main h3 { font-size: 26px; }
             .campus-actions { flex-direction: column; align-items: stretch; }
