@@ -105,6 +105,8 @@
       <a href="facturacion/" title="Facturación"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span class="lb">Facturación</span><span class="pill hidden" id="navFac">0</span></a>
       <a href="clientes/" title="Clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg><span class="lb">Clientes</span></a>
 
+      <div class="sh-grp" data-super="1" style="display:none">Finanzas</div>
+      <a href="cheques/" title="Cheques" data-super="1" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg><span class="lb">Cheques</span></a>
       <div class="sh-grp">Ajustes</div>
       <a href="servicios/" title="Servicios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.63.67 1.1 1.31 1.1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="lb">Servicios</span></a>
 
@@ -302,6 +304,11 @@ function showPanel(d,rol,user){
   $('userNm').innerHTML=esc(nombre.split(' ')[0]||'Usuario')+'<small>'+(rol==='super_admin'?'Super Admin':'Administrador')+'</small>';
   $('userAv').textContent=(nombre||user.email||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
   $('userMail').textContent=user.email||'';
+  /* Esta página tiene su propia barra lateral, no la de shell.js: lo que es
+     solo del dueño se pinta oculto y se revela acá, al saber el rol. */
+  if(rol==='super_admin'){
+    document.querySelectorAll('.sh-nav [data-super="1"]').forEach(function(el){el.style.display=''});
+  }
   cargarPanel();
 }
 
