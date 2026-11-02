@@ -24,7 +24,8 @@ var STShell = (function () {
     mas: '<path d="M12 5v14M5 12h14"/>',
     ajustes: '<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.63.67 1.1 1.31 1.1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
     sitio: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/>',
-    salir: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>'
+    salir: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+    cheque: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>'
   };
 
   function svg(d, w) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (w || 1.9) + '" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; }
@@ -40,6 +41,7 @@ var STShell = (function () {
     if (/\/facturacion\//.test(p)) return 'facturacion';
     if (/\/clientes\//.test(p)) return 'clientes';
     if (/\/servicios\//.test(p)) return 'servicios';
+    if (/\/cheques\//.test(p)) return 'cheques';
     return 'inicio';
   }
 
@@ -53,6 +55,8 @@ var STShell = (function () {
       { k: 'presupuestos', t: 'Presupuestos', h: b + 'presupuesto/', i: IC.presu },
       { k: 'facturacion', t: 'Facturación', h: b + 'facturacion/', i: IC.factu },
       { k: 'clientes', t: 'Clientes', h: b + 'clientes/', i: IC.clien },
+      { g: 'Finanzas', soloSuper: true },
+      { k: 'cheques', t: 'Cheques', h: b + 'cheques/', i: IC.cheque, soloSuper: true },
       { g: 'Ajustes' },
       { k: 'servicios', t: 'Servicios', h: b + 'servicios/', i: IC.ajustes },
       { g: 'Crear' },
@@ -65,8 +69,9 @@ var STShell = (function () {
   function htmlSidebar() {
     var b = base(), act = actual();
     var nav = itemsNav().map(function (x) {
-      if (x.g) return '<div class="sh-grp">' + x.g + '</div>';
-      return '<a class="' + (x.k === act ? 'on' : '') + '" href="' + x.h + '" title="' + esc(x.t) + '">' +
+      var oculto = x.soloSuper ? ' data-super="1" style="display:none"' : '';
+      if (x.g) return '<div class="sh-grp"' + oculto + '>' + x.g + '</div>';
+      return '<a class="' + (x.k === act ? 'on' : '') + '" href="' + x.h + '" title="' + esc(x.t) + '"' + oculto + '>' +
         svg(x.i) + '<span class="lb">' + esc(x.t) + '</span></a>';
     }).join('');
     return '<div class="sh-scrim" id="shScrim"></div>' +
@@ -77,7 +82,7 @@ var STShell = (function () {
       '</aside>';
   }
 
-  var TITULOS = { inicio: 'Inicio', balance: 'Balance', presupuestos: 'Presupuestos', facturacion: 'Facturación', clientes: 'Clientes', servicios: 'Servicios' };
+  var TITULOS = { inicio: 'Inicio', balance: 'Balance', presupuestos: 'Presupuestos', facturacion: 'Facturación', clientes: 'Clientes', servicios: 'Servicios', cheques: 'Cheques' };
 
   /* Convierte el <header class="st-top"> de la página en la barra superior clara. */
   function armarTopbar() {
@@ -228,6 +233,7 @@ var STShell = (function () {
     var s = document.getElementById('shScrim');
     if (s) s.onclick = cerrarCajon;
     armarTopbar();
+    aplicarRol();   // por si el rol ya se supo antes de montar la barra
 
     document.addEventListener('click', function (e) {
       if (!e.target.closest || !e.target.closest('.sh-tools')) {
@@ -251,7 +257,18 @@ var STShell = (function () {
   }
 
   /* La llama cada página desde initAuthGuard. */
+  var _rol = null;
+
+  /* Muestra lo que es solo del dueño. Se llama al montar y al saber el rol,
+     porque el orden entre esas dos cosas no está garantizado. */
+  function aplicarRol() {
+    if (_rol !== 'super_admin') return;
+    var els = document.querySelectorAll('.sh-nav [data-super="1"]');
+    for (var i = 0; i < els.length; i++) els[i].style.display = '';
+  }
+
   function usuario(data, rol, user) {
+    _rol = rol;
     data = data || {};
     var nombre = data.nombre || '';
     var mail = (user && user.email) || '';
@@ -261,6 +278,7 @@ var STShell = (function () {
     if (av) av.textContent = (nombre || mail || '?').trim().split(/\s+/).slice(0, 2).map(function (x) { return x[0]; }).join('').toUpperCase();
     if (nm) nm.innerHTML = esc(nombre.split(' ')[0] || 'Cuenta') + '<small>' + (rol === 'super_admin' ? 'Super Admin' : 'Administrador') + '</small>';
     if (ml) ml.textContent = mail;
+    aplicarRol();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', montar);

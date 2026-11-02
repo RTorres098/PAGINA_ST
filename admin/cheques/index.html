@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoilTech — Cheques</title>
+<link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="../shell.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.main{max-width:1180px;margin:0 auto;padding:24px 24px 80px;width:100%}
+.hd1{font-size:24px;color:var(--gd);line-height:1.15}
+.hd2{font-size:13px;color:var(--tx2);margin-top:3px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+
+/* Franja de los que entran pronto */
+.urge{border-radius:14px;padding:16px 18px;margin-bottom:18px;border:1px solid}
+.urge.rojo{background:#FEF2F2;border-color:#FCA5A5;color:#7F1D1D}
+.urge.verde{background:rgba(52,166,120,.08);border-color:rgba(52,166,120,.3);color:#1E7A55}
+.urge h3{font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.urge .sub{font-size:12px;opacity:.85;margin-bottom:10px}
+.ulist{display:flex;flex-direction:column;gap:6px}
+.urow{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.65);border-radius:9px;padding:8px 12px;font-size:12.5px;cursor:pointer}
+.urow:hover{background:#fff}
+.urow .d{font-weight:800;min-width:118px}
+.urow .c{flex:1;color:var(--tx2)}
+.urow .m{font-weight:700;white-space:nowrap}
+
+/* Tarjetas de resumen */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.kpi .v{font-size:19px;font-weight:800;color:var(--gd);line-height:1.1}
+.kpi .l{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--tx2);margin-top:4px}
+
+/* Filtros */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.pill{border:1px solid var(--bd);background:var(--sf);color:var(--tx2);border-radius:100px;
+  padding:6px 14px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.pill.on{background:var(--g);border-color:var(--g);color:#fff}
+.busca{flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--bd);border-radius:9px;font:inherit;font-size:12.5px;background:var(--sf)}
+
+/* Tabla */
+.tabla{background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:var(--sf2);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);
+  text-align:left;padding:10px 12px;font-weight:700}
+td{padding:11px 12px;border-top:1px solid var(--bd);font-size:12.5px;vertical-align:middle}
+tr.ch-vencido td{background:#FEF2F2}
+tr.ch-hoy td{background:#FFFBEB}
+tr.ch-cerrado td{opacity:.55}
+.est{display:inline-block;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.est.vencido{background:#FEE2E2;color:#991B1B}
+.est.hoy{background:#FEF3C7;color:#92400E}
+.est.proximo{background:#DBEAFE;color:#1E40AF}
+.est.lejos{background:var(--sf2);color:var(--tx2)}
+.est.cobrado{background:rgba(52,166,120,.14);color:#1E7A55}
+.est.anulado{background:#F3F4F6;color:#6B7280}
+.dest{font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--tx3);letter-spacing:.05em}
+.acc{display:flex;gap:5px;justify-content:flex-end}
+.ab{border:1px solid var(--bd);background:var(--sf);color:var(--tx2);border-radius:7px;padding:4px 9px;
+  font:inherit;font-size:11px;cursor:pointer;white-space:nowrap}
+.ab:hover{background:var(--sf2);color:var(--gd);border-color:var(--g)}
+.ab.rm:hover{color:var(--dg);border-color:var(--dg)}
+.vacio{padding:34px 20px;text-align:center;color:var(--tx3);font-size:13px}
+
+/* Formulario */
+.md{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:70;padding:20px}
+.md.show{display:flex}
+.mdc{background:var(--sf);border-radius:16px;max-width:560px;width:100%;max-height:92vh;overflow-y:auto;padding:24px;position:relative}
+.mdc h3{font-size:18px;color:var(--gd);margin-bottom:14px}
+.f{margin-bottom:11px}
+.f label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;font:inherit;font-size:13px;background:var(--bg)}
+.f input:focus,.f select:focus{outline:none;border-color:var(--g)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ayuda{font-size:10.5px;color:var(--tx3);margin-top:3px}
+.btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn{padding:9px 18px;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn-g{background:var(--g);color:#fff}
+.btn-w{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
+.btn-d{background:var(--sf);color:var(--dg);border:1px solid var(--dg)}
+.cerrar{position:absolute;top:14px;right:14px;border:0;background:transparent;font-size:22px;color:var(--tx3);cursor:pointer;line-height:1}
+
+/* Banco nuevo desde el propio formulario */
+.inline{display:flex;gap:6px}
+.inline select{flex:1}
+.inline .ab{flex:0 0 auto}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--gd);
+  color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:200;transition:transform .25s;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:860px){.kpis{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}
+  .tabla{overflow-x:auto}table{min-width:720px}}
+</style>
+</head>
+<body class="sh-flow">
+
+<header class="st-top">
+  <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
+  <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../facturacion/">Facturación</a><a href="../clientes/">Clientes</a><a class="on" href="./">Cheques</a></nav>
+  <div class="st-right"><button class="st-btn st-btn-g" id="btnNuevo" onclick="abrir()">+ Nuevo cheque</button></div>
+</header>
+
+<main class="main">
+  <div class="head">
+    <div><h1 class="hd1">Cheques emitidos</h1>
+      <div class="hd2">Lo que tiene que salir de la cuenta y cuándo. Avisa desde 3 días antes.</div></div>
+  </div>
+
+  <div id="franja"></div>
+  <div class="kpis" id="kpis"></div>
+
+  <div class="filtros">
+    <button class="pill on" data-f="pendientes" onclick="setFiltro('pendientes')">Pendientes</button>
+    <button class="pill" data-f="todos" onclick="setFiltro('todos')">Todos</button>
+    <button class="pill" data-f="cobrados" onclick="setFiltro('cobrados')">Cobrados</button>
+    <button class="pill" data-f="Personal" onclick="setFiltro('Personal')">Personales</button>
+    <button class="pill" data-f="Negocio" onclick="setFiltro('Negocio')">De SoilTech</button>
+    <input class="busca" id="busca" placeholder="Buscar por número, concepto, banco o beneficiario…" oninput="pintar()">
+  </div>
+
+  <div class="tabla" id="tabla"></div>
+</main>
+
+<!-- Alta y edición -->
+<div class="md" id="mdCheque"><div class="mdc">
+  <button class="cerrar" onclick="cerrar()">×</button>
+  <h3 id="mdTitulo">Nuevo cheque</h3>
+
+  <div class="g2">
+    <div class="f"><label>Número del cheque</label><input id="fNumero" autocomplete="off"></div>
+    <div class="f"><label>Banco</label>
+      <div class="inline">
+        <select id="fBanco"></select>
+        <button class="ab" type="button" onclick="nuevoBanco()" title="Agregar un banco a la lista">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="f"><label>Monto (Gs)</label><input id="fMonto" type="number" min="0" step="1"></div>
+    <div class="f"><label>Se cobra el</label><input id="fCobro" type="date">
+      <div class="ayuda" id="avisoCobro"></div></div>
+  </div>
+
+  <div class="f"><label>Concepto: para qué se usó</label>
+    <input id="fConcepto" placeholder="Ej.: Pago de análisis de laboratorio" autocomplete="off"></div>
+
+  <div class="g2">
+    <div class="f"><label>Beneficiario (opcional)</label><input id="fBenef" autocomplete="off"></div>
+    <div class="f"><label>Destino</label>
+      <select id="fDestino"><option>Personal</option><option>Negocio</option></select>
+      <div class="ayuda">Si es tuyo o de SoilTech.</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="f"><label>Fecha de emisión</label><input id="fEmision" type="date"></div>
+    <div class="f"><label>Estado</label>
+      <select id="fEstado"><option value="pendiente">Pendiente</option><option value="cobrado">Cobrado</option><option value="anulado">Anulado</option></select></div>
+  </div>
+
+  <div class="f"><label>Nota (opcional)</label><input id="fNota" autocomplete="off"></div>
+
+  <div class="btns">
+    <button class="btn btn-d" id="btnBorrar" style="display:none;margin-right:auto" onclick="borrar()">Borrar</button>
+    <button class="btn btn-w" onclick="cerrar()">Cancelar</button>
+    <button class="btn btn-g" id="btnGuardar" onclick="guardar()">Guardar</button>
+  </div>
+</div></div>
+
+<!-- Confirmación -->
+<div class="md" id="mdConf"><div class="mdc" style="max-width:420px">
+  <h3 id="cfTit"></h3>
+  <div id="cfCuerpo" style="font-size:13px;color:var(--tx2);line-height:1.6"></div>
+  <div class="btns">
+    <button class="btn btn-w" id="cfNo">Cancelar</button>
+    <button class="btn" id="cfSi"></button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config.js"></script>
+<script src="../auth-guard.js"></script>
+<script src="../shell.js"></script>
+<script src="../bancos.js"></script>
+<script src="../cheques.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+var db=firebase.firestore();
+
+var LISTA=[];          // todos los cheques
+var FILTRO='pendientes';
+var EDITANDO=null;     // el cheque que se está editando, o null si es nuevo
+
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var gs=function(n){return '₲ '+Math.round(n||0).toLocaleString('es-PY')};
+var fFecha=function(v){var d=Cheques.aFecha(v);return d?d.toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'};
+
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show')},2800)}
+
+/* Confirmación con la cara del panel, no la del navegador. */
+function confirmar(o){
+  return new Promise(function(res){
+    $('cfTit').textContent=o.titulo||'¿Confirmás?';
+    $('cfCuerpo').innerHTML=o.cuerpo||'';
+    var si=$('cfSi'),no=$('cfNo');
+    si.textContent=o.ok||'Aceptar';
+    si.className='btn '+(o.peligro?'btn-d':'btn-g');
+    var cerrarC=function(v){$('mdConf').classList.remove('show');si.onclick=null;no.onclick=null;res(v)};
+    si.onclick=function(){cerrarC(true)};
+    no.onclick=function(){cerrarC(false)};
+    $('mdConf').classList.add('show');
+  });
+}
+
+/* Esta pantalla es de finanzas personales: solo el dueño. */
+initAuthGuard(function(user,data,rol){
+  STShell.usuario(data,rol,user);
+  if(rol!=='super_admin'){
+    document.querySelector('.main').innerHTML=
+      '<div class="vacio" style="padding:70px 20px">Esta sección es privada.<br>'+
+      '<a href="../" style="color:var(--g);font-weight:700">Volver al panel</a></div>';
+    var b=$('btnNuevo');if(b)b.remove();
+    return;
+  }
+  Promise.all([Bancos.cargar(db), Cheques.cargar(db)]).then(function(r){
+    LISTA=r[1];
+    pintar();
+  }).catch(function(e){
+    $('tabla').innerHTML='<div class="vacio">No se pudieron leer los cheques: '+esc(e.message)+
+      '<br><small>Si dice que faltan permisos, hay que publicar las reglas de Firestore.</small></div>';
+  });
+});
+
+function recargar(){
+  return Cheques.cargar(db).then(function(l){LISTA=l;pintar()})
+    .catch(function(e){toast('❌ '+e.message)});
+}
+
+function setFiltro(f){
+  FILTRO=f;
+  document.querySelectorAll('.pill').forEach(function(p){p.classList.toggle('on',p.dataset.f===f)});
+  pintar();
+}
+
+function visibles(){
+  var q=($('busca').value||'').toLowerCase().trim();
+  return LISTA.filter(function(c){
+    if(FILTRO==='pendientes'&&c.estado!=='pendiente')return false;
+    if(FILTRO==='cobrados'&&c.estado!=='cobrado')return false;
+    if((FILTRO==='Personal'||FILTRO==='Negocio')&&c.destino!==FILTRO)return false;
+    if(!q)return true;
+    return [c.numero,c.concepto,c.bancoNombre,c.beneficiario,c.nota]
+      .filter(Boolean).join(' ').toLowerCase().indexOf(q)>=0;
+  });
+}
+
+function pintar(){ pintarFranja(); pintarKpis(); pintarTabla(); }
+
+/* Lo que entra en los próximos días, arriba de todo. */
+function pintarFranja(){
+  var pv=Cheques.porVencer(LISTA,3);
+  if(!pv.length){
+    $('franja').innerHTML='<div class="urge verde"><h3>✔ Nada entra en los próximos 3 días</h3>'+
+      '<div class="sub">Los cheques pendientes están todos más adelante.</div></div>';
+    return;
+  }
+  var total=Cheques.totalDe(pv);
+  $('franja').innerHTML='<div class="urge rojo">'+
+    '<h3>⚠ '+pv.length+(pv.length===1?' cheque entra pronto':' cheques entran pronto')+'</h3>'+
+    '<div class="sub">Suman '+gs(total)+'. Tiene que haber plata en la cuenta.</div>'+
+    '<div class="ulist">'+pv.map(function(c){
+      return '<div class="urow" onclick="abrir(\''+c._id+'\')">'+
+        '<span class="d">'+esc(Cheques.leyenda(c))+'</span>'+
+        '<span class="c">'+esc(c.bancoNombre||'')+' · '+esc(c.concepto||'')+'</span>'+
+        '<span class="m">'+gs(c.monto)+'</span></div>';
+    }).join('')+'</div></div>';
+}
+
+function pintarKpis(){
+  var pend=LISTA.filter(function(c){return c.estado==='pendiente'});
+  var venc=pend.filter(function(c){return Cheques.situacion(c)==='vencido'});
+  $('kpis').innerHTML=
+    kpi(pend.length,'Pendientes')+
+    kpi(gs(Cheques.comprometido(LISTA)),'Comprometido')+
+    kpi(gs(Cheques.comprometido(LISTA,'Personal')),'Tuyo')+
+    kpi(venc.length?gs(Cheques.totalDe(venc)):'—', venc.length?'Vencido sin cobrar':'Nada vencido');
+  function kpi(v,l){return '<div class="kpi"><div class="v">'+v+'</div><div class="l">'+l+'</div></div>'}
+}
+
+function pintarTabla(){
+  var L=visibles();
+  if(!L.length){
+    $('tabla').innerHTML='<div class="vacio">'+(LISTA.length
+      ?'Ningún cheque coincide con el filtro.'
+      :'Todavía no cargaste cheques. Usá «+ Nuevo cheque» arriba a la derecha.')+'</div>';
+    return;
+  }
+  $('tabla').innerHTML='<table><thead><tr>'+
+    '<th style="width:92px">Nº</th><th>Banco y concepto</th><th style="width:104px">Se cobra</th>'+
+    '<th style="width:118px">Estado</th><th style="width:116px;text-align:right">Monto</th>'+
+    '<th style="width:190px"></th></tr></thead><tbody>'+
+    L.map(fila).join('')+'</tbody></table>';
+}
+
+function fila(c){
+  var sit=Cheques.situacion(c);
+  var clase=sit==='vencido'?'ch-vencido':(sit==='hoy'?'ch-hoy':
+            ((sit==='cobrado'||sit==='anulado')?'ch-cerrado':''));
+  var acciones='';
+  if(c.estado==='pendiente'){
+    acciones+='<button class="ab" onclick="cobrar(\''+c._id+'\')">✔ Cobrado</button>'+
+              '<button class="ab rm" onclick="anular(\''+c._id+'\')">Anular</button>';
+  }
+  acciones+='<button class="ab" onclick="abrir(\''+c._id+'\')">✎</button>';
+  return '<tr class="'+clase+'">'+
+    '<td><b>'+esc(c.numero||'')+'</b></td>'+
+    '<td>'+esc(c.bancoNombre||'')+
+      '<div style="font-size:11px;color:var(--tx2)">'+esc(c.concepto||'')+
+      (c.beneficiario?' · '+esc(c.beneficiario):'')+'</div>'+
+      '<div class="dest">'+esc(c.destino||'')+'</div></td>'+
+    '<td>'+fFecha(c.fechaCobro)+'</td>'+
+    '<td><span class="est '+sit+'">'+esc(Cheques.leyenda(c))+'</span></td>'+
+    '<td style="text-align:right;font-weight:700">'+gs(c.monto)+'</td>'+
+    '<td><div class="acc">'+acciones+'</div></td></tr>';
+}
+
+/* ─── Formulario ─── */
+function llenarBancos(sel){
+  $('fBanco').innerHTML='<option value="">— Elegir —</option>'+
+    Bancos.lista().map(function(b){
+      return '<option value="'+esc(b.id)+'"'+(b.id===sel?' selected':'')+'>'+esc(b.nombre)+'</option>';
+    }).join('');
+  /* Un cheque viejo puede apuntar a un banco que se desactivó: se agrega
+     suelto para no perderlo al editar. */
+  if(sel&&!Bancos.lista().some(function(b){return b.id===sel})){
+    var b=Bancos.porId(sel);
+    $('fBanco').insertAdjacentHTML('beforeend',
+      '<option value="'+esc(sel)+'" selected>'+esc((b&&b.nombre)||sel)+' (fuera de la lista)</option>');
+  }
+}
+
+function abrir(id){
+  EDITANDO=id?(LISTA.filter(function(c){return c._id===id})[0]||null):null;
+  var c=EDITANDO||{};
+  llenarBancos(c.bancoId||'');
+  $('fNumero').value=c.numero||'';
+  $('fMonto').value=c.monto||'';
+  $('fCobro').value=c.fechaCobro?Cheques.aInput(c.fechaCobro):'';
+  $('fEmision').value=c.fechaEmision?Cheques.aInput(c.fechaEmision):Cheques.aInput(new Date());
+  $('fConcepto').value=c.concepto||'';
+  $('fBenef').value=c.beneficiario||'';
+  $('fDestino').value=c.destino||'Personal';
+  $('fEstado').value=c.estado||'pendiente';
+  $('fNota').value=c.nota||'';
+  $('mdTitulo').textContent=EDITANDO?'Editar cheque':'Nuevo cheque';
+  $('btnBorrar').style.display=EDITANDO?'block':'none';
+  avisoCobro();
+  $('mdCheque').classList.add('show');
+  setTimeout(function(){$('fNumero').focus()},60);
+}
+function cerrar(){$('mdCheque').classList.remove('show');EDITANDO=null}
+
+/* Dice cuántos días faltan mientras se escribe la fecha. */
+function avisoCobro(){
+  var v=$('fCobro').value;
+  if(!v){$('avisoCobro').textContent='';return}
+  var d=Cheques.diasPara({fechaCobro:v,estado:'pendiente'});
+  $('avisoCobro').textContent = d<0 ? ('Esa fecha ya pasó hace '+Math.abs(d)+' días')
+    : (d===0?'Es hoy':(d===1?'Es mañana':'Faltan '+d+' días'));
+  $('avisoCobro').style.color = d<=0?'var(--dg)':'var(--tx3)';
+}
+
+function nuevoBanco(){
+  var nombre=prompt('Nombre del banco a agregar:');
+  if(!nombre)return;
+  Bancos.agregar(db,nombre).then(function(b){
+    llenarBancos(b.id);
+    toast('✅ '+b.nombre+' agregado a la lista');
+  }).catch(function(e){toast('❌ '+e.message)});
+}
+
+function leer(){
+  return {
+    numero:$('fNumero').value, bancoId:$('fBanco').value,
+    monto:$('fMonto').value, fechaCobro:$('fCobro').value, fechaEmision:$('fEmision').value,
+    concepto:$('fConcepto').value, beneficiario:$('fBenef').value,
+    destino:$('fDestino').value, estado:$('fEstado').value, nota:$('fNota').value,
+    prestamoId:(EDITANDO&&EDITANDO.prestamoId)||null,
+    fechaCobrado:(EDITANDO&&EDITANDO.fechaCobrado)||null
+  };
+}
+
+function guardar(){
+  var d=leer(), banco=Bancos.porId(d.bancoId);
+  var btn=$('btnGuardar'),txt=btn.textContent;
+  btn.disabled=true;btn.textContent='Guardando…';
+  var fin=function(){btn.disabled=false;btn.textContent=txt};
+  var op=EDITANDO
+    ? Cheques.actualizar(db,EDITANDO._id,d,banco,EDITANDO)
+    : Cheques.crear(db,d,banco);
+  op.then(function(){
+    fin();cerrar();toast(EDITANDO?'✅ Cheque actualizado':'✅ Cheque cargado');
+    return recargar();
+  }).catch(function(e){fin();toast('❌ '+e.message)});
+}
+
+function cobrar(id){
+  var c=LISTA.filter(function(x){return x._id===id})[0];if(!c)return;
+  confirmar({titulo:'Marcar como cobrado',
+    cuerpo:'<p>El cheque <strong>'+esc(c.numero)+'</strong> por <strong>'+gs(c.monto)+
+           '</strong> sale de los pendientes y deja de avisar.</p>',
+    ok:'Marcar cobrado'}).then(function(ok){
+    if(!ok)return;
+    Cheques.marcarCobrado(db,id).then(function(){toast('✅ Cobrado');return recargar()})
+      .catch(function(e){toast('❌ '+e.message)});
+  });
+}
+
+function anular(id){
+  var c=LISTA.filter(function(x){return x._id===id})[0];if(!c)return;
+  confirmar({titulo:'Anular cheque',
+    cuerpo:'<p>El cheque <strong>'+esc(c.numero)+'</strong> queda anulado y deja de avisar.</p>'+
+           '<p style="color:var(--tx3)">Queda en la lista como constancia, no se borra.</p>',
+    ok:'Anular',peligro:true}).then(function(ok){
+    if(!ok)return;
+    Cheques.anular(db,id).then(function(){toast('Anulado');return recargar()})
+      .catch(function(e){toast('❌ '+e.message)});
+  });
+}
+
+function borrar(){
+  if(!EDITANDO)return;
+  var c=EDITANDO;
+  confirmar({titulo:'Borrar cheque',
+    cuerpo:'<p>Se borra el cheque <strong>'+esc(c.numero)+'</strong> por <strong>'+gs(c.monto)+'</strong>.</p>'+
+           '<p style="color:var(--tx3)">Esto no se puede deshacer. Si el cheque existió y no se cobró, '+
+           'conviene anularlo en vez de borrarlo.</p>',
+    ok:'Borrar',peligro:true}).then(function(ok){
+    if(!ok)return;
+    Cheques.borrar(db,c._id).then(function(){cerrar();toast('🗑 Borrado');return recargar()})
+      .catch(function(e){toast('❌ '+e.message)});
+  });
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var f=$('fCobro'); if(f) f.addEventListener('input',avisoCobro);
+});
+</script>
+</body>
+</html>
