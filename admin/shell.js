@@ -32,7 +32,23 @@ var STShell = (function () {
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
   /* ../ desde una subcarpeta, ./ desde /admin/ */
-  function base() { return /\/(presupuesto|facturacion|clientes|servicios)\//.test(location.pathname) ? '../' : './'; }
+  /* La raíz del panel es la carpeta donde vive este mismo archivo. Se calcula
+     una sola vez al cargar, en vez de mantener a mano una lista de subcarpetas
+     que se olvida de actualizar cada vez que se agrega un módulo. */
+  var _BASE = (function () {
+    var sc = document.currentScript;
+    if (!sc) {
+      var todos = document.getElementsByTagName('script');
+      for (var i = todos.length - 1; i >= 0; i--) {
+        if (/shell\.js(\?|$)/.test(todos[i].src || '')) { sc = todos[i]; break; }
+      }
+    }
+    if (sc && sc.src) return sc.src.replace(/[^/]*$/, '');   // .../admin/
+    /* Sin src (por ejemplo si alguien lo pega en línea) se cae a lo de antes. */
+    return /\/(presupuesto|facturacion|clientes|servicios|cheques)\//.test(location.pathname) ? '../' : './';
+  })();
+
+  function base() { return _BASE; }
 
   /* Qué página es, para marcar el ítem activo */
   function actual() {
