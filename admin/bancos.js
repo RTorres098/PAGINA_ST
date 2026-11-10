@@ -8,15 +8,20 @@
  * se fusionan y cambian de nombre seguido. Editala desde el panel.
  */
 var BANCOS_SEED = [
+  /* `mio` marca dónde hay cuenta habilitada: esos salen primero al elegir
+     banco y son los únicos que se consultan al buscar promociones.
+     `dominio` va sin https:// porque así lo pide allowed_domains. */
+  { id: 'itau',        nombre: 'Banco Itaú',        mio: true, dominio: 'itau.com.py' },
+  { id: 'continental', nombre: 'Banco Continental', mio: true, dominio: 'bancontinental.com.py' },
+  { id: 'basa',        nombre: 'Banco Basa',        mio: true, dominio: 'bancobasa.com.py' },
+
+  /* El resto queda por si aparece un cheque de otro banco, sin marcar. */
   { id: 'ueno',        nombre: 'Ueno Bank' },
-  { id: 'continental', nombre: 'Banco Continental' },
-  { id: 'itau',        nombre: 'Banco Itaú' },
   { id: 'bnf',         nombre: 'Banco Nacional de Fomento' },
   { id: 'atlas',       nombre: 'Banco Atlas' },
   { id: 'familiar',    nombre: 'Banco Familiar' },
   { id: 'vision',      nombre: 'Visión Banco' },
   { id: 'sudameris',   nombre: 'Banco Sudameris' },
-  { id: 'basa',        nombre: 'Banco Basa' },
   { id: 'bancop',      nombre: 'Bancop' }
 ];
 
@@ -41,9 +46,17 @@ var Bancos = (function () {
       var id = String((b && b.id) || '').trim() || idDe(nombre);
       if (vistos[id]) return;            // un id no se repite
       vistos[id] = true;
-      out.push({ id: id, nombre: nombre, activo: b.activo !== false });
+      out.push({
+        id: id, nombre: nombre, activo: b.activo !== false,
+        mio: !!b.mio,
+        dominio: String(b.dominio || '').trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+      });
     });
-    out.sort(function (a, b) { return a.nombre.localeCompare(b.nombre); });
+    /* Los propios arriba, y dentro de cada grupo por nombre. */
+    out.sort(function (a, b) {
+      if (a.mio !== b.mio) return a.mio ? -1 : 1;
+      return a.nombre.localeCompare(b.nombre);
+    });
     return out;
   }
 
@@ -92,7 +105,7 @@ var Bancos = (function () {
     if (!nombre) return Promise.reject(new Error('Falta el nombre del banco'));
     var ya = resolver(nombre);
     if (ya) return Promise.resolve(ya);
-    var nuevo = { id: idDe(nombre), nombre: nombre, activo: true };
+    var nuevo = { id: idDe(nombre), nombre: nombre, activo: true, mio: false, dominio: '' };
     var completa = normalizar(lista(true).concat([nuevo]));
     return guardar(db, completa).then(function () { return porId(nuevo.id) || nuevo; });
   }
@@ -108,12 +121,22 @@ var Bancos = (function () {
     });
   }
 
+  /* Los bancos donde hay cuenta. Es la lista que se consulta al buscar
+     promociones: sin esto se traerían ofertas de bancos ajenos. */
+  function mios() { return lista(true).filter(function (b) { return b.mio; }); }
+
+  /* Dominios de los bancos propios, para limitar la búsqueda web. */
+  function dominiosMios() {
+    return mios().map(function (b) { return b.dominio; }).filter(Boolean);
+  }
+
   function enNube() { return desdeFirestore; }
   function invalidar() { cargadoEn = 0; }
 
   return {
     cargar: cargar, lista: lista, porId: porId, resolver: resolver, nombreDe: nombreDe,
     agregar: agregar, guardar: guardar, normalizar: normalizar, idDe: idDe,
+    mios: mios, dominiosMios: dominiosMios,
     enNube: enNube, invalidar: invalidar, SEED: BANCOS_SEED
   };
 })();
