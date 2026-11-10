@@ -25,7 +25,8 @@ var STShell = (function () {
     ajustes: '<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.63.67 1.1 1.31 1.1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
     sitio: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/>',
     salir: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
-    cheque: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>'
+    cheque: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
+    ia: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><rect x="7" y="7" width="10" height="10" rx="2.5"/><path d="M10.5 11v2M13.5 11v2"/>'
   };
 
   function svg(d, w) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (w || 1.9) + '" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; }
@@ -58,6 +59,7 @@ var STShell = (function () {
     if (/\/clientes\//.test(p)) return 'clientes';
     if (/\/servicios\//.test(p)) return 'servicios';
     if (/\/cheques\//.test(p)) return 'cheques';
+    if (/\/asistente\//.test(p)) return 'asistente';
     return 'inicio';
   }
 
@@ -73,6 +75,7 @@ var STShell = (function () {
       { k: 'clientes', t: 'Clientes', h: b + 'clientes/', i: IC.clien },
       { g: 'Finanzas', soloSuper: true },
       { k: 'cheques', t: 'Cheques', h: b + 'cheques/', i: IC.cheque, soloSuper: true },
+      { k: 'asistente', t: 'Asistente', h: b + 'asistente/', i: IC.ia, soloSuper: true },
       { g: 'Ajustes' },
       { k: 'servicios', t: 'Servicios', h: b + 'servicios/', i: IC.ajustes },
       { g: 'Crear' },
@@ -98,7 +101,7 @@ var STShell = (function () {
       '</aside>';
   }
 
-  var TITULOS = { inicio: 'Inicio', balance: 'Balance', presupuestos: 'Presupuestos', facturacion: 'Facturación', clientes: 'Clientes', servicios: 'Servicios', cheques: 'Cheques' };
+  var TITULOS = { inicio: 'Inicio', balance: 'Balance', presupuestos: 'Presupuestos', facturacion: 'Facturación', clientes: 'Clientes', servicios: 'Servicios', cheques: 'Cheques', asistente: 'Asistente' };
 
   /* Convierte el <header class="st-top"> de la página en la barra superior clara. */
   function armarTopbar() {

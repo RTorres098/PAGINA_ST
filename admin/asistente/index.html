@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoilTech — Asistente</title>
+<link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="../shell.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.main{max-width:900px;margin:0 auto;padding:24px 24px 80px;width:100%}
+.hd1{font-size:24px;color:var(--gd);line-height:1.15}
+.hd2{font-size:13px;color:var(--tx2);margin-top:3px}
+.head{margin-bottom:18px}
+
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
+.card h3{font-size:15px;color:var(--gd);margin-bottom:4px}
+.card .sub{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:14px}
+
+.f{margin-bottom:11px}
+.f label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:3px}
+.f input{width:100%;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;font:inherit;font-size:13px;background:var(--bg);font-family:ui-monospace,monospace}
+.f input:focus{outline:none;border-color:var(--g)}
+.ayuda{font-size:11px;color:var(--tx3);margin-top:4px;line-height:1.5}
+.ayuda a{color:var(--g);font-weight:600}
+
+.estado{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:10px;font-size:12.5px;margin-bottom:14px;line-height:1.5}
+.estado.si{background:rgba(52,166,120,.1);border:1px solid rgba(52,166,120,.3);color:#1E7A55}
+.estado.no{background:#FEF3C7;border:1px solid #FCD34D;color:#78350F}
+.estado.mal{background:#FEF2F2;border:1px solid #FCA5A5;color:#7F1D1D}
+.estado b{font-family:ui-monospace,monospace}
+
+.aviso{background:#FFFBEB;border:1px solid #FDE68A;color:#78350F;border-radius:10px;
+  padding:12px 14px;font-size:12px;line-height:1.6;margin-bottom:14px}
+.aviso strong{font-weight:700}
+
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:9px 18px;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn-g{background:var(--g);color:#fff}
+.btn-g:disabled{opacity:.55;cursor:default}
+.btn-w{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
+.btn-d{background:var(--sf);color:var(--dg);border:1px solid var(--dg)}
+
+.costos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.costo{background:var(--sf2);border-radius:9px;padding:11px 13px}
+.costo .v{font-size:15px;font-weight:800;color:var(--gd)}
+.costo .l{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;margin-top:2px;line-height:1.3}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--gd);
+  color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:200;transition:transform .25s;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:700px){.costos{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="sh-flow">
+
+<header class="st-top">
+  <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
+  <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../facturacion/">Facturación</a><a class="on" href="./">Asistente</a></nav>
+  <div class="st-right"></div>
+</header>
+
+<main class="main">
+  <div class="head">
+    <h1 class="hd1">Asistente</h1>
+    <div class="hd2">Preguntas sobre tus datos y promociones de tus bancos, con Claude.</div>
+  </div>
+
+  <div class="card">
+    <h3>Clave de Anthropic</h3>
+    <div class="sub">El asistente usa tu propia clave y se cobra por uso a tu cuenta. Se guarda en la base, visible solo para vos.</div>
+
+    <div id="estado"></div>
+
+    <div class="aviso">
+      <strong>Lo que tenés que saber antes de pegarla.</strong> El panel llama a la API directamente desde el navegador,
+      así que la clave viaja en los pedidos y se ve en la pestaña de red. Es aceptable porque sos el único que entra acá,
+      pero significa que quien entre a tu cuenta de administrador se lleva la clave.
+      Si eso pasa, revocala desde la consola de Anthropic y cargá una nueva.
+    </div>
+
+    <div class="f">
+      <label>Clave</label>
+      <input id="fClave" type="password" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
+      <div class="ayuda">La sacás de <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>, en API Keys. Empieza con <b>sk-ant-</b>.</div>
+    </div>
+
+    <div class="btns">
+      <button class="btn btn-g" id="btnGuardar" onclick="guardar()">Guardar y probar</button>
+      <button class="btn btn-w" id="btnProbar" onclick="probar()">Probar la que está</button>
+      <button class="btn btn-d" id="btnBorrar" onclick="borrar()">Quitar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Qué te va a costar</h3>
+    <div class="sub">Calculado con tus volúmenes reales, para que no te sorprenda la factura.</div>
+    <div class="costos">
+      <div class="costo"><div class="v">≈ 2,5¢</div><div class="l">Una pregunta sobre tus datos</div></div>
+      <div class="costo"><div class="v">≈ 15¢</div><div class="l">Una revisión de promociones de los 3 bancos</div></div>
+      <div class="costo"><div class="v">≈ 0,02¢</div><div class="l">Un gasto dictado por voz</div></div>
+    </div>
+    <div class="ayuda" style="margin-top:10px">En dólares. Un uso normal ronda los 2 a 4 dólares al mes. El gasto real lo ves en la consola de Anthropic.</div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config.js"></script>
+<script src="../auth-guard.js"></script>
+<script src="../shell.js"></script>
+<script src="../ia.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+var db=firebase.firestore();
+var UID=null;
+
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show')},3400)}
+
+/* La clave es una credencial de pago: solo el dueño. */
+initAuthGuard(function(user,data,rol){
+  STShell.usuario(data,rol,user);
+  if(rol!=='super_admin'){
+    document.querySelector('.main').innerHTML=
+      '<div style="padding:70px 20px;text-align:center;color:var(--tx3);font-size:13px">'+
+      'Esta sección es privada.<br><a href="../" style="color:var(--g);font-weight:700">Volver al panel</a></div>';
+    return;
+  }
+  UID=user.uid;
+  IA.cargarClave(db,UID).then(pintarEstado).catch(function(e){
+    pintarEstado(false);
+    toast('❌ No se pudo leer la configuración: '+e.message);
+  });
+});
+
+function pintarEstado(hay,detalle){
+  var el=$('estado');
+  if(detalle==='mal'){
+    el.innerHTML='<div class="estado mal">⚠ La clave está cargada pero la API la rechazó. Revisala o generá una nueva.</div>';
+  }else if(hay){
+    el.innerHTML='<div class="estado si">✔ Clave cargada: <b>'+esc(IA.claveEnmascarada())+'</b></div>';
+  }else{
+    el.innerHTML='<div class="estado no">Todavía no cargaste la clave. El asistente y las promociones no van a funcionar hasta que lo hagas.</div>';
+  }
+  $('btnProbar').style.display=hay?'':'none';
+  $('btnBorrar').style.display=hay?'':'none';
+}
+
+function ocupado(si,boton){
+  ['btnGuardar','btnProbar','btnBorrar'].forEach(function(id){$(id).disabled=si});
+  if(boton)$(boton).textContent=si?'Probando…':($(boton)._txt||$(boton).textContent);
+}
+
+/* Una llamada mínima, para confirmar que la clave sirve de verdad antes de
+   que descubras que no en medio de otra cosa. */
+function probarClave(){
+  return IA.preguntar('Respondé solamente: ok',
+    {modelo:IA.MODELOS.rapido, maxTokens:16, temperatura:0});
+}
+
+function guardar(){
+  var clave=$('fClave').value.trim();
+  var b=$('btnGuardar'); b._txt='Guardar y probar';
+  ocupado(true,'btnGuardar');
+  IA.guardarClave(db,UID,clave).then(function(){
+    return probarClave();
+  }).then(function(){
+    $('fClave').value='';
+    ocupado(false,'btnGuardar'); b.textContent=b._txt;
+    pintarEstado(true);
+    toast('✅ Clave guardada y probada: la API respondió');
+  }).catch(function(e){
+    ocupado(false,'btnGuardar'); b.textContent=b._txt;
+    /* Si guardó pero la API la rechazó, queda guardada y se avisa: así no
+       hay que volver a pegarla para corregir otra cosa. */
+    pintarEstado(IA.tieneClave(), IA.tieneClave()?'mal':undefined);
+    toast('❌ '+e.message);
+  });
+}
+
+function probar(){
+  var b=$('btnProbar'); b._txt='Probar la que está';
+  ocupado(true,'btnProbar');
+  probarClave().then(function(){
+    ocupado(false,'btnProbar'); b.textContent=b._txt;
+    pintarEstado(true);
+    toast('✅ La API respondió, la clave funciona');
+  }).catch(function(e){
+    ocupado(false,'btnProbar'); b.textContent=b._txt;
+    pintarEstado(true,'mal');
+    toast('❌ '+e.message);
+  });
+}
+
+function borrar(){
+  if(!confirm('¿Quitar la clave? El asistente y las promociones dejan de funcionar hasta que cargues otra.'))return;
+  IA.borrarClave(db,UID).then(function(){
+    pintarEstado(false);
+    toast('Clave quitada');
+  }).catch(function(e){toast('❌ '+e.message)});
+}
+</script>
+</body>
+</html>
