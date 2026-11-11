@@ -3,46 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SoilTech — Asistente</title>
+<title>SoilTech &mdash; Asistente</title>
 <link rel="stylesheet" href="../ui.css">
 <link rel="stylesheet" href="../shell.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
-.main{max-width:900px;margin:0 auto;padding:24px 24px 80px;width:100%}
-.hd1{font-size:24px;color:var(--gd);line-height:1.15}
-.hd2{font-size:13px;color:var(--tx2);margin-top:3px}
-.head{margin-bottom:18px}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+[hidden]{display:none!important}
 
-.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
+/* ── La pantalla ocupa el alto justo: el hilo scrollea, la barra de
+      escribir queda fija abajo. Se mide contra el alto real del
+      navegador (dvh), que en el celular cambia cuando aparece la
+      barra de direcciones. ── */
+.chat{height:calc(100vh - var(--sh-top));height:calc(100dvh - var(--sh-top));
+  display:flex;flex-direction:column;background:var(--bg)}
+
+.mensajes{flex:1;overflow-y:auto;padding:22px 0 10px;scroll-behavior:smooth}
+.adentro{max-width:780px;margin:0 auto;padding:0 20px}
+
+/* ── Estado vacío ── */
+.vacio{text-align:center;padding:40px 20px 24px;max-width:620px;margin:0 auto}
+.vacio .ico{width:52px;height:52px;border-radius:15px;background:var(--g-soft);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 15px}
+.vacio .ico svg{width:25px;height:25px;stroke:var(--g);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vacio h2{font-size:19px;color:var(--gd);margin-bottom:7px}
+.vacio p{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{background:var(--sf);border:1px solid var(--bd);border-radius:999px;padding:8px 14px;
+  font:inherit;font-size:12.5px;color:var(--tx2);cursor:pointer;text-align:left;transition:.12s}
+.chip:hover{border-color:var(--g);color:var(--gd);background:var(--g-soft)}
+
+/* ── Burbujas ── */
+.hilo{display:flex;flex-direction:column;gap:13px}
+.hilo:empty{display:none}
+.msg{font-size:13.5px;line-height:1.62;position:relative;max-width:82%;
+  padding:10px 14px 7px;border-radius:14px;box-shadow:0 1px 2px rgba(24,64,62,.06);word-break:break-word}
+.msg .hora{display:block;font-size:10px;color:var(--tx3);text-align:right;margin-top:3px;letter-spacing:.02em}
+
+.msg.yo{align-self:flex-end;background:var(--g-soft);border:1px solid rgba(52,166,120,.22);
+  border-bottom-right-radius:4px;white-space:pre-wrap}
+.msg.ia{align-self:flex-start;background:var(--sf);border:1px solid var(--bd);
+  border-bottom-left-radius:4px;max-width:92%}
+.msg.err{align-self:flex-start;background:#FEF2F2;border:1px solid #FCA5A5;color:#7F1D1D;
+  border-bottom-left-radius:4px;font-size:12.5px}
+
+.msg.ia p{margin:0 0 8px}
+.msg.ia p:last-of-type{margin-bottom:0}
+.msg.ia ul,.msg.ia ol{margin:0 0 8px 19px}
+.msg.ia li{margin-bottom:3px}
+.msg.ia h4{font-size:13.5px;color:var(--gd);margin:12px 0 5px}
+.msg.ia table{border-collapse:collapse;width:100%;font-size:12.5px;margin:5px 0 9px;display:block;overflow-x:auto}
+.msg.ia th{text-align:left;border-bottom:2px solid var(--bd);padding:5px 8px;color:var(--tx2);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.msg.ia td{border-bottom:1px solid var(--bd);padding:5px 8px}
+.msg.ia code{background:var(--sf2);padding:1px 5px;border-radius:4px;font-size:12px}
+.pensando{color:var(--tx3);font-style:italic}
+
+/* ── Barra de escribir ── */
+.barra{flex-shrink:0;border-top:1px solid var(--bd);background:var(--sf);padding:12px 0 9px}
+.composer{display:flex;gap:9px;align-items:flex-end}
+.composer textarea{flex:1;padding:11px 14px;border:1px solid var(--bd);border-radius:20px;font:inherit;
+  font-size:13.5px;background:var(--bg);color:var(--tx);resize:none;max-height:150px;line-height:1.5}
+.composer textarea:focus{outline:none;border-color:var(--g)}
+.enviar{width:41px;height:41px;flex-shrink:0;border:0;border-radius:50%;background:var(--g);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s}
+.enviar:hover:not(:disabled){background:#2D9068}
+.enviar:disabled{opacity:.4;cursor:default}
+.enviar svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pie{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:7px;
+  font-size:11px;color:var(--tx3);min-height:15px}
+.pie .der{display:flex;gap:13px}
+.lnk{background:none;border:0;font:inherit;font-size:11px;color:var(--tx3);cursor:pointer;
+  text-decoration:underline;padding:0}
+.lnk:hover{color:var(--gd)}
+
+/* ── Ajustes ── */
+.ajustes{height:calc(100vh - var(--sh-top));height:calc(100dvh - var(--sh-top));overflow-y:auto}
+.aj{max-width:720px;margin:0 auto;padding:22px 20px 70px}
+.volver{background:none;border:0;font:inherit;font-size:12.5px;font-weight:600;color:var(--g);
+  cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:5px}
+.volver:hover{color:var(--gd)}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:15px}
 .card h3{font-size:15px;color:var(--gd);margin-bottom:4px}
 .card .sub{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:14px}
-
 .f{margin-bottom:11px}
-.f label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:3px}
-.f input{width:100%;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;font:inherit;font-size:13px;background:var(--bg);font-family:ui-monospace,monospace}
+.f label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--tx2);margin-bottom:3px}
+.f input{width:100%;padding:9px 11px;border:1px solid var(--bd);border-radius:8px;font:inherit;
+  font-size:13px;background:var(--bg);font-family:ui-monospace,monospace;color:var(--tx)}
 .f input:focus{outline:none;border-color:var(--g)}
 .ayuda{font-size:11px;color:var(--tx3);margin-top:4px;line-height:1.5}
 .ayuda a{color:var(--g);font-weight:600}
-
-.estado{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:10px;font-size:12.5px;margin-bottom:14px;line-height:1.5}
+.estado{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:10px;
+  font-size:12.5px;margin-bottom:14px;line-height:1.5}
 .estado.si{background:rgba(52,166,120,.1);border:1px solid rgba(52,166,120,.3);color:#1E7A55}
 .estado.no{background:#FEF3C7;border:1px solid #FCD34D;color:#78350F}
 .estado.mal{background:#FEF2F2;border:1px solid #FCA5A5;color:#7F1D1D}
 .estado b{font-family:ui-monospace,monospace}
-
 .aviso{background:#FFFBEB;border:1px solid #FDE68A;color:#78350F;border-radius:10px;
   padding:12px 14px;font-size:12px;line-height:1.6;margin-bottom:14px}
 .aviso strong{font-weight:700}
-
 .btns{display:flex;gap:8px;flex-wrap:wrap}
 .btn{padding:9px 18px;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .btn-g{background:var(--g);color:#fff}
 .btn-g:disabled{opacity:.55;cursor:default}
 .btn-w{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
 .btn-d{background:var(--sf);color:var(--dg);border:1px solid var(--dg)}
-
 .costos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
 .costo{background:var(--sf2);border-radius:9px;padding:11px 13px}
 .costo .v{font-size:15px;font-weight:800;color:var(--gd)}
@@ -52,126 +119,120 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:200;transition:transform .25s;
   box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:90vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
-@media(max-width:700px){.costos{grid-template-columns:1fr}}
 
-/* ── Chat ── */
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
-.chip{background:var(--sf2);border:1px solid var(--bd);border-radius:999px;padding:6px 12px;
-  font:inherit;font-size:12px;color:var(--tx2);cursor:pointer;text-align:left}
-.chip:hover{border-color:var(--g);color:var(--gd)}
-.hilo{display:flex;flex-direction:column;gap:15px;margin-bottom:14px}
-.hilo:empty{display:none}
-.msg{font-size:13.5px;line-height:1.65;max-width:100%}
-.msg.yo{background:var(--sf2);border-radius:12px;padding:10px 14px;align-self:flex-end;
-  max-width:85%;white-space:pre-wrap;word-break:break-word}
-.msg.ia{border-left:3px solid var(--g);padding-left:14px}
-.msg.ia p{margin:0 0 9px}
-.msg.ia p:last-child{margin-bottom:0}
-.msg.ia ul,.msg.ia ol{margin:0 0 9px 20px}
-.msg.ia li{margin-bottom:3px}
-.msg.ia h4{font-size:13.5px;color:var(--gd);margin:13px 0 5px}
-.msg.ia table{border-collapse:collapse;width:100%;font-size:12.5px;margin:4px 0 10px;display:block;overflow-x:auto}
-.msg.ia th{text-align:left;border-bottom:2px solid var(--bd);padding:5px 8px;color:var(--tx2);
-  font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
-.msg.ia td{border-bottom:1px solid var(--bd);padding:5px 8px}
-.msg.ia code{background:var(--sf2);padding:1px 5px;border-radius:4px;font-size:12px}
-.msg.err{color:#7F1D1D;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:10px 13px;font-size:12.5px}
-.pensando{color:var(--tx3);font-style:italic}
-.entrada{display:flex;gap:8px;align-items:flex-end}
-.entrada textarea{flex:1;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;font:inherit;
-  font-size:13.5px;background:var(--bg);resize:none;max-height:160px;line-height:1.5;color:var(--tx)}
-.entrada textarea:focus{outline:none;border-color:var(--g)}
-.pie{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:9px;
-  font-size:11px;color:var(--tx3);min-height:17px}
-.pie .der{display:flex;gap:12px}
-.lnk{background:none;border:0;font:inherit;font-size:11px;color:var(--tx3);cursor:pointer;text-decoration:underline;padding:0}
-.lnk:hover{color:var(--gd)}
+@media(max-width:700px){
+  .costos{grid-template-columns:1fr}
+  .adentro,.aj{padding-left:14px;padding-right:14px}
+  .msg{max-width:90%}
+  .msg.ia{max-width:96%}
+}
 </style>
 </head>
-<body class="sh-flow">
+<body>
 
 <header class="st-top">
   <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
-  <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../facturacion/">Facturación</a><a class="on" href="./">Asistente</a></nav>
-  <div class="st-right"></div>
+  <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../facturacion/">Facturaci&oacute;n</a><a class="on" href="./">Asistente</a></nav>
+  <div class="st-right">
+    <button class="sh-ico" id="btnAjustes" title="Clave del asistente" aria-label="Clave del asistente" onclick="mostrarVista('ajustes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
 </header>
 
-<main class="main">
-  <div class="head">
-    <h1 class="hd1">Asistente</h1>
-    <div class="hd2">Preguntas sobre tus datos y promociones de tus bancos, con Claude.</div>
-  </div>
+<main>
 
-  <div class="card">
-    <h3>Preguntá sobre tus datos</h3>
-    <div class="sub">Lee tus proyectos, facturas, gastos y cheques del panel. Los totales son los mismos
-      que ves en Balance, no los recalcula. Si un dato no está, lo dice en vez de inventarlo.</div>
+<!-- ─────────── Chat ─────────── -->
+<section class="chat" id="vistaChat">
+  <div class="mensajes" id="mensajes">
+    <div class="adentro">
 
-    <div class="chips" id="sugerencias">
-      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Qué proyectos tienen plata sin cobrar?</button>
-      <button class="chip" onclick="preguntarEsto(this.textContent)">¿En qué categoría gasté más este año?</button>
-      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Qué cheques entran en los próximos días?</button>
-      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Cuáles son mis tres clientes más grandes?</button>
-      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Qué proyecto me dejó mejor margen?</button>
-    </div>
+      <div class="vacio" id="sugerencias">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h2>Pregunt&aacute; sobre tus n&uacute;meros</h2>
+        <p>Lee tus proyectos, facturas, gastos y cheques. Los totales son los mismos que ves en Balance,
+           no los recalcula. Si un dato no est&aacute;, lo dice en vez de inventarlo.</p>
+        <div class="chips">
+          <button class="chip" onclick="preguntarEsto(this.textContent)">&iquest;Qu&eacute; proyectos tienen plata sin cobrar?</button>
+          <button class="chip" onclick="preguntarEsto(this.textContent)">&iquest;En qu&eacute; categor&iacute;a gast&eacute; m&aacute;s este a&ntilde;o?</button>
+          <button class="chip" onclick="preguntarEsto(this.textContent)">&iquest;Qu&eacute; cheques entran en los pr&oacute;ximos d&iacute;as?</button>
+          <button class="chip" onclick="preguntarEsto(this.textContent)">&iquest;Cu&aacute;les son mis tres clientes m&aacute;s grandes?</button>
+          <button class="chip" onclick="preguntarEsto(this.textContent)">&iquest;Qu&eacute; proyecto me dej&oacute; mejor margen?</button>
+        </div>
+      </div>
 
-    <div class="hilo" id="hilo"></div>
-
-    <div class="entrada">
-      <textarea id="fPregunta" rows="1" placeholder="Preguntá lo que quieras sobre tus números…"></textarea>
-      <button class="btn btn-g" id="btnEnviar" onclick="enviar()">Preguntar</button>
-    </div>
-    <div class="pie">
-      <span id="consumo"></span>
-      <span class="der">
-        <button class="lnk" onclick="refrescarDatos()">Actualizar datos</button>
-        <button class="lnk" onclick="limpiar()">Vaciar conversación</button>
-      </span>
+      <div class="hilo" id="hilo"></div>
     </div>
   </div>
 
-  <div class="card">
-    <h3>Clave de Anthropic</h3>
-    <div class="sub">El asistente usa tu propia clave y se cobra por uso a tu cuenta. Se guarda en la base, visible solo para vos.</div>
-
-    <div id="estado"></div>
-
-    <div class="aviso">
-      <strong>Lo que tenés que saber antes de pegarla.</strong> El panel llama a la API directamente desde el navegador,
-      así que la clave viaja en los pedidos y se ve en la pestaña de red. Es aceptable porque sos el único que entra acá,
-      pero significa que quien entre a tu cuenta de administrador se lleva la clave.
-      Si eso pasa, revocala desde la consola de Anthropic y cargá una nueva.
-    </div>
-
-    <div class="f">
-      <label>Clave</label>
-      <input id="fClave" type="password" placeholder="sk-ant-api03-…" autocomplete="new-password" spellcheck="false">
-      <div class="ayuda">La sacás de <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noopener">platform.claude.com</a>, en API Keys. Empieza con <b>sk-ant-</b>.</div>
-    </div>
-
-    <div class="f">
-      <label>Id de workspace (casi siempre vacío)</label>
-      <input id="fWorkspace" name="st-workspace" placeholder="wrkspc_…" autocomplete="off" autocorrect="off" spellcheck="false">
-      <div class="ayuda">Solo hace falta si creaste la clave <strong>sin</strong> asignarla a un workspace. En ese caso la API lo exige en cada pedido. Lo sacás de <a href="https://platform.claude.com/settings/workspaces" target="_blank" rel="noopener">Settings, Workspaces</a>.</div>
-    </div>
-
-    <div class="btns">
-      <button class="btn btn-g" id="btnGuardar" onclick="guardar()">Guardar y probar</button>
-      <button class="btn btn-w" id="btnProbar" onclick="probar()">Probar la que está</button>
-      <button class="btn btn-d" id="btnBorrar" onclick="borrar()">Quitar</button>
+  <div class="barra">
+    <div class="adentro">
+      <div class="composer">
+        <textarea id="fPregunta" rows="1" placeholder="Escrib&iacute; tu pregunta&hellip;"></textarea>
+        <button class="enviar" id="btnEnviar" onclick="enviar()" title="Enviar" aria-label="Enviar">
+          <svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="pie">
+        <span id="consumo"></span>
+        <span class="der">
+          <button class="lnk" onclick="refrescarDatos()">Actualizar datos</button>
+          <button class="lnk" onclick="limpiar()">Vaciar conversaci&oacute;n</button>
+        </span>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="card">
-    <h3>Qué te va a costar</h3>
-    <div class="sub">Calculado con tus volúmenes reales, para que no te sorprenda la factura.</div>
-    <div class="costos">
-      <div class="costo"><div class="v">≈ 0,5¢</div><div class="l">Una pregunta sobre tus datos</div></div>
-      <div class="costo"><div class="v">≈ 10¢</div><div class="l">Una revisión de promociones de los 3 bancos</div></div>
-      <div class="costo"><div class="v">≈ 0,02¢</div><div class="l">Un gasto dictado por voz</div></div>
+<!-- ─────────── Ajustes ─────────── -->
+<section class="ajustes" id="vistaAjustes" hidden>
+  <div class="aj">
+    <button class="volver" onclick="mostrarVista('chat')">&larr; Volver al chat</button>
+
+    <div class="card">
+      <h3>Clave de Anthropic</h3>
+      <div class="sub">El asistente usa tu propia clave y se cobra por uso a tu cuenta. Se guarda en la base, visible solo para vos.</div>
+
+      <div id="estado"></div>
+
+      <div class="aviso">
+        <strong>Lo que ten&eacute;s que saber antes de pegarla.</strong> El panel llama a la API directamente desde
+        el navegador, as&iacute; que la clave viaja en los pedidos y se ve en la pesta&ntilde;a de red. Es aceptable porque
+        sos el &uacute;nico que entra ac&aacute;, pero significa que quien entre a tu cuenta de administrador se lleva la
+        clave. Si eso pasa, revocala desde la consola de Anthropic y carg&aacute; una nueva.
+      </div>
+
+      <div class="f">
+        <label>Clave</label>
+        <input id="fClave" type="password" placeholder="sk-ant-api03-&hellip;" autocomplete="new-password" spellcheck="false">
+        <div class="ayuda">La sac&aacute;s de <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noopener">platform.claude.com</a>, en API Keys. Empieza con <b>sk-ant-</b>.</div>
+      </div>
+      <div class="f">
+        <label>Id de workspace (casi siempre vac&iacute;o)</label>
+        <input id="fWorkspace" name="st-workspace" placeholder="wrkspc_&hellip;" autocomplete="off" autocorrect="off" spellcheck="false">
+        <div class="ayuda">Solo hace falta si creaste la clave <b>sin</b> asignarla a un workspace. En ese caso la API lo exige en cada pedido. Lo sac&aacute;s de <a href="https://platform.claude.com/settings/workspaces" target="_blank" rel="noopener">Settings, Workspaces</a>.</div>
+      </div>
+
+      <div class="btns">
+        <button class="btn btn-g" id="btnGuardar" onclick="guardar()">Guardar y probar</button>
+        <button class="btn btn-w" id="btnProbar" onclick="probar()">Probar la que est&aacute;</button>
+        <button class="btn btn-d" id="btnBorrar" onclick="borrar()">Quitar</button>
+      </div>
     </div>
-    <div class="ayuda" style="margin-top:10px">En dólares, medido sobre tus datos reales. Lo de las promociones es casi todo el costo de las búsquedas en la web. Un uso normal ronda el dólar al mes. El gasto real lo ves en la consola de Anthropic.</div>
+
+    <div class="card">
+      <h3>Qu&eacute; te va a costar</h3>
+      <div class="sub">Calculado con tus vol&uacute;menes reales, para que no te sorprenda la factura.</div>
+      <div class="costos">
+        <div class="costo"><div class="v">&asymp; 0,5&cent;</div><div class="l">Una pregunta sobre tus datos</div></div>
+        <div class="costo"><div class="v">&asymp; 10&cent;</div><div class="l">Una revisi&oacute;n de promociones de los 3 bancos</div></div>
+        <div class="costo"><div class="v">&asymp; 0,02&cent;</div><div class="l">Un gasto dictado por voz</div></div>
+      </div>
+      <div class="ayuda" style="margin-top:10px">En d&oacute;lares, medido sobre tus datos reales. Lo de las promociones es casi todo el costo de las b&uacute;squedas en la web. Un uso normal ronda el d&oacute;lar al mes.</div>
+    </div>
   </div>
+</section>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -202,7 +263,7 @@ function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
 initAuthGuard(function(user,data,rol){
   STShell.usuario(data,rol,user);
   if(rol!=='super_admin'){
-    document.querySelector('.main').innerHTML=
+    document.querySelector('main').innerHTML=
       '<div style="padding:70px 20px;text-align:center;color:var(--tx3);font-size:13px">'+
       'Esta sección es privada.<br><a href="../" style="color:var(--g);font-weight:700">Volver al panel</a></div>';
     return;
@@ -378,13 +439,40 @@ function md(texto){
   return out.join('');
 }
 
+function hora(){
+  var d=new Date(), p=function(x){return String(x).padStart(2,'0')};
+  return p(d.getHours())+':'+p(d.getMinutes());
+}
+
+function abajo(){
+  var m=$('mensajes');
+  m.scrollTop=m.scrollHeight;
+}
+
 function burbuja(clase,html){
   var d=document.createElement('div');
   d.className='msg '+clase;
-  d.innerHTML=html;
+  d.innerHTML=html+'<span class="hora">'+hora()+'</span>';
   $('hilo').appendChild(d);
-  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+  abajo();
   return d;
+}
+
+/* Reemplaza el cuerpo dejando la hora que ya tenía la burbuja. */
+function rellenar(d,html,clase){
+  if(clase)d.className='msg '+clase;
+  d.innerHTML=html+'<span class="hora">'+hora()+'</span>';
+  abajo();
+}
+
+/* El engranaje de arriba lleva a la clave y la flecha vuelve. */
+function mostrarVista(v){
+  var chat=(v==='chat');
+  $('vistaChat').hidden=!chat;
+  $('vistaAjustes').hidden=chat;
+  var t=document.querySelector('.sh-title');
+  if(t)t.textContent=chat?'Asistente':'Clave del asistente';
+  if(chat){abajo();$('fPregunta').focus()}
 }
 
 function pintarConsumo(){
@@ -433,7 +521,7 @@ function enviar(){
   }).then(function(r){
     var texto=IA.textoDe(r);
     HIST.push({role:'assistant',content:texto});
-    espera.innerHTML=md(texto);
+    rellenar(espera,md(texto));
     var c=IA.consumoDe(r);
     USADO.entrada+=c.entrada; USADO.salida+=c.salida; USADO.preguntas++;
     pintarConsumo();
@@ -441,8 +529,7 @@ function enviar(){
     /* La pregunta que falló sale del historial. Si quedara, la próxima
        viajaría con una conversación que la API nunca contestó. */
     if(HIST.length&&HIST[HIST.length-1].role==='user')HIST.pop();
-    espera.className='msg err';
-    espera.textContent='No se pudo responder. '+e.message;
+    rellenar(espera,esc('No se pudo responder. '+e.message),'err');
   }).then(function(){
     CARGANDO=false;
     $('btnEnviar').disabled=!IA.tieneClave();
