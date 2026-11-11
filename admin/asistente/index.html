@@ -126,6 +126,36 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   .msg{max-width:90%}
   .msg.ia{max-width:96%}
 }
+
+/* ── Propuesta de acción: nada se escribe hasta que toques Confirmar ── */
+.prop{margin-top:10px;border:1px solid var(--warn);border-radius:11px;overflow:hidden;background:#FFFBEB}
+.prop-t{display:flex;align-items:center;gap:7px;padding:9px 13px;background:#FEF3C7;
+  color:#78350F;font-size:11.5px;font-weight:700;letter-spacing:.02em}
+.prop-t svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;flex-shrink:0}
+.prop table{width:100%;border-collapse:collapse;font-size:12.5px}
+.prop td{padding:6px 13px;border-bottom:1px solid #FDE68A;vertical-align:top}
+.prop tr:last-child td{border-bottom:0}
+.prop td.k{color:#92400E;width:38%;white-space:nowrap;font-size:11px;text-transform:uppercase;
+  letter-spacing:.05em;padding-top:8px}
+.prop td.v{color:var(--tx);font-weight:600}
+.prop-b{display:flex;gap:7px;padding:11px 13px;border-top:1px solid #FDE68A}
+.prop-b .btn{padding:8px 15px;font-size:12.5px;border-radius:8px}
+.prop-r{padding:10px 13px;font-size:12.5px;line-height:1.5;display:none}
+.prop[data-estado="hecho"]{border-color:var(--g);background:rgba(52,166,120,.07)}
+.prop[data-estado="hecho"] .prop-t{background:rgba(52,166,120,.16);color:#1E7A55}
+.prop[data-estado="hecho"] td{border-bottom-color:rgba(52,166,120,.22)}
+.prop[data-estado="hecho"] td.k{color:#1E7A55}
+.prop[data-estado="cancelado"] td.k{color:var(--tx2)}
+.prop[data-estado="falla"] td.k{color:#7F1D1D}
+.prop[data-estado="cancelado"]{border-color:var(--bd);background:var(--sf2);opacity:.75}
+.prop[data-estado="cancelado"] .prop-t{background:var(--bd);color:var(--tx2)}
+.prop[data-estado="cancelado"] td{border-bottom-color:var(--bd)}
+.prop[data-estado="falla"]{border-color:#FCA5A5;background:#FEF2F2}
+.prop[data-estado="falla"] .prop-t{background:#FEE2E2;color:#7F1D1D}
+.prop[data-estado="falla"] td{border-bottom-color:#FCA5A5}
+.prop:not([data-estado="pendiente"]) .prop-b{display:none}
+.prop:not([data-estado="pendiente"]) .prop-r{display:block}
+.aviso-pend{font-size:11px;color:#92400E}
 </style>
 </head>
 <body>
@@ -247,11 +277,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 <script src="../servicios.js"></script>
 <script src="../cheques.js"></script>
 <script src="../contexto.js"></script>
+<script src="../gastos.js"></script>
+<script src="../acciones.js"></script>
 <script src="../ia.js"></script>
 <script>
 firebase.initializeApp(FIREBASE_CONFIG);
 var db=firebase.firestore();
-var UID=null;
+var UID=null, YO=null;
 
 var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
@@ -269,6 +301,7 @@ initAuthGuard(function(user,data,rol){
     return;
   }
   UID=user.uid;
+  YO={uid:user.uid, nombre:(data&&data.nombre)||user.email||null};
   IA.cargarClave(db,UID).then(pintarEstado).catch(function(e){
     pintarEstado(false);
     toast('❌ No se pudo leer la configuración: '+e.message);
@@ -351,6 +384,8 @@ function borrar(){
    ───────────────────────────────────────────────────────────────── */
 
 var CTX=null;          /* el resumen de tus datos, armado una sola vez  */
+var PROYECTOS=[];      /* los necesitan las herramientas, para resolver nombres */
+var PENDIENTE=null;    /* una propuesta esperando que la confirmes */
 var HIST=[];           /* la conversación, para que entienda "¿y ese?"  */
 var CARGANDO=false;
 var USADO={entrada:0,salida:0,preguntas:0};
@@ -379,6 +414,7 @@ function cargarContexto(){
     opcional(function(){return ServiciosCat.cargar(db)})
   ]).then(function(r){
     var proyectos=r[0].docs.map(function(d){var o=d.data();o._id=d.id;return o});
+    PROYECTOS=proyectos;
     CTX=Contexto.armar(r[1],proyectos,{cheques:r[2],servicios:r[3]});
     return CTX;
   });
@@ -492,48 +528,170 @@ function autoAlto(){
 function preguntarEsto(t){$('fPregunta').value=t;enviar()}
 
 function limpiar(){
-  HIST=[];
+  HIST=[];PENDIENTE=null;bloquear(false);
   USADO={entrada:0,salida:0,preguntas:0};
   $('hilo').innerHTML='';
   $('sugerencias').style.display='';
   pintarConsumo();
 }
 
+function sumar(r){
+  var c=IA.consumoDe(r);
+  USADO.entrada+=c.entrada; USADO.salida+=c.salida;
+  pintarConsumo();
+}
+
+function bloquear(si){
+  CARGANDO=si;
+  $('btnEnviar').disabled=si||!!PENDIENTE||!IA.tieneClave();
+  $('fPregunta').disabled=!!PENDIENTE;
+  $('fPregunta').placeholder=PENDIENTE
+    ? 'Confirmá o cancelá la acción de arriba para seguir'
+    : 'Escribí tu pregunta…';
+}
+
+/* Una vuelta contra la API, con las herramientas puestas. */
+function llamar(){
+  return cargarContexto().then(function(ctx){
+    return IA.pedir(HIST,{
+      sistema:Contexto.SISTEMA+Acciones.INSTRUCCIONES+'\n\n'+ctx,
+      modelo:IA.MODELOS.bueno,
+      maxTokens:1500,
+      herramientas:Acciones.herramientas()
+    });
+  });
+}
+
+function icoAviso(){
+  return '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">'+
+    '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>'+
+    '<path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+}
+
+function tarjeta(prop){
+  return '<div class="prop" data-estado="pendiente">'+
+    '<div class="prop-t">'+icoAviso()+esc(prop.titulo)+' · necesita tu confirmación</div>'+
+    '<table>'+prop.filas.map(function(f){
+      return '<tr><td class="k">'+esc(f.k)+'</td><td class="v">'+esc(f.v)+'</td></tr>';
+    }).join('')+'</table>'+
+    '<div class="prop-b">'+
+      '<button class="btn btn-g" onclick="confirmarAccion()">'+esc(prop.verbo)+'</button>'+
+      '<button class="btn btn-w" onclick="cancelarAccion()">Cancelar</button>'+
+    '</div>'+
+    '<div class="prop-r"></div></div>';
+}
+
+function estadoTarjeta(nodo,estado,texto){
+  var el=nodo.querySelector('.prop');
+  if(!el)return;
+  el.setAttribute('data-estado',estado);
+  var t=el.querySelector('.prop-t');
+  if(t)t.innerHTML=({
+    hecho:'✔ Guardado',
+    cancelado:'Cancelado, no se guardó nada',
+    falla:'No se pudo guardar',
+    haciendo:'Guardando…'
+  })[estado]||t.innerHTML;
+  var r=el.querySelector('.prop-r');
+  if(r&&texto)r.textContent=texto;
+}
+
+/* Qué hacer con lo que contestó la API. `vueltas` corta los reintentos:
+   si el modelo insiste en una herramienta que no se puede preparar, no
+   lo dejamos girar gastando plata. */
+function procesar(r,espera,vueltas){
+  sumar(r);
+  var texto=IA.textoDe(r);
+  var uso=((r&&r.content)||[]).filter(function(b){return b.type==='tool_use'})[0];
+
+  /* la respuesta entra al historial tal cual vino: si se recorta, el
+     tool_use pierde su id y la API rechaza el próximo pedido */
+  HIST.push({role:'assistant',content:r.content});
+
+  if(!uso){ rellenar(espera,md(texto)); return Promise.resolve(); }
+
+  var prep=Acciones.preparar(uso.name,uso.input,{proyectos:PROYECTOS});
+
+  if(prep.error){
+    HIST.push({role:'user',content:[{type:'tool_result',tool_use_id:uso.id,
+      is_error:true,content:prep.error}]});
+    if(vueltas>=2){
+      rellenar(espera,'<p>'+esc('No pude completar eso: '+prep.error)+'</p>','err');
+      return Promise.resolve();
+    }
+    return llamar().then(function(r2){return procesar(r2,espera,vueltas+1)});
+  }
+
+  rellenar(espera,(texto?md(texto):'')+tarjeta(prep.propuesta));
+  PENDIENTE={id:uso.id,propuesta:prep.propuesta,nodo:espera};
+  return Promise.resolve();
+}
+
+function responderHerramienta(id,texto,fallo){
+  var b={type:'tool_result',tool_use_id:id,content:texto};
+  if(fallo)b.is_error=true;
+  HIST.push({role:'user',content:[b]});
+  var espera=burbuja('ia','<span class="pensando">Pensando…</span>');
+  bloquear(true);
+  return llamar().then(function(r){return procesar(r,espera,0)})
+    .catch(function(e){rellenar(espera,'<p>'+esc('No se pudo responder. '+e.message)+'</p>','err')})
+    .then(function(){bloquear(false);abajo()});
+}
+
+function confirmarAccion(){
+  if(!PENDIENTE)return;
+  var pend=PENDIENTE; PENDIENTE=null;
+  estadoTarjeta(pend.nodo,'haciendo');
+  bloquear(true);
+  Acciones.ejecutar(db,pend.propuesta,YO).then(function(msg){
+    /* lo que se acaba de escribir tiene que aparecer en la próxima pregunta */
+    CTX=null; BalanceData.invalidar();
+    estadoTarjeta(pend.nodo,'hecho',pend.propuesta.resumen+'.');
+    toast('✅ Guardado');
+    return responderHerramienta(pend.id,msg,false);
+  }).catch(function(e){
+    estadoTarjeta(pend.nodo,'falla',e.message);
+    return responderHerramienta(pend.id,'No se pudo guardar: '+e.message,true);
+  });
+}
+
+function cancelarAccion(){
+  if(!PENDIENTE)return;
+  var pend=PENDIENTE; PENDIENTE=null;
+  estadoTarjeta(pend.nodo,'cancelado','No se escribió nada en la base.');
+  responderHerramienta(pend.id,'El usuario canceló. No se guardó nada.',false);
+}
+
 function enviar(){
-  if(CARGANDO)return;
+  if(CARGANDO||PENDIENTE)return;
   var q=$('fPregunta').value.trim();
   if(!q)return;
-  if(!IA.tieneClave()){toast('Cargá la clave primero, acá abajo');return}
+  if(!IA.tieneClave()){toast('Cargá la clave primero, en el engranaje de arriba');return}
 
   $('fPregunta').value=''; autoAlto();
   $('sugerencias').style.display='none';
   burbuja('yo',esc(q));
   var espera=burbuja('ia','<span class="pensando">Pensando…</span>');
-  CARGANDO=true; $('btnEnviar').disabled=true;
+  bloquear(true);
 
-  cargarContexto().then(function(ctx){
-    HIST.push({role:'user',content:q});
-    return IA.pedir(HIST,{
-      sistema:Contexto.SISTEMA+'\n\n'+ctx,
-      modelo:IA.MODELOS.bueno,
-      maxTokens:1500
-    });
-  }).then(function(r){
-    var texto=IA.textoDe(r);
-    HIST.push({role:'assistant',content:texto});
-    rellenar(espera,md(texto));
-    var c=IA.consumoDe(r);
-    USADO.entrada+=c.entrada; USADO.salida+=c.salida; USADO.preguntas++;
+  /* Si algo falla, el intercambio entero sale del historial. Si quedara a
+     medias, el próximo pedido viajaría con un tool_use sin su respuesta y
+     la API lo rechaza. */
+  var marca=HIST.length;
+  HIST.push({role:'user',content:q});
+
+  llamar().then(function(r){
+    return procesar(r,espera,0);
+  }).then(function(){
+    USADO.preguntas++;
     pintarConsumo();
   }).catch(function(e){
-    /* La pregunta que falló sale del historial. Si quedara, la próxima
-       viajaría con una conversación que la API nunca contestó. */
-    if(HIST.length&&HIST[HIST.length-1].role==='user')HIST.pop();
-    rellenar(espera,esc('No se pudo responder. '+e.message),'err');
+    HIST.length=marca;
+    rellenar(espera,'<p>'+esc('No se pudo responder. '+e.message)+'</p>','err');
   }).then(function(){
-    CARGANDO=false;
-    $('btnEnviar').disabled=!IA.tieneClave();
-    $('fPregunta').focus();
+    bloquear(false);
+    if(!PENDIENTE)$('fPregunta').focus();
+    abajo();
   });
 }
 
