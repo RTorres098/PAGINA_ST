@@ -24,6 +24,19 @@ var Acciones = (function () {
       .replace(/\s+/g, ' ').trim();
   }
   function num(v) { var n = typeof v === 'number' ? v : parseFloat(v); return isNaN(n) ? 0 : n; }
+
+  /* "7.500" son siete mil quinientos y "125.5" son ciento veinticinco y
+     medio. Sacar todos los puntos convertiría lo segundo en 1255. */
+  function aNumero(t) {
+    if (typeof t === 'number') return t;
+    var x = String(t == null ? '' : t).trim().replace(/\s|\u20B2|USD|Gs\.?/gi, '');
+    if (!x) return NaN;
+    var coma = x.indexOf(',') >= 0, punto = x.indexOf('.') >= 0;
+    if (coma && punto) x = x.replace(/\./g, '').replace(',', '.');
+    else if (coma) x = x.replace(',', '.');
+    else if (punto && /^\d{1,3}(\.\d{3})+$/.test(x)) x = x.replace(/\./g, '');
+    return /^-?\d*\.?\d+$/.test(x) ? parseFloat(x) : NaN;
+  }
   function gs(n) { return '₲ ' + Math.round(num(n)).toLocaleString('es-PY'); }
 
   function esCurso(p) {
@@ -92,13 +105,104 @@ var Acciones = (function () {
         },
         required: ['proyecto', 'categoria', 'concepto', 'monto']
       }
+    },
+    {
+      name: 'editar_presupuesto',
+      description:
+        'Prepara cambios en el presupuesto de un proyecto y abre el formulario con esos ' +
+        'cambios aplicados, sin guardarlos. Usala cuando el usuario pida cambiar un valor del ' +
+        'presupuesto, por ejemplo "subí las calicatas a 20 en SILVIPAR" o "poné la cotización a 7500". ' +
+        'No guarda nada: el usuario revisa los totales recalculados en el formulario y guarda ' +
+        'desde ahí. Decíselo así, no digas que el presupuesto quedó cambiado. ' +
+        'No sirve para precios de laboratorio, maquinaria ni honorarios, que son tablas: para eso ' +
+        'decile que los edite en el formulario.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          proyecto: { type: 'string', description: 'Nombre del proyecto, como lo dijo el usuario.' },
+          cambios: {
+            type: 'array',
+            description: 'Los campos a cambiar, con su valor nuevo.',
+            items: {
+              type: 'object',
+              properties: {
+                campo: { type: 'string', enum: CamposPres.editables(), description: 'Id del campo del formulario.' },
+                valor: { type: 'string', description: 'Valor nuevo, como texto. Los porcentajes van de 0 a 100.' }
+              },
+              required: ['campo', 'valor']
+            }
+          }
+        },
+        required: ['proyecto', 'cambios']
+      }
     }];
+  }
+
+  /* Los que son porcentaje: un 150% de anticipo no es un typo que convenga
+     dejar pasar hasta el formulario. */
+  var PORCENTAJES = ['pImp', 'pRet', 'pAnt', 'pctMargen', 'pesoPrep', 'pesoLab', 'pesoInf'];
+
+  function prepararPresupuesto(args, ctx) {
+    var r = resolverProyecto(args.proyecto, ctx.proyectos);
+    if (r.error) return { error: r.error };
+    var p = r.proyecto;
+
+    var cambios = args.cambios || [];
+    if (!cambios.length) return { error: 'No dijiste qué cambiar. Preguntale al usuario.' };
+    if (cambios.length > 12) return { error: 'Son demasiados cambios de una vez. Hacelo por partes.' };
+
+    var validos = CamposPres.editables(), vistos = {}, limpios = [], filas = [];
+    var actuales = (p.presupuesto && p.presupuesto.form && p.presupuesto.form.campos) || {};
+
+    for (var i = 0; i < cambios.length; i++) {
+      var c = cambios[i] || {}, campo = c.campo;
+      if (validos.indexOf(campo) < 0) {
+        return { error: '"' + campo + '" no es un campo del formulario. Los que se pueden cambiar son: ' +
+                 validos.map(function (x) { return x + ' (' + CamposPres.etiqueta(x) + ')'; }).join(', ') + '.' };
+      }
+      if (vistos[campo]) return { error: 'Mandaste dos valores distintos para ' + CamposPres.etiqueta(campo) + '.' };
+      vistos[campo] = true;
+
+      var valor = c.valor;
+      if (!CamposPres.esTexto(campo)) {
+        var n = aNumero(valor);
+        if (isNaN(n)) return { error: CamposPres.etiqueta(campo) + ' tiene que ser un número, y mandaste "' + valor + '".' };
+        if (n < 0) return { error: CamposPres.etiqueta(campo) + ' no puede ser negativo.' };
+        if (PORCENTAJES.indexOf(campo) >= 0 && n > 100) {
+          return { error: CamposPres.etiqueta(campo) + ' es un porcentaje y mandaste ' + n +
+                   '. Confirmá con el usuario qué quiso decir.' };
+        }
+        valor = n;
+      } else {
+        valor = String(valor == null ? '' : valor).trim();
+      }
+
+      var antes = actuales[campo];
+      limpios.push({ campo: campo, valor: valor });
+      filas.push({
+        k: CamposPres.etiqueta(campo),
+        v: (antes === undefined || antes === '' ? '(vacío)' : antes) + '  →  ' + valor
+      });
+    }
+
+    return {
+      propuesta: {
+        tipo: 'editar_presupuesto',
+        titulo: 'Cambiar el presupuesto de ' + p.nombre,
+        verbo: 'Abrir el presupuesto con los cambios',
+        filas: filas,
+        cambios: limpios,
+        proyecto: p,
+        resumen: limpios.length + (limpios.length === 1 ? ' cambio' : ' cambios') + ' en ' + p.nombre
+      }
+    };
   }
 
   /* ── Preparar: valida y arma la propuesta, sin tocar la base ── */
   function preparar(nombre, args, ctx) {
-    if (nombre !== 'registrar_gasto') return { error: 'No conozco la herramienta "' + nombre + '".' };
     args = args || {};
+    if (nombre === 'editar_presupuesto') return prepararPresupuesto(args, ctx);
+    if (nombre !== 'registrar_gasto') return { error: 'No conozco la herramienta "' + nombre + '".' };
 
     var r = resolverProyecto(args.proyecto, ctx.proyectos);
     if (r.error) return { error: r.error };
@@ -166,7 +270,26 @@ var Acciones = (function () {
 
   /* ── Ejecutar: recién acá se escribe, y por la vía del panel ── */
   function ejecutar(db, propuesta, yo) {
-    if (!propuesta || propuesta.tipo !== 'registrar_gasto') {
+    if (!propuesta) return Promise.reject(new Error('Propuesta desconocida'));
+
+    /* El presupuesto no se escribe desde acá. El cálculo del total vive en
+       calc(), que lee el formulario, y son trescientas líneas: una segunda
+       versión que el asistente escribiera por su cuenta daría otro número
+       el día que cambie una. Así que se dejan los cambios, se abre el
+       formulario y el total lo recalcula el mismo código de siempre. */
+    if (propuesta.tipo === 'editar_presupuesto') {
+      var id = propuesta.proyecto._id;
+      if (!CamposPres.dejar(id, propuesta.cambios)) {
+        return Promise.reject(new Error('El navegador no dejó guardar los cambios para pasarlos al formulario'));
+      }
+      window.open('../presupuesto/#/p/' + encodeURIComponent(id) + '/editar', '_blank');
+      return Promise.resolve(
+        'Se abrió el formulario del presupuesto de ' + propuesta.proyecto.nombre +
+        ' en otra pestaña, con los cambios aplicados y sin guardar. El usuario tiene que ' +
+        'revisar los totales y guardar desde ahí. No afirmes que ya está guardado.');
+    }
+
+    if (propuesta.tipo !== 'registrar_gasto') {
       return Promise.reject(new Error('Propuesta desconocida'));
     }
     return Gastos.crear(db, propuesta.datos, propuesta.proyecto, yo).then(function (id) {
@@ -179,11 +302,13 @@ var Acciones = (function () {
     'Además de responder, podés registrar gastos con la herramienta registrar_gasto.\n' +
     '- Nunca digas que algo quedó guardado: el usuario tiene que confirmarlo en pantalla primero.\n' +
     '- Si te falta un dato obligatorio, preguntáselo. No inventes montos, proyectos ni categorías.\n' +
-    '- Si el usuario solo pregunta algo, respondé. La herramienta es para cuando pide registrar.';
+    '- Si el usuario solo pregunta algo, respondé. Las herramientas son para cuando pide hacer algo.\n' +
+    '- Con editar_presupuesto no se guarda nada: se abre el formulario con los cambios puestos y ' +
+    'el usuario guarda desde ahí. Decilo así.';
 
   return {
     herramientas: herramientas, preparar: preparar, ejecutar: ejecutar,
-    resolverProyecto: resolverProyecto, esCurso: esCurso,
+    resolverProyecto: resolverProyecto, esCurso: esCurso, aNumero: aNumero,
     INSTRUCCIONES: INSTRUCCIONES, N: N
   };
 })();

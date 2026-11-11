@@ -610,6 +610,7 @@ tr.lab-man .lab-qty{border-color:var(--g);background:rgba(52,166,120,.08);font-w
 <script src="../personas.js"></script>
 <script src="../balance-calc.js"></script>
 <script src="../gastos.js"></script>
+<script src="../campos-presupuesto.js"></script>
 <script>
 /* Error handler global — muestra errores visualmente */
 window.onerror=function(msg,url,line,col,err){
@@ -1118,23 +1119,13 @@ function showPropDirect(p){
 /* ═══════════════════════════════════════ */
 /*  FORM — espejo fiel del TEMPLATE XLSX  */
 /* ═══════════════════════════════════════ */
-var CAMPOS=['proyNombre','cliSel','cliContacto','tipoServicio','proyUbi','superficie',
-  'cotizacion','pImp','pRet','pAnt',
-  'calicatas','mpc','barrenadas','mpb',
-  'nVehiculos','diasCampo','diasTotal','distKm','nViajes','consumo','pComb','cAlq','personas','cCons','cHosp',
-  'pesoPrep','pesoLab','pesoInf','pctMargen','montoSolicitar'];
+/* Viven en campos-presupuesto.js: los comparte el asistente. */
+var CAMPOS=CamposPres.CAMPOS;
 /* Políticas que sí vienen cargadas en un presupuesto nuevo */
 var POLITICAS={pImp:10,pRet:7,pAnt:50,pctMargen:15};
 /* Campos que conviene no dejar vacíos (se marcan en amarillo) */
-var REQ={
-  proyNombre:'Nombre del proyecto',cliSel:'Cliente',tipoServicio:'Tipo de servicio',proyUbi:'Ubicación',superficie:'Superficie (ha)',
-  cotizacion:'Cotización Gs/USD',pImp:'Imprevisto (%)',pRet:'Retención IVA (%)',pAnt:'Anticipo (%)',
-  calicatas:'Nº calicatas',mpc:'Muestras/calicata',barrenadas:'Nº barrenadas',mpb:'Muestras/barrenada',
-  nVehiculos:'Nº vehículos',diasCampo:'Días de campo',diasTotal:'Días totales',distKm:'Km ida+vuelta',nViajes:'Nº viajes',
-  consumo:'Consumo L/100km',pComb:'Precio combustible',cAlq:'Alquiler/día',personas:'Personas en campo',cCons:'Viático/pers/día',cHosp:'Hospedaje/pers/día',
-  pctMargen:'Margen SoilTech (%)'
-};
-var OBLIG=['proyNombre','cliSel','cotizacion'];
+var REQ=CamposPres.REQ;
+var OBLIG=CamposPres.OBLIG;
 var TABLAS_DEF={
   maq:[{n:'Retropala'}],
   hon:[{cat:'Honorarios Profesional Senior',u:'Por calicata'},{cat:'Honorarios Coordinador Campo',u:'Honorario fijo'},{cat:'Honorarios',u:'Honorario fijo'}],
@@ -1256,8 +1247,9 @@ function openEdit(id){
   document.getElementById('rpTitle').textContent='Editando: '+(p.nombre||'');
   renderFormCrumbs(p.nombre||'Sin nombre',true);
   showPanel('panelForm');
-  populateForm(p);
-  formDirty=false;
+  /* Los cambios del asistente llegan sin guardar: el formulario tiene que
+     quedar sucio, si no se pueden perder al salir sin que nadie avise. */
+  formDirty=populateForm(p)===true;
 }
 
 function renderFormCrumbs(nombre,esEdicion,esCurso){
@@ -1574,8 +1566,28 @@ function populateForm(p){
   if(!(cli&&(cli.nombre||'').toUpperCase()===(p.cliente||'').toUpperCase()&&(cs.value=guardado)))seleccionarClientePorNombre(p.cliente);
   if(p.cliente&&!cs.value)nota+='<div class="form-note warn">El cliente «'+esc(p.cliente)+'» no está en la lista de clientes. Elegilo o crealo con el botón +.</div>';
   if(cs.value&&!document.getElementById('cliContacto').value)onCli();
+  /* Si el asistente dejó cambios para este proyecto, se aplican acá y
+     calc() los recalcula. No se guarda nada: eso lo decidís vos. */
+  var aplicoIA=false;
+  var deIA=CamposPres.tomar(p._id||p.id||editingId);
+  if(deIA&&deIA.length){
+    var puestos=[];
+    deIA.forEach(function(c){
+      var el=document.getElementById(c.campo);
+      if(!el)return;
+      el.value=(c.valor==null?'':String(c.valor));
+      if(c.campo==='montoSolicitar')el.dataset.manual='1';
+      puestos.push(CamposPres.etiqueta(c.campo)+': '+el.value);
+    });
+    if(puestos.length){
+      aplicoIA=true;
+      nota+='<div class="form-note warn"><strong>El asistente aplicó estos cambios y todavía no están guardados.</strong><br>'+
+        esc(puestos.join(' · '))+'<br>Revisá los totales y guardá, o salí sin guardar para descartarlos.</div>';
+    }
+  }
   document.getElementById('formNote').innerHTML=nota;
   calc();
+  return aplicoIA;
 }
 
 function onCli(){var c=CLIS.find(function(x){return x.id===document.getElementById('cliSel').value});document.getElementById('cliContacto').value=c?(c.contacto||c.nombre||''):''}
