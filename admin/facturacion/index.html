@@ -253,6 +253,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
 <script src="../shell.js"></script>
+<script src="../traspaso.js"></script>
 <script src="../cobros.js"></script>
 <script src="../servicios.js"></script>
 <script src="../personas.js"></script>
@@ -439,13 +440,18 @@ function loadAll(primera){
     if(ALL.length===0&&typeof HISTORICAL_FACTURAS!=='undefined')document.getElementById('seedBtn').style.display='block';
     renderStats();renderList();
     // Acceso rápido desde el inicio: ../facturacion/#nueva
-    // Accesos directos: #nueva · #nueva/p/<proyecto> · #f/<factura>
+    // Accesos directos: #nueva · #nueva/p/<proyecto> · #nueva/ia · #f/<factura>
     if(primera&&location.hash){
       var h=location.hash,m;
       history.replaceState(null,'',location.pathname);
       if((m=h.match(/^#nueva\/s\/(.+)$/)))openNew(null,null,decodeURIComponent(m[1]));
       else if((m=h.match(/^#nueva\/p\/(.+)$/)))openNew(decodeURIComponent(m[1]));
       else if((m=h.match(/^#nueva\/c\/(.+)$/)))openNew(null,decodeURIComponent(m[1]));
+      else if(h==='#nueva/ia'){
+        var dIA=Traspaso.tomar('factura');
+        if(dIA)openNew(dIA.proyectoId||null,null,dIA.servicio||null,dIA);
+        else{toast('Los datos del asistente vencieron. Armá la factura a mano.');openNew()}
+      }
       else if(h==='#nueva')openNew();
       else if((m=h.match(/^#f\/(.+)$/)))openDetail(decodeURIComponent(m[1]));
     }
@@ -600,7 +606,7 @@ function openDetail(id){
   openPanel();
 }
 
-function openNew(proyectoId,clienteId,servicioCod){
+function openNew(proyectoId,clienteId,servicioCod,deIA){
   isNew=true;curId=null;
   // Get next number
   var px=proxNumero();
@@ -628,8 +634,31 @@ function openNew(proyectoId,clienteId,servicioCod){
     if(svc)curF.items=[{cant:1,code:svc.codigo,desc:svc.nombre,unit:0}];
     else toast('El servicio '+servicioCod+' no está en el catálogo');
   }
+  /* Lo que preparó el asistente se aplica sobre curF, antes de pintar: así
+     la factura la dibuja el mismo código de siempre. El número y el
+     timbrado NO se tocan, salen de proxNumero() como en cualquier factura. */
+  avisoIA=deIA?aplicarFacturaIA(deIA):'';
   renderSide();
   openPanel();
+}
+
+var avisoIA='';
+function aplicarFacturaIA(d){
+  var puestos=[];
+  var it=curF.items&&curF.items[0]?curF.items[0]:{cant:1,code:'',desc:'',unit:0};
+  if(d.cliente&&!curF.cliente){curF.cliente=d.cliente;puestos.push('Cliente: '+d.cliente)}
+  if(d.descripcion){it.desc=d.descripcion;puestos.push('Detalle: '+d.descripcion)}
+  if(d.cantidad!=null){it.cant=d.cantidad;puestos.push('Cantidad: '+d.cantidad)}
+  if(d.precioUnitario!=null){it.unit=d.precioUnitario;puestos.push('Precio unitario: '+d.precioUnitario)}
+  if(d.moneda){curF.moneda=d.moneda;puestos.push('Moneda: '+d.moneda)}
+  if(d.condicion){curF.condicion=d.condicion;puestos.push('Condición: '+d.condicion)}
+  if(d.tipoIva!=null){curF.tipoIva=d.tipoIva;puestos.push('IVA: '+d.tipoIva+'%')}
+  if(d.fecha){curF.fecha=d.fecha;puestos.push('Fecha: '+d.fecha)}
+  curF.items=[it];
+  if(!puestos.length)return '';
+  return '<div class="cm-dup" style="margin-bottom:10px"><strong>El asistente dejó esto preparado.</strong><br>'+
+    escH(puestos.join(' · '))+'<br>El número y el timbrado salen de la numeración de siempre. '+
+    'Revisá todo y guardá vos.</div>';
 }
 
 function renderSide(){
@@ -640,6 +669,7 @@ function renderSide(){
   var amt=isU?fmtUsd(f.total||0):fmtGs(f.total||0);
 
   var h='<h2 style="font-size:16px;font-weight:700;color:var(--gd);margin-bottom:4px">'+(isNew?'Nueva Factura':'Factura '+(f.nroFormateado||''))+'</h2>';
+  if(avisoIA){h+=avisoIA;avisoIA='';}
 
   // Status badges (only for existing)
   if(!isNew){

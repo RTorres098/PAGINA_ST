@@ -53,29 +53,16 @@ var CamposPres = (function () {
      versión del cálculo, y vos ves los totales antes de guardar.
      Se consume una sola vez y vence, para que un cambio viejo no aparezca
      la semana que viene en otro presupuesto. */
-  var LLAVE = 'stPresCambios';
-  var VENCE = 5 * 60 * 1000;
-
+  var LLAVE = 'presupuesto';
   var NUEVO = 'nuevo';   // el id que usa un presupuesto que todavía no existe
 
   function dejar(proyectoId, cambios, extra) {
-    try {
-      localStorage.setItem(LLAVE, JSON.stringify({
-        proyectoId: proyectoId, cambios: cambios, extra: extra || null, cuando: Date.now()
-      }));
-      return true;
-    } catch (e) { return false; }
+    return Traspaso.dejar(LLAVE, { proyectoId: proyectoId, cambios: cambios, extra: extra || null });
   }
 
   function tomar(proyectoId) {
-    var crudo;
-    try { crudo = localStorage.getItem(LLAVE); } catch (e) { return null; }
-    if (!crudo) return null;
-    try { localStorage.removeItem(LLAVE); } catch (e) {}
-    var d;
-    try { d = JSON.parse(crudo); } catch (e) { return null; }
+    var d = Traspaso.tomar(LLAVE);
     if (!d || d.proyectoId !== proyectoId) return null;
-    if (!d.cuando || Date.now() - d.cuando > VENCE) return null;
     return { cambios: d.cambios || [], extra: d.extra || {} };
   }
 

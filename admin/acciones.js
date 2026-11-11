@@ -190,7 +190,99 @@ var Acciones = (function () {
         },
         required: ['nombre', 'valores']
       }
+    },
+    {
+      name: 'preparar_factura',
+      description:
+        'Abre el formulario de factura nueva con los datos cargados, para que el usuario la revise ' +
+        'y la emita. Usala cuando pida facturar algo, por ejemplo "armame la factura de SILVIPAR por ' +
+        'el inventario forestal, 4.200 dólares". ' +
+        'NO emite la factura ni elige el número: el número y el timbrado los pone el sistema de ' +
+        'numeración cuando se abre el formulario, y el usuario guarda e imprime. Nunca digas que la ' +
+        'factura quedó emitida ni inventes un número de factura. ' +
+        'Necesita al menos el proyecto o el cliente. Poné solo lo que el usuario dijo.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          proyecto: { type: 'string', description: 'Nombre del proyecto a facturar. Trae el cliente, el RUC y el servicio solos.' },
+          cliente: { type: 'string', description: 'Nombre del cliente, si no hay proyecto.' },
+          servicio: { type: 'string', description: 'Código del servicio del catálogo, por ejemplo ST-07.' },
+          descripcion: { type: 'string', description: 'Detalle del ítem, si el usuario quiere uno distinto al del catálogo.' },
+          cantidad: { type: 'string', description: 'Cantidad del ítem. Por defecto 1.' },
+          precioUnitario: { type: 'string', description: 'Precio unitario, en la moneda de la factura.' },
+          moneda: { type: 'string', enum: ['DOLARES AMERICANOS', 'GUARANIES'], description: 'Por defecto dólares.' },
+          condicion: { type: 'string', enum: ['CONTADO', 'CREDITO'], description: 'Por defecto contado.' },
+          tipoIva: { type: 'string', enum: ['10', '5', '0'], description: 'IVA en porcentaje. Por defecto 10.' },
+          fecha: { type: 'string', description: 'Fecha de la factura en formato AAAA-MM-DD. Por defecto hoy.' }
+        },
+        required: []
+      }
     }];
+  }
+
+  function prepararFactura(args, ctx) {
+    var p = null;
+    if (args.proyecto) {
+      var r = resolverProyecto(args.proyecto, ctx.proyectos);
+      if (r.error) return { error: r.error };
+      p = r.proyecto;
+    }
+    var cliente = String(args.cliente || '').trim();
+    if (!p && !cliente) {
+      return { error: 'Para armar la factura hace falta al menos el proyecto o el cliente. Preguntáselo.' };
+    }
+
+    /* El servicio se resuelve contra el catálogo: un código inventado deja
+       la descripción vacía en la factura impresa. */
+    var servicio = null;
+    if (args.servicio) {
+      if (typeof ServiciosCat === 'undefined') return { error: 'No pude leer el catálogo de servicios.' };
+      servicio = ServiciosCat.buscar(args.servicio) || ServiciosCat.resolver(args.servicio);
+      if (!servicio) {
+        return { error: 'El servicio "' + args.servicio + '" no está en el catálogo. Los códigos válidos ' +
+                 'son: ' + ServiciosCat.activos().map(function (x) { return x.codigo; }).join(', ') + '.' };
+      }
+    }
+
+    var d = { proyectoId: p ? p._id : null, servicio: servicio ? servicio.codigo : null };
+    var filas = [];
+    if (p) filas.push({ k: 'Proyecto', v: p.nombre });
+    if (cliente && !p) { d.cliente = cliente; filas.push({ k: 'Cliente', v: cliente }); }
+    if (servicio) filas.push({ k: 'Servicio', v: servicio.codigo + ' · ' + servicio.nombre });
+
+    if (args.descripcion) { d.descripcion = String(args.descripcion).trim(); filas.push({ k: 'Detalle', v: d.descripcion }); }
+
+    if (args.cantidad != null && args.cantidad !== '') {
+      var c = aNumero(args.cantidad);
+      if (isNaN(c) || c <= 0) return { error: 'La cantidad tiene que ser un número mayor a cero, y mandaste "' + args.cantidad + '".' };
+      d.cantidad = c; filas.push({ k: 'Cantidad', v: String(c) });
+    }
+    if (args.precioUnitario != null && args.precioUnitario !== '') {
+      var u = aNumero(args.precioUnitario);
+      if (isNaN(u) || u < 0) return { error: 'El precio unitario tiene que ser un número, y mandaste "' + args.precioUnitario + '".' };
+      d.precioUnitario = u; filas.push({ k: 'Precio unitario', v: String(u) });
+    }
+    if (args.moneda) { d.moneda = args.moneda; filas.push({ k: 'Moneda', v: args.moneda }); }
+    if (args.condicion) { d.condicion = args.condicion; filas.push({ k: 'Condición', v: args.condicion }); }
+    if (args.tipoIva != null && args.tipoIva !== '') {
+      var iva = aNumero(args.tipoIva);
+      if ([0, 5, 10].indexOf(iva) < 0) return { error: 'El IVA solo puede ser 10, 5 o exento (0).' };
+      d.tipoIva = iva; filas.push({ k: 'IVA', v: iva + '%' });
+    }
+    if (args.fecha) { d.fecha = String(args.fecha).slice(0, 10); filas.push({ k: 'Fecha', v: d.fecha }); }
+
+    filas.push({ k: 'Número', v: 'Lo asigna la numeración del timbrado vigente, al abrir el formulario' });
+
+    return {
+      propuesta: {
+        tipo: 'preparar_factura',
+        titulo: 'Armar la factura de ' + ((p && p.nombre) || cliente),
+        verbo: 'Abrir la factura preparada',
+        filas: filas,
+        datos: d,
+        resumen: 'Factura de ' + ((p && p.nombre) || cliente) + ' lista para revisar'
+      }
+    };
   }
 
   function prepararNuevo(args) {
@@ -381,6 +473,7 @@ var Acciones = (function () {
     if (nombre === 'editar_presupuesto') return prepararPresupuesto(args, ctx);
     if (nombre === 'registrar_cobro') return prepararCobro(args, ctx);
     if (nombre === 'crear_presupuesto') return prepararNuevo(args);
+    if (nombre === 'preparar_factura') return prepararFactura(args, ctx);
     if (nombre !== 'registrar_gasto') return { error: 'No conozco la herramienta "' + nombre + '".' };
 
     var r = resolverProyecto(args.proyecto, ctx.proyectos);
@@ -456,6 +549,20 @@ var Acciones = (function () {
        versión que el asistente escribiera por su cuenta daría otro número
        el día que cambie una. Así que se dejan los cambios, se abre el
        formulario y el total lo recalcula el mismo código de siempre. */
+    /* La factura tampoco se escribe: el numero sale del timbrado vigente
+       cuando se abre el formulario, y emitir una mal no es un bug de
+       pantalla, hay que dar de baja el numero quemado. */
+    if (propuesta.tipo === 'preparar_factura') {
+      if (!Traspaso.dejar('factura', propuesta.datos)) {
+        return Promise.reject(new Error('El navegador no dejó guardar los datos para pasarlos al formulario'));
+      }
+      window.open('../facturacion/#nueva/ia', '_blank');
+      return Promise.resolve(
+        'Se abrió el formulario de factura nueva en otra pestaña, con los datos cargados. El número ' +
+        'lo asignó la numeración del timbrado. Falta que el usuario revise, guarde e imprima. ' +
+        'No afirmes que la factura está emitida ni menciones un número.');
+    }
+
     if (propuesta.tipo === 'crear_presupuesto') {
       if (!CamposPres.dejar(CamposPres.NUEVO, propuesta.cambios, propuesta.extra)) {
         return Promise.reject(new Error('El navegador no dejó guardar los datos para pasarlos al formulario'));
@@ -504,7 +611,9 @@ var Acciones = (function () {
     '- Si te falta un dato obligatorio, preguntáselo. No inventes montos, proyectos ni categorías.\n' +
     '- Si el usuario solo pregunta algo, respondé. Las herramientas son para cuando pide hacer algo.\n' +
     '- Con editar_presupuesto y crear_presupuesto no se guarda nada: se abre el formulario con los ' +
-    'datos puestos y el usuario guarda desde ahí. Decilo así.';
+    'datos puestos y el usuario guarda desde ahí. Decilo así.\n' +
+    '- preparar_factura tampoco emite nada: abre el formulario y el usuario guarda e imprime. ' +
+    'Nunca inventes ni menciones un número de factura.';
 
   return {
     herramientas: herramientas, preparar: preparar, ejecutar: ejecutar,
