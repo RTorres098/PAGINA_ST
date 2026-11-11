@@ -24,7 +24,7 @@ var IA = (function () {
     bueno: 'claude-sonnet-5-5'
   };
 
-  var _clave = null, _uid = null;
+  var _clave = null, _uid = null, _workspace = null;
 
   function tieneClave() { return !!_clave; }
   /* Para mostrarla sin mostrarla. */
@@ -36,30 +36,48 @@ var IA = (function () {
   function cargarClave(db, uid) {
     _uid = uid;
     return db.collection('ia').doc(uid).get().then(function (d) {
-      _clave = (d.exists && d.data() && d.data().clave) || null;
+      var dd = (d.exists && d.data()) || {};
+      _clave = dd.clave || null;
+      _workspace = dd.workspace || null;
       return tieneClave();
-    }, function () { _clave = null; return false; });
+    }, function () { _clave = null; _workspace = null; return false; });
   }
 
-  function guardarClave(db, uid, clave) {
+  /* `workspace` solo hace falta cuando la clave no está asignada a uno:
+     en ese caso la API exige la cabecera anthropic-workspace-id. Si la clave
+     ya pertenece a un workspace, se deja vacío. */
+  function guardarClave(db, uid, clave, workspace) {
     clave = String(clave || '').trim();
+    workspace = String(workspace || '').trim();
     if (!clave) return Promise.reject(new Error('Pegá la clave'));
     if (clave.indexOf('sk-ant-') !== 0) {
       return Promise.reject(new Error('Una clave de Anthropic empieza con sk-ant-'));
     }
+    if (workspace && workspace.indexOf('wrkspc_') !== 0) {
+      return Promise.reject(new Error('El id de workspace empieza con wrkspc_'));
+    }
     return db.collection('ia').doc(uid).set({
-      clave: clave, actualizado: new Date()
-    }).then(function () { _clave = clave; _uid = uid; return true; });
+      clave: clave, workspace: workspace || null, actualizado: new Date()
+    }).then(function () {
+      _clave = clave; _workspace = workspace || null; _uid = uid; return true;
+    });
   }
 
+  function workspace() { return _workspace; }
+
   function borrarClave(db, uid) {
-    return db.collection('ia').doc(uid).delete().then(function () { _clave = null; });
+    return db.collection('ia').doc(uid).delete().then(function () { _clave = null; _workspace = null; });
   }
 
   /* Traduce lo que devuelve la API a algo que se entienda en pantalla. */
   function mensajeDeError(estado, cuerpo) {
     var detalle = (cuerpo && cuerpo.error && cuerpo.error.message) || '';
     if (estado === 401) return 'La clave no es válida o fue revocada';
+    /* Lo específico antes que lo genérico: un 400 por workspace también es un
+       400, y si se mira primero el código nunca se llega a explicarlo. */
+    if (/workspace/i.test(detalle)) {
+      return 'La clave no está asignada a un workspace. Poné el id del workspace en Ajustes, o creá una clave ya asignada a uno';
+    }
     if (estado === 400 && /credit|balance/i.test(detalle)) return 'La cuenta de Anthropic no tiene saldo';
     if (estado === 400) return 'Pedido mal armado: ' + detalle;
     if (estado === 403) return 'La clave no tiene permiso para esto';
@@ -84,15 +102,19 @@ var IA = (function () {
     if (opciones.herramientas) cuerpo.tools = opciones.herramientas;
     if (opciones.temperatura != null) cuerpo.temperature = opciones.temperatura;
 
+    var cabeceras = {
+      'content-type': 'application/json',
+      'x-api-key': _clave,
+      'anthropic-version': VERSION,
+      /* Sin esto el navegador ni siquiera llega: la API lo rechaza. */
+      'anthropic-dangerous-direct-browser-access': 'true'
+    };
+    /* Solo hace falta si la clave no pertenece a un workspace. */
+    if (_workspace) cabeceras['anthropic-workspace-id'] = _workspace;
+
     return fetch(URL, {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': _clave,
-        'anthropic-version': VERSION,
-        /* Sin esto el navegador ni siquiera llega: la API lo rechaza. */
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: cabeceras,
       body: JSON.stringify(cuerpo)
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
@@ -165,6 +187,7 @@ var IA = (function () {
     MODELOS: MODELOS,
     tieneClave: tieneClave, claveEnmascarada: claveEnmascarada,
     cargarClave: cargarClave, guardarClave: guardarClave, borrarClave: borrarClave,
+    workspace: workspace,
     pedir: pedir, preguntar: preguntar,
     textoDe: textoDe, fuentesDe: fuentesDe, consumoDe: consumoDe,
     herramientaBusqueda: herramientaBusqueda,

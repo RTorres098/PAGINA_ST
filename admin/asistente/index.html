@@ -88,6 +88,12 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <div class="ayuda">La sacás de <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>, en API Keys. Empieza con <b>sk-ant-</b>.</div>
     </div>
 
+    <div class="f">
+      <label>Id de workspace (casi siempre vacío)</label>
+      <input id="fWorkspace" placeholder="wrkspc_…" autocomplete="off" spellcheck="false">
+      <div class="ayuda">Solo hace falta si creaste la clave <strong>sin</strong> asignarla a un workspace. En ese caso la API lo exige en cada pedido. Lo sacás de <a href="https://platform.claude.com/settings/workspaces" target="_blank" rel="noopener">Settings, Workspaces</a>.</div>
+    </div>
+
     <div class="btns">
       <button class="btn btn-g" id="btnGuardar" onclick="guardar()">Guardar y probar</button>
       <button class="btn btn-w" id="btnProbar" onclick="probar()">Probar la que está</button>
@@ -148,10 +154,12 @@ function pintarEstado(hay,detalle){
   if(detalle==='mal'){
     el.innerHTML='<div class="estado mal">⚠ La clave está cargada pero la API la rechazó. Revisala o generá una nueva.</div>';
   }else if(hay){
-    el.innerHTML='<div class="estado si">✔ Clave cargada: <b>'+esc(IA.claveEnmascarada())+'</b></div>';
+    el.innerHTML='<div class="estado si">✔ Clave cargada: <b>'+esc(IA.claveEnmascarada())+'</b>'+
+      (IA.workspace()?' · workspace <b>'+esc(IA.workspace())+'</b>':'')+'</div>';
   }else{
     el.innerHTML='<div class="estado no">Todavía no cargaste la clave. El asistente y las promociones no van a funcionar hasta que lo hagas.</div>';
   }
+  if(hay&&IA.workspace()&&!$('fWorkspace').value)$('fWorkspace').value=IA.workspace();
   $('btnProbar').style.display=hay?'':'none';
   $('btnBorrar').style.display=hay?'':'none';
 }
@@ -170,9 +178,10 @@ function probarClave(){
 
 function guardar(){
   var clave=$('fClave').value.trim();
+  var ws=$('fWorkspace').value.trim();
   var b=$('btnGuardar'); b._txt='Guardar y probar';
   ocupado(true,'btnGuardar');
-  IA.guardarClave(db,UID,clave).then(function(){
+  IA.guardarClave(db,UID,clave,ws).then(function(){
     return probarClave();
   }).then(function(){
     $('fClave').value='';
