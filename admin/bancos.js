@@ -123,6 +123,15 @@ var Bancos = (function () {
 
   /* Los bancos donde hay cuenta. Es la lista que se consulta al buscar
      promociones: sin esto se traerían ofertas de bancos ajenos. */
+  /* Las tarjetas con las que Ramón paga, para que la búsqueda de
+     promociones filtre las que no le sirven. Si cambia alguna, se cambia
+     acá y la pantalla de promociones se entera sola. */
+  var TARJETAS_MIAS = [
+    { banco: 'itau', nombre: 'Visa Gold', marca: 'Visa' },
+    { banco: 'itau', nombre: 'Interventajas', marca: 'Mastercard' }
+  ];
+  function tarjetasMias() { return TARJETAS_MIAS.slice(); }
+
   function mios() { return lista(true).filter(function (b) { return b.mio; }); }
 
   /* Dominios de los bancos propios, para limitar la búsqueda web. */
@@ -136,7 +145,7 @@ var Bancos = (function () {
   return {
     cargar: cargar, lista: lista, porId: porId, resolver: resolver, nombreDe: nombreDe,
     agregar: agregar, guardar: guardar, normalizar: normalizar, idDe: idDe,
-    mios: mios, dominiosMios: dominiosMios,
+    mios: mios, dominiosMios: dominiosMios, tarjetasMias: tarjetasMias,
     enNube: enNube, invalidar: invalidar, SEED: BANCOS_SEED
   };
 })();

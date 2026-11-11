@@ -16,6 +16,7 @@ var STShell = (function () {
   var LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg>';
 
   var IC = {
+    promos: '<path d="M20.6 13.4 11 3.8V3H4v7h.8l9.6 9.6a2 2 0 0 0 2.8 0l3.4-3.4a2 2 0 0 0 0-2.8z"/><circle cx="7.5" cy="6.5" r="1.2"/>',
     inicio: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/>',
     balance: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
     presu: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
@@ -60,6 +61,7 @@ var STShell = (function () {
     if (/\/servicios\//.test(p)) return 'servicios';
     if (/\/cheques\//.test(p)) return 'cheques';
     if (/\/asistente\//.test(p)) return 'asistente';
+    if (/\/promociones\//.test(p)) return 'promociones';
     return 'inicio';
   }
 
@@ -76,6 +78,7 @@ var STShell = (function () {
       { g: 'Finanzas', soloSuper: true },
       { k: 'cheques', t: 'Cheques', h: b + 'cheques/', i: IC.cheque, soloSuper: true },
       { k: 'asistente', t: 'Asistente', h: b + 'asistente/', i: IC.ia, soloSuper: true },
+      { k: 'promociones', t: 'Promociones', h: b + 'promociones/', i: IC.promos, soloSuper: true },
       { g: 'Ajustes' },
       { k: 'servicios', t: 'Servicios', h: b + 'servicios/', i: IC.ajustes },
       { g: 'Crear' },
@@ -101,7 +104,7 @@ var STShell = (function () {
       '</aside>';
   }
 
-  var TITULOS = { inicio: 'Inicio', balance: 'Balance', presupuestos: 'Presupuestos', facturacion: 'Facturación', clientes: 'Clientes', servicios: 'Servicios', cheques: 'Cheques', asistente: 'Asistente' };
+  var TITULOS = { inicio: 'Inicio', balance: 'Balance', presupuestos: 'Presupuestos', facturacion: 'Facturación', clientes: 'Clientes', servicios: 'Servicios', cheques: 'Cheques', asistente: 'Asistente', promociones: 'Promociones' };
 
   /* Convierte el <header class="st-top"> de la página en la barra superior clara. */
   function armarTopbar() {

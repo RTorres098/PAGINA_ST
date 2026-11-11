@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoilTech &mdash; Promociones</title>
+<link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="../shell.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.main{max-width:860px;margin:0 auto;padding:24px 24px 80px;width:100%}
+.hd1{font-size:24px;color:var(--gd);line-height:1.15}
+.hd2{font-size:13px;color:var(--tx2);margin-top:3px}
+.head{margin-bottom:18px}
+
+.barra{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:14px 18px;margin-bottom:16px}
+.bancos{display:flex;flex-wrap:wrap;gap:7px}
+.banco{background:var(--g-soft);border:1px solid rgba(52,166,120,.3);color:#1E7A55;
+  border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600}
+.cuando{font-size:11.5px;color:var(--tx3)}
+.btn{padding:9px 16px;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn-g{background:var(--g);color:#fff}
+.btn-g:disabled{opacity:.55;cursor:default}
+.btn-w{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
+
+.aviso{border-radius:11px;padding:12px 15px;font-size:12.5px;line-height:1.6;margin-bottom:15px}
+.aviso.info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E3A5F}
+.aviso.mal{background:#FEF2F2;border:1px solid #FCA5A5;color:#7F1D1D}
+.aviso.viejo{background:#FFFBEB;border:1px solid #FDE68A;color:#78350F}
+
+.hoja{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:22px 24px;
+  font-size:13.5px;line-height:1.65}
+.hoja h4{font-size:15px;color:var(--gd);margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.hoja h4:first-child{margin-top:0}
+.hoja p{margin:0 0 9px}
+.hoja ul,.hoja ol{margin:0 0 12px 20px}
+.hoja li{margin-bottom:5px}
+.hoja b{color:var(--gd)}
+.hoja table{border-collapse:collapse;width:100%;font-size:12.5px;margin:6px 0 12px;display:block;overflow-x:auto}
+.hoja th{text-align:left;border-bottom:2px solid var(--bd);padding:6px 9px;color:var(--tx2);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.hoja td{border-bottom:1px solid var(--bd);padding:6px 9px}
+.hoja code{background:var(--sf2);padding:1px 5px;border-radius:4px;font-size:12px}
+
+.fuentes{margin-top:18px;padding-top:15px;border-top:1px solid var(--bd)}
+.fuentes h5{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--tx3);margin-bottom:8px}
+.fuentes a{display:block;font-size:12px;color:var(--g);text-decoration:none;margin-bottom:4px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fuentes a:hover{text-decoration:underline}
+
+.vacio{text-align:center;padding:60px 20px;color:var(--tx3);font-size:13px;line-height:1.7}
+.vacio .btn{margin-top:16px}
+.cargando{text-align:center;padding:60px 20px;color:var(--tx2);font-size:13px}
+.cargando .pts{display:inline-block;width:26px;text-align:left}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--gd);
+  color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;z-index:200;transition:transform .25s;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:700px){.barra{flex-direction:column;align-items:flex-start}.hoja{padding:18px 16px}}
+</style>
+</head>
+<body class="sh-flow">
+
+<header class="st-top">
+  <a class="st-brand" href="../"><span class="st-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 7c3-2 6 2 9 0s6-2 9 0"/><path d="M3 12c3-2 6 2 9 0s6-2 9 0"/><path d="M3 17c3-2 6 2 9 0s6-2 9 0"/></svg></span><span>SoilTech <b>Admin</b></span></a>
+  <nav class="st-nav"><a href="../">Inicio</a><a href="../presupuesto/">Presupuestos</a><a href="../facturacion/">Facturaci&oacute;n</a><a class="on" href="./">Promociones</a></nav>
+  <div class="st-right">
+    <button class="st-btn st-btn-g" id="btnBuscar" onclick="actualizar()">Buscar ahora</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="head">
+    <h1 class="hd1">Promociones de tus bancos</h1>
+    <div class="hd2">Buscadas en los sitios oficiales de los bancos donde ten&eacute;s cuenta.</div>
+  </div>
+
+  <div class="barra">
+    <div class="bancos" id="bancos"></div>
+    <div class="cuando" id="cuando"></div>
+  </div>
+
+  <div id="avisos"></div>
+  <div id="cuerpo"><div class="cargando">Cargando&hellip;</div></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config.js"></script>
+<script src="../auth-guard.js"></script>
+<script src="../shell.js"></script>
+<script src="../markdown.js"></script>
+<script src="../bancos.js"></script>
+<script src="../ia.js"></script>
+<script src="../promociones.js"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+var db=firebase.firestore();
+var UID=null,BUSCANDO=false;
+
+var $=function(i){return document.getElementById(i)};
+var esc=Markdown.esc;
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show')},3600)}
+
+/* Usa la clave de Anthropic, que es una credencial de pago: solo el dueño. */
+initAuthGuard(function(user,data,rol){
+  STShell.usuario(data,rol,user);
+  if(rol!=='super_admin'){
+    document.querySelector('.main').innerHTML=
+      '<div class="vacio">Esta sección es privada.<br><a href="../" style="color:var(--g);font-weight:700">Volver al panel</a></div>';
+    $('btnBuscar').style.display='none';
+    return;
+  }
+  UID=user.uid;
+  Bancos.cargar(db).catch(function(){return null}).then(function(){
+    pintarBancos();
+    return IA.cargarClave(db,UID);
+  }).then(function(hay){
+    if(!hay){
+      $('cuerpo').innerHTML='';
+      $('avisos').innerHTML='<div class="aviso mal">Para buscar promociones hace falta la clave de Anthropic. '+
+        'Cargála en el <a href="../asistente/" style="color:#7F1D1D;font-weight:700">Asistente</a>, en el engranaje de arriba.</div>';
+      $('btnBuscar').disabled=true;
+      return;
+    }
+    /* Al entrar no se busca: se muestra lo guardado. Cada búsqueda cuesta,
+       y abrir la pantalla no debería gastar plata. */
+    return Promos.leer(db,UID).then(pintar);
+  }).catch(function(e){
+    $('cuerpo').innerHTML='';
+    $('avisos').innerHTML='<div class="aviso mal">'+esc(e.message)+'</div>';
+  });
+});
+
+function pintarBancos(){
+  var ms=Bancos.mios();
+  $('bancos').innerHTML=ms.length
+    ? ms.map(function(b){return '<span class="banco">'+esc(b.nombre)+'</span>'}).join('')
+    : '<span class="cuando">No hay ningún banco marcado como tuyo</span>';
+}
+
+function pintar(promos){
+  if(!promos){
+    $('cuerpo').innerHTML='<div class="vacio">Todavía no buscaste promociones.<br>'+
+      'Cada búsqueda cuesta unos 10 centavos de dólar, así que no se hace sola al entrar.'+
+      '<br><button class="btn btn-g" onclick="actualizar()">Buscar ahora</button></div>';
+    $('cuando').textContent='';
+    return;
+  }
+  var h='<div class="hoja">'+Markdown.render(promos.texto||'');
+  if(promos.fuentes&&promos.fuentes.length){
+    h+='<div class="fuentes"><h5>De dónde salió</h5>'+
+      promos.fuentes.map(function(f){
+        return '<a href="'+esc(f.url)+'" target="_blank" rel="noopener">'+esc(f.titulo||f.url)+'</a>';
+      }).join('')+'</div>';
+  }
+  h+='</div>';
+  $('cuerpo').innerHTML=h;
+  $('cuando').textContent='Actualizado '+Promos.hace(promos.cuando)+
+    (promos.busquedas?' · '+promos.busquedas+' búsquedas':'');
+  if(!Promos.fresco(promos)){
+    $('avisos').innerHTML='<div class="aviso viejo">Esto se buscó '+esc(Promos.hace(promos.cuando))+
+      '. Las promociones cambian seguido: si vas a usar alguna, actualizá antes.</div>';
+  }
+}
+
+function actualizar(){
+  if(BUSCANDO)return;
+  BUSCANDO=true;
+  $('btnBuscar').disabled=true;
+  $('btnBuscar').textContent='Buscando…';
+  $('avisos').innerHTML='';
+  $('cuerpo').innerHTML='<div class="cargando">Buscando en los sitios de tus bancos. '+
+    'Tarda entre diez y treinta segundos.</div>';
+
+  Promos.obtener(db,UID,true).then(function(r){
+    pintar(r.promos);
+    if(r.error){
+      $('avisos').innerHTML='<div class="aviso mal">No se pudo actualizar: '+esc(r.error)+
+        '. Arriba está lo último que se había guardado.</div>';
+    }else toast('✅ Promociones actualizadas');
+  }).catch(function(e){
+    $('cuerpo').innerHTML='';
+    $('avisos').innerHTML='<div class="aviso mal">No se pudo buscar: '+esc(e.message)+'</div>';
+  }).then(function(){
+    BUSCANDO=false;
+    $('btnBuscar').disabled=false;
+    $('btnBuscar').textContent='Buscar ahora';
+  });
+}
+</script>
+</body>
+</html>

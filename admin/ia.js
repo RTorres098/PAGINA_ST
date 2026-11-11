@@ -56,9 +56,11 @@ var IA = (function () {
     if (workspace && workspace.indexOf('wrkspc_') !== 0) {
       return Promise.reject(new Error('El id de workspace empieza con wrkspc_'));
     }
+    /* merge: el documento también guarda las promociones; un set sin
+       merge se las llevaría puestas al cambiar la clave. */
     return db.collection('ia').doc(uid).set({
       clave: clave, workspace: workspace || null, actualizado: new Date()
-    }).then(function () {
+    }, { merge: true }).then(function () {
       _clave = clave; _workspace = workspace || null; _uid = uid; return true;
     });
   }
