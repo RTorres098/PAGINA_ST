@@ -53,6 +53,39 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:90vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
 @media(max-width:700px){.costos{grid-template-columns:1fr}}
+
+/* ── Chat ── */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chip{background:var(--sf2);border:1px solid var(--bd);border-radius:999px;padding:6px 12px;
+  font:inherit;font-size:12px;color:var(--tx2);cursor:pointer;text-align:left}
+.chip:hover{border-color:var(--g);color:var(--gd)}
+.hilo{display:flex;flex-direction:column;gap:15px;margin-bottom:14px}
+.hilo:empty{display:none}
+.msg{font-size:13.5px;line-height:1.65;max-width:100%}
+.msg.yo{background:var(--sf2);border-radius:12px;padding:10px 14px;align-self:flex-end;
+  max-width:85%;white-space:pre-wrap;word-break:break-word}
+.msg.ia{border-left:3px solid var(--g);padding-left:14px}
+.msg.ia p{margin:0 0 9px}
+.msg.ia p:last-child{margin-bottom:0}
+.msg.ia ul,.msg.ia ol{margin:0 0 9px 20px}
+.msg.ia li{margin-bottom:3px}
+.msg.ia h4{font-size:13.5px;color:var(--gd);margin:13px 0 5px}
+.msg.ia table{border-collapse:collapse;width:100%;font-size:12.5px;margin:4px 0 10px;display:block;overflow-x:auto}
+.msg.ia th{text-align:left;border-bottom:2px solid var(--bd);padding:5px 8px;color:var(--tx2);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.msg.ia td{border-bottom:1px solid var(--bd);padding:5px 8px}
+.msg.ia code{background:var(--sf2);padding:1px 5px;border-radius:4px;font-size:12px}
+.msg.err{color:#7F1D1D;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:10px 13px;font-size:12.5px}
+.pensando{color:var(--tx3);font-style:italic}
+.entrada{display:flex;gap:8px;align-items:flex-end}
+.entrada textarea{flex:1;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;font:inherit;
+  font-size:13.5px;background:var(--bg);resize:none;max-height:160px;line-height:1.5;color:var(--tx)}
+.entrada textarea:focus{outline:none;border-color:var(--g)}
+.pie{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:9px;
+  font-size:11px;color:var(--tx3);min-height:17px}
+.pie .der{display:flex;gap:12px}
+.lnk{background:none;border:0;font:inherit;font-size:11px;color:var(--tx3);cursor:pointer;text-decoration:underline;padding:0}
+.lnk:hover{color:var(--gd)}
 </style>
 </head>
 <body class="sh-flow">
@@ -67,6 +100,34 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   <div class="head">
     <h1 class="hd1">Asistente</h1>
     <div class="hd2">Preguntas sobre tus datos y promociones de tus bancos, con Claude.</div>
+  </div>
+
+  <div class="card">
+    <h3>Preguntá sobre tus datos</h3>
+    <div class="sub">Lee tus proyectos, facturas, gastos y cheques del panel. Los totales son los mismos
+      que ves en Balance, no los recalcula. Si un dato no está, lo dice en vez de inventarlo.</div>
+
+    <div class="chips" id="sugerencias">
+      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Qué proyectos tienen plata sin cobrar?</button>
+      <button class="chip" onclick="preguntarEsto(this.textContent)">¿En qué categoría gasté más este año?</button>
+      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Qué cheques entran en los próximos días?</button>
+      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Cuáles son mis tres clientes más grandes?</button>
+      <button class="chip" onclick="preguntarEsto(this.textContent)">¿Qué proyecto me dejó mejor margen?</button>
+    </div>
+
+    <div class="hilo" id="hilo"></div>
+
+    <div class="entrada">
+      <textarea id="fPregunta" rows="1" placeholder="Preguntá lo que quieras sobre tus números…"></textarea>
+      <button class="btn btn-g" id="btnEnviar" onclick="enviar()">Preguntar</button>
+    </div>
+    <div class="pie">
+      <span id="consumo"></span>
+      <span class="der">
+        <button class="lnk" onclick="refrescarDatos()">Actualizar datos</button>
+        <button class="lnk" onclick="limpiar()">Vaciar conversación</button>
+      </span>
+    </div>
   </div>
 
   <div class="card">
@@ -121,6 +182,10 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
 <script src="../shell.js"></script>
+<script src="../balance-calc.js"></script>
+<script src="../servicios.js"></script>
+<script src="../cheques.js"></script>
+<script src="../contexto.js"></script>
 <script src="../ia.js"></script>
 <script>
 firebase.initializeApp(FIREBASE_CONFIG);
@@ -162,6 +227,7 @@ function pintarEstado(hay,detalle){
   if(hay&&IA.workspace()&&!$('fWorkspace').value)$('fWorkspace').value=IA.workspace();
   $('btnProbar').style.display=hay?'':'none';
   $('btnBorrar').style.display=hay?'':'none';
+  if(!CARGANDO)$('btnEnviar').disabled=!hay;
 }
 
 function ocupado(si,boton){
@@ -218,6 +284,178 @@ function borrar(){
     toast('Clave quitada');
   }).catch(function(e){toast('❌ '+e.message)});
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   El chat
+   ───────────────────────────────────────────────────────────────── */
+
+var CTX=null;          /* el resumen de tus datos, armado una sola vez  */
+var HIST=[];           /* la conversación, para que entienda "¿y ese?"  */
+var CARGANDO=false;
+var USADO={entrada:0,salida:0,preguntas:0};
+
+/* Precio por millón de tokens del modelo que usamos acá. */
+var PRECIO={entrada:2,salida:10};
+
+/* Junta todo lo que el asistente necesita saber. Se arma una vez por
+   sesión: volver a leer Firestore en cada pregunta sería pagar dos veces
+   por el mismo dato. "Actualizar datos" lo fuerza de nuevo. */
+function cargarContexto(){
+  if(CTX)return Promise.resolve(CTX);
+  /* Lo accesorio no puede voltear la pregunta: si falta un módulo o
+     Firestore rechaza una colección, el asistente igual contesta con el
+     resto y lo dice. */
+  function opcional(fn){
+    try{
+      var p=fn();
+      return (p&&p.then)?p.then(null,function(){return []}):Promise.resolve(p||[]);
+    }catch(e){return Promise.resolve([])}
+  }
+  return Promise.all([
+    db.collection('proyectos').get(),
+    BalanceData.cargar(db),
+    opcional(function(){return Cheques.cargar(db)}),
+    opcional(function(){return ServiciosCat.cargar(db)})
+  ]).then(function(r){
+    var proyectos=r[0].docs.map(function(d){var o=d.data();o._id=d.id;return o});
+    CTX=Contexto.armar(r[1],proyectos,{cheques:r[2],servicios:r[3]});
+    return CTX;
+  });
+}
+
+function refrescarDatos(){
+  CTX=null;
+  BalanceData.invalidar();
+  cargarContexto().then(function(c){
+    toast('Datos actualizados ('+Contexto.tokensAprox(c).toLocaleString('es-PY')+' tokens de contexto)');
+  }).catch(function(e){toast('No se pudieron leer los datos: '+e.message)});
+}
+
+/* Un markdown mínimo: solo lo que Claude usa de verdad en una respuesta
+   (tablas, listas, negritas, títulos). No pretende ser un parser general.
+   Escapa primero, así nada de lo que venga de la API puede inyectar HTML. */
+function md(texto){
+  var L=esc(texto).split('\n'), out=[], i=0;
+  function inline(x){
+    return x.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
+            .replace(/`([^`]+)`/g,'<code>$1</code>');
+  }
+  function celdas(fila){
+    return fila.trim().replace(/^\||\|$/g,'').split('|')
+      .map(function(c){return inline(c.trim())});
+  }
+  var esLista=function(x){return /^\s*[-*]\s+/.test(x)};
+  var esNum=function(x){return /^\s*\d+[.)]\s+/.test(x)};
+  while(i<L.length){
+    var l=L[i];
+    if(!l.trim()){i++;continue}
+    if(/^\s*\|/.test(l)&&i+1<L.length&&/^\s*\|?[\s:|-]+\|?\s*$/.test(L[i+1])&&L[i+1].indexOf('-')>=0){
+      var th=celdas(l); i+=2; var filas=[];
+      while(i<L.length&&/^\s*\|/.test(L[i])){filas.push(celdas(L[i]));i++}
+      out.push('<table><thead><tr>'+th.map(function(c){return '<th>'+c+'</th>'}).join('')+
+        '</tr></thead><tbody>'+filas.map(function(f){
+          return '<tr>'+f.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+
+        '</tbody></table>');
+      continue;
+    }
+    var h=l.match(/^#{1,6}\s+(.*)$/);
+    if(h){out.push('<h4>'+inline(h[1])+'</h4>');i++;continue}
+    if(esLista(l)){
+      var li=[];
+      while(i<L.length&&esLista(L[i])){li.push('<li>'+inline(L[i].replace(/^\s*[-*]\s+/,''))+'</li>');i++}
+      out.push('<ul>'+li.join('')+'</ul>');continue;
+    }
+    if(esNum(l)){
+      var ol=[];
+      while(i<L.length&&esNum(L[i])){ol.push('<li>'+inline(L[i].replace(/^\s*\d+[.)]\s+/,''))+'</li>');i++}
+      out.push('<ol>'+ol.join('')+'</ol>');continue;
+    }
+    var par=[];
+    while(i<L.length&&L[i].trim()&&!esLista(L[i])&&!esNum(L[i])&&
+          !/^#{1,6}\s/.test(L[i])&&!/^\s*\|/.test(L[i])){par.push(L[i]);i++}
+    out.push('<p>'+inline(par.join(' '))+'</p>');
+  }
+  return out.join('');
+}
+
+function burbuja(clase,html){
+  var d=document.createElement('div');
+  d.className='msg '+clase;
+  d.innerHTML=html;
+  $('hilo').appendChild(d);
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+  return d;
+}
+
+function pintarConsumo(){
+  if(!USADO.preguntas){$('consumo').textContent='';return}
+  var cent=(USADO.entrada*PRECIO.entrada+USADO.salida*PRECIO.salida)/1e4;
+  $('consumo').textContent=
+    USADO.preguntas+(USADO.preguntas===1?' pregunta':' preguntas')+' · '+
+    (cent<0.05?'menos de 0,1 centavos':cent.toFixed(1).replace('.',',')+' centavos');
+}
+
+function autoAlto(){
+  var t=$('fPregunta');
+  t.style.height='auto';
+  t.style.height=Math.min(t.scrollHeight,160)+'px';
+}
+
+function preguntarEsto(t){$('fPregunta').value=t;enviar()}
+
+function limpiar(){
+  HIST=[];
+  USADO={entrada:0,salida:0,preguntas:0};
+  $('hilo').innerHTML='';
+  $('sugerencias').style.display='';
+  pintarConsumo();
+}
+
+function enviar(){
+  if(CARGANDO)return;
+  var q=$('fPregunta').value.trim();
+  if(!q)return;
+  if(!IA.tieneClave()){toast('Cargá la clave primero, acá abajo');return}
+
+  $('fPregunta').value=''; autoAlto();
+  $('sugerencias').style.display='none';
+  burbuja('yo',esc(q));
+  var espera=burbuja('ia','<span class="pensando">Pensando…</span>');
+  CARGANDO=true; $('btnEnviar').disabled=true;
+
+  cargarContexto().then(function(ctx){
+    HIST.push({role:'user',content:q});
+    return IA.pedir(HIST,{
+      sistema:Contexto.SISTEMA+'\n\n'+ctx,
+      modelo:IA.MODELOS.bueno,
+      maxTokens:1500
+    });
+  }).then(function(r){
+    var texto=IA.textoDe(r);
+    HIST.push({role:'assistant',content:texto});
+    espera.innerHTML=md(texto);
+    var c=IA.consumoDe(r);
+    USADO.entrada+=c.entrada; USADO.salida+=c.salida; USADO.preguntas++;
+    pintarConsumo();
+  }).catch(function(e){
+    /* La pregunta que falló sale del historial. Si quedara, la próxima
+       viajaría con una conversación que la API nunca contestó. */
+    if(HIST.length&&HIST[HIST.length-1].role==='user')HIST.pop();
+    espera.className='msg err';
+    espera.textContent='No se pudo responder. '+e.message;
+  }).then(function(){
+    CARGANDO=false;
+    $('btnEnviar').disabled=!IA.tieneClave();
+    $('fPregunta').focus();
+  });
+}
+
+$('fPregunta').addEventListener('input',autoAlto);
+$('fPregunta').addEventListener('keydown',function(e){
+  /* Enter manda, Shift+Enter hace salto de línea. */
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviar()}
+});
+$('btnEnviar').disabled=true;
 </script>
 </body>
 </html>
