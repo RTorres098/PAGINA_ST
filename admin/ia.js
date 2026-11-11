@@ -88,7 +88,9 @@ var IA = (function () {
   }
 
   /* El pedido en crudo. `opciones` acepta sistema, modelo, herramientas,
-     maxTokens y temperatura. Devuelve la respuesta completa de la API. */
+     maxTokens. Devuelve la respuesta completa de la API.
+     No mandamos `temperature`: los modelos nuevos lo rechazan con
+     "Extra inputs are not permitted". */
   function pedir(mensajes, opciones) {
     opciones = opciones || {};
     if (!_clave) return Promise.reject(new Error('Falta cargar la clave en Ajustes'));
@@ -100,7 +102,6 @@ var IA = (function () {
     };
     if (opciones.sistema) cuerpo.system = opciones.sistema;
     if (opciones.herramientas) cuerpo.tools = opciones.herramientas;
-    if (opciones.temperatura != null) cuerpo.temperature = opciones.temperatura;
 
     var cabeceras = {
       'content-type': 'application/json',
