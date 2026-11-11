@@ -1221,6 +1221,33 @@ function getFormState(){
 
 function marcarCambio(){formDirty=true}
 
+/* Lo que el asistente dejó preparado. No guarda nada: pone los valores en
+   el formulario para que calc() recalcule y vos decidas. Devuelve el aviso
+   que va arriba, o cadena vacía si no había nada. */
+function aplicarCambiosIA(idTraspaso){
+  var d=CamposPres.tomar(idTraspaso);
+  if(!d)return '';
+  var puestos=[];
+  (d.cambios||[]).forEach(function(c){
+    var el=document.getElementById(c.campo);
+    if(!el)return;
+    el.value=(c.valor==null?'':String(c.valor));
+    if(c.campo==='montoSolicitar')el.dataset.manual='1';
+    puestos.push(CamposPres.etiqueta(c.campo)+': '+el.value);
+  });
+  /* El cliente es un select de ids: se busca por nombre como hace el
+     formulario cuando abre un proyecto. Si no está, queda en amarillo. */
+  if(d.extra&&d.extra.cliente){
+    seleccionarClientePorNombre(d.extra.cliente);
+    var cs=document.getElementById('cliSel');
+    if(cs&&cs.value){onCli();puestos.push('Cliente: '+d.extra.cliente)}
+    else puestos.push('Cliente: «'+d.extra.cliente+'» no está en la lista, elegilo o crealo');
+  }
+  if(!puestos.length)return '';
+  return '<div class="form-note warn"><strong>El asistente dejó estos datos y todavía no están guardados.</strong><br>'+
+    esc(puestos.join(' · '))+'<br>Revisá los totales y guardá, o salí sin guardar para descartarlos.</div>';
+}
+
 function renderNewForm(clienteId){
   editingId=null;R={};
   document.title='Nuevo presupuesto — SoilTech';
@@ -1234,7 +1261,11 @@ function renderNewForm(clienteId){
   Object.keys(POLITICAS).forEach(function(k){setCampo(k,POLITICAS[k])});
   Object.keys(TABLAS_DEF).forEach(function(k){setTabla(k,TABLAS_DEF[k])});
   if(clienteId&&CLIS.some(function(c){return c.id===clienteId})){document.getElementById('cliSel').value=clienteId;onCli();}
-  formDirty=false;
+  /* Después de los valores por defecto, para que los pise el asistente y
+     no al revés. */
+  var avisoIA=aplicarCambiosIA(CamposPres.NUEVO);
+  if(avisoIA)document.getElementById('formNote').innerHTML=avisoIA;
+  formDirty=!!avisoIA;
   calc();
 }
 
@@ -1568,23 +1599,9 @@ function populateForm(p){
   if(cs.value&&!document.getElementById('cliContacto').value)onCli();
   /* Si el asistente dejó cambios para este proyecto, se aplican acá y
      calc() los recalcula. No se guarda nada: eso lo decidís vos. */
-  var aplicoIA=false;
-  var deIA=CamposPres.tomar(p._id||p.id||editingId);
-  if(deIA&&deIA.length){
-    var puestos=[];
-    deIA.forEach(function(c){
-      var el=document.getElementById(c.campo);
-      if(!el)return;
-      el.value=(c.valor==null?'':String(c.valor));
-      if(c.campo==='montoSolicitar')el.dataset.manual='1';
-      puestos.push(CamposPres.etiqueta(c.campo)+': '+el.value);
-    });
-    if(puestos.length){
-      aplicoIA=true;
-      nota+='<div class="form-note warn"><strong>El asistente aplicó estos cambios y todavía no están guardados.</strong><br>'+
-        esc(puestos.join(' · '))+'<br>Revisá los totales y guardá, o salí sin guardar para descartarlos.</div>';
-    }
-  }
+  var avisoIA=aplicarCambiosIA(p._id||p.id||editingId);
+  var aplicoIA=!!avisoIA;
+  nota+=avisoIA;
   document.getElementById('formNote').innerHTML=nota;
   calc();
   return aplicoIA;

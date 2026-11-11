@@ -56,10 +56,12 @@ var CamposPres = (function () {
   var LLAVE = 'stPresCambios';
   var VENCE = 5 * 60 * 1000;
 
-  function dejar(proyectoId, cambios) {
+  var NUEVO = 'nuevo';   // el id que usa un presupuesto que todavía no existe
+
+  function dejar(proyectoId, cambios, extra) {
     try {
       localStorage.setItem(LLAVE, JSON.stringify({
-        proyectoId: proyectoId, cambios: cambios, cuando: Date.now()
+        proyectoId: proyectoId, cambios: cambios, extra: extra || null, cuando: Date.now()
       }));
       return true;
     } catch (e) { return false; }
@@ -74,12 +76,12 @@ var CamposPres = (function () {
     try { d = JSON.parse(crudo); } catch (e) { return null; }
     if (!d || d.proyectoId !== proyectoId) return null;
     if (!d.cuando || Date.now() - d.cuando > VENCE) return null;
-    return d.cambios || null;
+    return { cambios: d.cambios || [], extra: d.extra || {} };
   }
 
   return {
     CAMPOS: CAMPOS, REQ: REQ, OBLIG: OBLIG, OTRAS: OTRAS,
     etiqueta: etiqueta, esTexto: esTexto, editables: editables,
-    dejar: dejar, tomar: tomar, LLAVE: LLAVE
+    dejar: dejar, tomar: tomar, LLAVE: LLAVE, NUEVO: NUEVO
   };
 })();

@@ -156,7 +156,71 @@ var Acciones = (function () {
         },
         required: ['factura']
       }
+    },
+    {
+      name: 'crear_presupuesto',
+      description:
+        'Arma un presupuesto nuevo y abre el formulario con los datos cargados, sin guardarlo. ' +
+        'Usala cuando el usuario describa un trabajo a presupuestar, por ejemplo "preparame un ' +
+        'presupuesto de 10 calicatas y 3 barrenadas con 4 días de campo". ' +
+        'Poné SOLO los valores que el usuario dijo o que se deducen directamente de lo que dijo: ' +
+        'si menciona un coordinador y dos jornaleros, son 3 personas en campo. No inventes ' +
+        'muestras por calicata, kilómetros ni precios que no dijo: el formulario marca en amarillo ' +
+        'lo que falta y el usuario lo completa. ' +
+        'Los porcentajes fijos, los precios de laboratorio y las tablas de honorarios, maquinaria y ' +
+        'peaje vienen con los valores de siempre y se ajustan en el formulario, no desde acá. ' +
+        'No se guarda nada: el usuario revisa los totales y guarda desde el formulario. Decilo así.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          nombre: { type: 'string', description: 'Nombre del proyecto. Si el usuario no lo dijo, preguntáselo.' },
+          cliente: { type: 'string', description: 'Nombre del cliente, si lo dijo. Si no está en la lista, el formulario lo marca para que lo elija.' },
+          valores: {
+            type: 'array',
+            description: 'Los campos del formulario que el usuario dio.',
+            items: {
+              type: 'object',
+              properties: {
+                campo: { type: 'string', enum: CamposPres.editables(), description: 'Id del campo del formulario.' },
+                valor: { type: 'string', description: 'Valor, como texto. Los porcentajes van de 0 a 100.' }
+              },
+              required: ['campo', 'valor']
+            }
+          }
+        },
+        required: ['nombre', 'valores']
+      }
     }];
+  }
+
+  function prepararNuevo(args) {
+    var nombre = String(args.nombre || '').trim();
+    if (!nombre) return { error: 'Falta el nombre del proyecto. Preguntáselo al usuario.' };
+
+    var valores = (args.valores || []).filter(function (c) { return c && c.campo !== 'proyNombre'; });
+    var v = validarCampos(valores, {}, false);
+    if (v.error) return { error: v.error };
+
+    var cambios = [{ campo: 'proyNombre', valor: nombre }].concat(v.limpios);
+    var cliente = String(args.cliente || '').trim();
+
+    var filas = [{ k: 'Proyecto', v: nombre }];
+    if (cliente) filas.push({ k: 'Cliente', v: cliente });
+    filas = filas.concat(v.filas);
+    filas.push({ k: 'Lo demás', v: 'Porcentajes fijos, precios de laboratorio y tablas, con los valores de siempre' });
+
+    return {
+      propuesta: {
+        tipo: 'crear_presupuesto',
+        titulo: 'Armar el presupuesto de ' + nombre,
+        verbo: 'Abrir el presupuesto armado',
+        filas: filas,
+        cambios: cambios,
+        extra: cliente ? { cliente: cliente } : null,
+        resumen: 'Presupuesto de ' + nombre + ' con ' + v.limpios.length +
+                 (v.limpios.length === 1 ? ' dato' : ' datos') + ' cargados'
+      }
+    };
   }
 
   /* Por número exacto, y si no por los últimos dígitos: "la 26" tiene que
@@ -244,22 +308,20 @@ var Acciones = (function () {
      dejar pasar hasta el formulario. */
   var PORCENTAJES = ['pImp', 'pRet', 'pAnt', 'pctMargen', 'pesoPrep', 'pesoLab', 'pesoInf'];
 
-  function prepararPresupuesto(args, ctx) {
-    var r = resolverProyecto(args.proyecto, ctx.proyectos);
-    if (r.error) return { error: r.error };
-    var p = r.proyecto;
-
-    var cambios = args.cambios || [];
-    if (!cambios.length) return { error: 'No dijiste qué cambiar. Preguntale al usuario.' };
-    if (cambios.length > 12) return { error: 'Son demasiados cambios de una vez. Hacelo por partes.' };
+  /* Valida una lista de campos del formulario. `actuales` son los valores
+     que ya tiene el presupuesto, para mostrar el antes; en uno nuevo va
+     vacío. Devuelve {error} o {limpios, filas}. */
+  function validarCampos(cambios, actuales, conAntes) {
+    cambios = cambios || [];
+    actuales = actuales || {};
+    if (!cambios.length) return { error: 'No dijiste qué valores poner. Preguntale al usuario.' };
+    if (cambios.length > 20) return { error: 'Son demasiados campos de una vez. Hacelo por partes.' };
 
     var validos = CamposPres.editables(), vistos = {}, limpios = [], filas = [];
-    var actuales = (p.presupuesto && p.presupuesto.form && p.presupuesto.form.campos) || {};
-
     for (var i = 0; i < cambios.length; i++) {
       var c = cambios[i] || {}, campo = c.campo;
       if (validos.indexOf(campo) < 0) {
-        return { error: '"' + campo + '" no es un campo del formulario. Los que se pueden cambiar son: ' +
+        return { error: '"' + campo + '" no es un campo del formulario. Los que se pueden poner son: ' +
                  validos.map(function (x) { return x + ' (' + CamposPres.etiqueta(x) + ')'; }).join(', ') + '.' };
       }
       if (vistos[campo]) return { error: 'Mandaste dos valores distintos para ' + CamposPres.etiqueta(campo) + '.' };
@@ -279,23 +341,36 @@ var Acciones = (function () {
         valor = String(valor == null ? '' : valor).trim();
       }
 
-      var antes = actuales[campo];
       limpios.push({ campo: campo, valor: valor });
-      filas.push({
-        k: CamposPres.etiqueta(campo),
-        v: (antes === undefined || antes === '' ? '(vacío)' : antes) + '  →  ' + valor
-      });
+      if (conAntes) {
+        var antes = actuales[campo];
+        filas.push({ k: CamposPres.etiqueta(campo),
+                     v: (antes === undefined || antes === '' ? '(vacío)' : antes) + '  \u2192  ' + valor });
+      } else {
+        filas.push({ k: CamposPres.etiqueta(campo), v: String(valor) });
+      }
     }
+    return { limpios: limpios, filas: filas };
+  }
+
+  function prepararPresupuesto(args, ctx) {
+    var r = resolverProyecto(args.proyecto, ctx.proyectos);
+    if (r.error) return { error: r.error };
+    var p = r.proyecto;
+
+    var actuales = (p.presupuesto && p.presupuesto.form && p.presupuesto.form.campos) || {};
+    var v = validarCampos(args.cambios, actuales, true);
+    if (v.error) return { error: v.error };
 
     return {
       propuesta: {
         tipo: 'editar_presupuesto',
         titulo: 'Cambiar el presupuesto de ' + p.nombre,
         verbo: 'Abrir el presupuesto con los cambios',
-        filas: filas,
-        cambios: limpios,
+        filas: v.filas,
+        cambios: v.limpios,
         proyecto: p,
-        resumen: limpios.length + (limpios.length === 1 ? ' cambio' : ' cambios') + ' en ' + p.nombre
+        resumen: v.limpios.length + (v.limpios.length === 1 ? ' cambio' : ' cambios') + ' en ' + p.nombre
       }
     };
   }
@@ -305,6 +380,7 @@ var Acciones = (function () {
     args = args || {};
     if (nombre === 'editar_presupuesto') return prepararPresupuesto(args, ctx);
     if (nombre === 'registrar_cobro') return prepararCobro(args, ctx);
+    if (nombre === 'crear_presupuesto') return prepararNuevo(args);
     if (nombre !== 'registrar_gasto') return { error: 'No conozco la herramienta "' + nombre + '".' };
 
     var r = resolverProyecto(args.proyecto, ctx.proyectos);
@@ -380,6 +456,17 @@ var Acciones = (function () {
        versión que el asistente escribiera por su cuenta daría otro número
        el día que cambie una. Así que se dejan los cambios, se abre el
        formulario y el total lo recalcula el mismo código de siempre. */
+    if (propuesta.tipo === 'crear_presupuesto') {
+      if (!CamposPres.dejar(CamposPres.NUEVO, propuesta.cambios, propuesta.extra)) {
+        return Promise.reject(new Error('El navegador no dejó guardar los datos para pasarlos al formulario'));
+      }
+      window.open('../presupuesto/#/nuevo', '_blank');
+      return Promise.resolve(
+        'Se abrió el formulario de presupuesto nuevo en otra pestaña, con lo que dijo cargado y sin ' +
+        'guardar. Falta que complete lo que quedó en amarillo, revise los totales y guarde. ' +
+        'No afirmes que el presupuesto ya existe.');
+    }
+
     if (propuesta.tipo === 'editar_presupuesto') {
       var id = propuesta.proyecto._id;
       if (!CamposPres.dejar(id, propuesta.cambios)) {
@@ -416,8 +503,8 @@ var Acciones = (function () {
     '- Nunca digas que algo quedó guardado: el usuario tiene que confirmarlo en pantalla primero.\n' +
     '- Si te falta un dato obligatorio, preguntáselo. No inventes montos, proyectos ni categorías.\n' +
     '- Si el usuario solo pregunta algo, respondé. Las herramientas son para cuando pide hacer algo.\n' +
-    '- Con editar_presupuesto no se guarda nada: se abre el formulario con los cambios puestos y ' +
-    'el usuario guarda desde ahí. Decilo así.';
+    '- Con editar_presupuesto y crear_presupuesto no se guarda nada: se abre el formulario con los ' +
+    'datos puestos y el usuario guarda desde ahí. Decilo así.';
 
   return {
     herramientas: herramientas, preparar: preparar, ejecutar: ejecutar,
