@@ -135,7 +135,109 @@ var Acciones = (function () {
         },
         required: ['proyecto', 'cambios']
       }
+    },
+    {
+      name: 'registrar_cobro',
+      description:
+        'Marca una factura como cobrada: crea el pago recibido y deja la factura pagada, los dos ' +
+        'juntos. Usala cuando el usuario diga que le pagaron una factura, por ejemplo "ya cobré la ' +
+        '26" o "SILVIPAR me pagó la factura de octubre". Identificá la factura por su número. ' +
+        'Si no decís el monto se toma el total de la factura; si no decís la cotización se toma la ' +
+        'del proyecto. El usuario confirma antes de que se escriba, así que no digas que ya quedó ' +
+        'cobrada. Para anular o desmarcar una factura, decile que lo haga en Facturación.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          factura: { type: 'string', description: 'Número de la factura, como lo dijo el usuario. Puede ser el número completo o los últimos dígitos.' },
+          monto: { type: 'string', description: 'Monto cobrado antes de retención, en la moneda de la factura. Si no lo dicen, no lo mandes.' },
+          fecha: { type: 'string', description: 'Fecha del cobro en formato AAAA-MM-DD. Si no la dicen, es hoy.' },
+          cotizacion: { type: 'string', description: 'Cotización Gs/USD del día del cobro. Si no la dicen, no la mandes.' },
+          retencionPct: { type: 'string', description: 'Retención de IVA en porcentaje, de 0 a 100. Si no la dicen, no la mandes.' }
+        },
+        required: ['factura']
+      }
     }];
+  }
+
+  /* Por número exacto, y si no por los últimos dígitos: "la 26" tiene que
+     encontrar la 001-001-0000026. Las anuladas no cuentan. */
+  function resolverFactura(texto, facturas) {
+    var q = String(texto == null ? '' : texto).replace(/\D/g, '');
+    if (!q) return { error: 'No dijiste qué factura. Preguntale el número al usuario.' };
+    var vivas = (facturas || []).filter(function (f) { return f.estado !== 'anulada'; });
+    var dig = function (f) { return String(f.nroFormateado || f.numero || '').replace(/\D/g, ''); };
+
+    var exacto = vivas.filter(function (f) { return dig(f) === q; });
+    var hay = exacto.length ? exacto : vivas.filter(function (f) {
+      var d = dig(f);
+      return d.length >= q.length && d.slice(-q.length) === q;
+    });
+
+    if (!hay.length) {
+      return { error: 'No encontré ninguna factura con el número "' + texto + '". Pedile al usuario ' +
+               'el número completo.' };
+    }
+    if (hay.length > 1) {
+      return { error: 'Hay ' + hay.length + ' facturas que terminan en ' + q + ': ' +
+               hay.map(function (f) { return (f.nroFormateado || '') + ' de ' + (f.cliente || ''); }).join(', ') +
+               '. Preguntale al usuario cuál.' };
+    }
+    return { factura: hay[0] };
+  }
+
+  function prepararCobro(args, ctx) {
+    var r = resolverFactura(args.factura, ctx.facturas);
+    if (r.error) return { error: r.error };
+    var f = r.factura;
+
+    if (f.pagada) {
+      return { error: 'La factura ' + (f.nroFormateado || '') + ' ya figura cobrada. Si hay que ' +
+               'corregirla, decile al usuario que la desmarque en Facturación.' };
+    }
+    if (!f.proyectoId) {
+      return { error: 'La factura ' + (f.nroFormateado || '') + ' no tiene proyecto asignado, así que ' +
+               'el cobro no sumaría a ningún balance. Decile que le asigne el proyecto en Facturación.' };
+    }
+    var p = (ctx.proyectos || []).filter(function (x) { return x._id === f.proyectoId; })[0] || null;
+    var esUsd = Cobros.esUsd(f);
+
+    var monto = args.monto != null && args.monto !== '' ? aNumero(args.monto) : num(f.total);
+    if (isNaN(monto)) return { error: 'No entendí el monto "' + args.monto + '".' };
+
+    var cot = args.cotizacion != null && args.cotizacion !== '' ? aNumero(args.cotizacion)
+                                                               : num(p && p.cotizacion);
+    if (!(cot > 0)) {
+      return { error: 'Falta la cotización del día del cobro: el proyecto no tiene una cargada. ' +
+               'Preguntásela al usuario.' };
+    }
+    var ret = args.retencionPct != null && args.retencionPct !== ''
+      ? aNumero(args.retencionPct) / 100 : Cobros.retencionDe(p);
+    if (isNaN(ret)) return { error: 'No entendí la retención "' + args.retencionPct + '".' };
+
+    var calc = Cobros.calcular({ monto: monto, retencion: ret, cotizacion: cot, esUsd: esUsd });
+    if (calc.error) return { error: calc.error };
+
+    var fecha = args.fecha || hoyISO();
+    var usd = function (n) { return 'USD ' + (Math.round(n * 100) / 100).toLocaleString('es-PY'); };
+
+    return {
+      propuesta: {
+        tipo: 'registrar_cobro',
+        titulo: 'Registrar el cobro de la factura ' + (f.nroFormateado || ''),
+        verbo: 'Registrar el cobro',
+        filas: [
+          { k: 'Factura', v: (f.nroFormateado || '') + ' · ' + (f.cliente || '') },
+          { k: 'Proyecto', v: (p && p.nombre) || f.proyectoNombre || '(sin proyecto)' },
+          { k: 'Cobrado', v: (esUsd ? usd(monto) : gs(monto)) + ' antes de retención' },
+          { k: 'Retención', v: Math.round(ret * 1000) / 10 + '%' },
+          { k: 'Cotización', v: gs(cot) + ' por USD' },
+          { k: 'Fecha', v: fecha },
+          { k: 'Suma al balance', v: gs(calc.finalGs) + '  ·  ' + usd(calc.finalUsd) }
+        ],
+        factura: f, facturaId: f._id, proyecto: p, calculo: calc, fecha: fecha,
+        resumen: 'Cobro de la factura ' + (f.nroFormateado || '') + ' por ' + gs(calc.finalGs) + ' netos'
+      }
+    };
   }
 
   /* Los que son porcentaje: un 150% de anticipo no es un typo que convenga
@@ -202,6 +304,7 @@ var Acciones = (function () {
   function preparar(nombre, args, ctx) {
     args = args || {};
     if (nombre === 'editar_presupuesto') return prepararPresupuesto(args, ctx);
+    if (nombre === 'registrar_cobro') return prepararCobro(args, ctx);
     if (nombre !== 'registrar_gasto') return { error: 'No conozco la herramienta "' + nombre + '".' };
 
     var r = resolverProyecto(args.proyecto, ctx.proyectos);
@@ -289,6 +392,16 @@ var Acciones = (function () {
         'revisar los totales y guardar desde ahí. No afirmes que ya está guardado.');
     }
 
+    /* Las dos escrituras del cobro van en un batch dentro de Cobros. */
+    if (propuesta.tipo === 'registrar_cobro') {
+      return Cobros.registrar(db, {
+        factura: propuesta.factura, facturaId: propuesta.facturaId,
+        proyecto: propuesta.proyecto, calculo: propuesta.calculo, fecha: propuesta.fecha
+      }).then(function () {
+        return 'Listo, ' + propuesta.resumen + '. La factura quedó marcada como pagada.';
+      });
+    }
+
     if (propuesta.tipo !== 'registrar_gasto') {
       return Promise.reject(new Error('Propuesta desconocida'));
     }
@@ -308,7 +421,8 @@ var Acciones = (function () {
 
   return {
     herramientas: herramientas, preparar: preparar, ejecutar: ejecutar,
-    resolverProyecto: resolverProyecto, esCurso: esCurso, aNumero: aNumero,
+    resolverProyecto: resolverProyecto, resolverFactura: resolverFactura,
+    esCurso: esCurso, aNumero: aNumero,
     INSTRUCCIONES: INSTRUCCIONES, N: N
   };
 })();

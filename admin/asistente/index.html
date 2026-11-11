@@ -279,6 +279,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 <script src="../contexto.js"></script>
 <script src="../gastos.js"></script>
 <script src="../campos-presupuesto.js"></script>
+<script src="../cobros.js"></script>
 <script src="../acciones.js"></script>
 <script src="../ia.js"></script>
 <script>
@@ -386,6 +387,7 @@ function borrar(){
 
 var CTX=null;          /* el resumen de tus datos, armado una sola vez  */
 var PROYECTOS=[];      /* los necesitan las herramientas, para resolver nombres */
+var FACTURAS=[];       /* idem, para resolver el número de factura */
 var PENDIENTE=null;    /* una propuesta esperando que la confirmes */
 var HIST=[];           /* la conversación, para que entienda "¿y ese?"  */
 var CARGANDO=false;
@@ -416,6 +418,7 @@ function cargarContexto(){
   ]).then(function(r){
     var proyectos=r[0].docs.map(function(d){var o=d.data();o._id=d.id;return o});
     PROYECTOS=proyectos;
+    FACTURAS=(r[1]&&r[1].facturas)||[];
     CTX=Contexto.armar(r[1],proyectos,{cheques:r[2],servicios:r[3]});
     return CTX;
   });
@@ -611,7 +614,7 @@ function procesar(r,espera,vueltas){
 
   if(!uso){ rellenar(espera,md(texto)); return Promise.resolve(); }
 
-  var prep=Acciones.preparar(uso.name,uso.input,{proyectos:PROYECTOS});
+  var prep=Acciones.preparar(uso.name,uso.input,{proyectos:PROYECTOS,facturas:FACTURAS});
 
   if(prep.error){
     HIST.push({role:'user',content:[{type:'tool_result',tool_use_id:uso.id,

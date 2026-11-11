@@ -253,6 +253,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--gd);color:var(-
 <script src="../config.js"></script>
 <script src="../auth-guard.js"></script>
 <script src="../shell.js"></script>
+<script src="../cobros.js"></script>
 <script src="../servicios.js"></script>
 <script src="../personas.js"></script>
 <script src="impresion.js"></script>
@@ -1123,10 +1124,7 @@ function abrirCobro(){
   calcCobro();
   // ¿Hay un cobro de anticipo viejo (creado al aprobar) sin factura vinculada? Se reutiliza para no duplicar.
   if(f.tipo==='anticipo'){
-    db.collection('pagos_recibidos').where('proyectoId','==',f.proyectoId).get().then(function(s){
-      var viejo=s.docs.map(function(d){return Object.assign({_id:d.id},d.data())}).find(function(x){
-        return x.proyectoId===f.proyectoId&&!x.facturaId&&/^anticipo/i.test(x.concepto||'');
-      });
+    Cobros.anticipoPrevio(db,f).then(function(viejo){
       if(!viejo||!cobroCtx||cobroCtx.f!==f)return;
       cobroCtx.previo=viejo;
       if(viejo.cotizacion)document.getElementById('cbCot').value=viejo.cotizacion;
@@ -1138,14 +1136,9 @@ function abrirCobro(){
 function cerrarCobro(){document.getElementById('cobroModal').classList.remove('show');cobroCtx=null}
 function datosCobro(){
   var c=cobroCtx;if(!c)return null;
-  var monto=numv('cbMonto'),ret=(numv('cbRet')||0)/100,cot=numv('cbCot');
-  if(!(monto>0))return {error:'Ingresá el monto cobrado'};
-  if(!(cot>0))return {error:'Ingresá la cotización del día del cobro'};
-  if(ret<0||ret>=1)return {error:'La retención tiene que estar entre 0 y 100%'};
-  var usd=c.isU?monto:monto/cot;
-  var finalUsd=usd-usd*ret;
-  var finalGs=c.isU?finalUsd*cot:monto-monto*ret;
-  return {usd:usd,ret:ret,cot:cot,finalUsd:finalUsd,finalGs:finalGs};
+  /* El cálculo vive en cobros.js: lo comparte el asistente. */
+  return Cobros.calcular({monto:numv('cbMonto'),retencion:(numv('cbRet')||0)/100,
+                          cotizacion:numv('cbCot'),esUsd:c.isU});
 }
 function calcCobro(){
   var d=datosCobro(),el=document.getElementById('cbPrev');
@@ -1157,19 +1150,12 @@ function guardarCobro(){
   if(!c||!d)return;
   if(d.error){toast('❌ '+d.error);return}
   var f=c.f,fecha=document.getElementById('cbFecha').value||new Date().toISOString().split('T')[0];
-  var desc=f.items&&f.items[0]?f.items[0].desc:(f.servicio||'');
-  var pago={
-    proyectoId:f.proyectoId,proyectoNombre:(c.p.nombre||f.proyectoNombre||'').toUpperCase(),
-    concepto:(f.tipo==='anticipo'?'Anticipo':'Factura')+' '+(f.nroFormateado||'')+(desc&&f.tipo!=='anticipo'?' — '+desc.slice(0,60):''),
-    montoUsd:d.usd,retencion:d.ret,montoFinalUsd:d.finalUsd,cotizacion:d.cot,montoFinalGs:d.finalGs,
-    fecha:new Date(fecha+'T12:00:00'),facturaId:c.id
-  };
   var b=document.getElementById('cbGuardar');b.disabled=true;
-  var existente=f.pagoRecibidoId||(c.previo&&c.previo._id);
-  var op=existente?db.collection('pagos_recibidos').doc(existente).set(pago).then(function(){return existente})
-                  :db.collection('pagos_recibidos').add(pago).then(function(r){return r.id});
-  op.then(function(pid){
-    return db.collection('facturas').doc(c.id).update({pagada:true,fechaPago:fecha,pagoRecibidoId:pid});
+  /* El pago y la factura van juntos o no van: antes eran dos escrituras
+     seguidas y una caída en el medio dejaba el balance desfasado. */
+  Cobros.registrar(db,{
+    factura:f,facturaId:c.id,proyecto:c.p,calculo:d,fecha:fecha,
+    previoId:f.pagoRecibidoId||(c.previo&&c.previo._id)
   }).then(function(){
     b.disabled=false;cerrarCobro();toast('💰 Cobro registrado en el balance');
     var id=curId;loadAll();setTimeout(function(){openDetail(id)},400);
@@ -1182,9 +1168,7 @@ function desmarcarPagada(){
   var f=curF;if(!f||!curId)return;
   if(!confirm('¿Desmarcar la factura '+(f.nroFormateado||'')+' como pagada?'+(f.pagoRecibidoId?'\nEl cobro se quita del balance del proyecto.':'')))return;
   var id=curId;
-  quitarCobroDe(f).then(function(){
-    return db.collection('facturas').doc(id).update({pagada:false,fechaPago:null,pagoRecibidoId:null});
-  }).then(function(){toast('Factura marcada como no pagada');loadAll();setTimeout(function(){openDetail(id)},400)}).catch(function(e){toast('❌ '+e.message)});
+  Cobros.quitar(db,f,id).then(function(){toast('Factura marcada como no pagada');loadAll();setTimeout(function(){openDetail(id)},400)}).catch(function(e){toast('❌ '+e.message)});
 }
 
 /* ═══ Print ═══ */
